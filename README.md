@@ -71,6 +71,8 @@ VAlert.success(
 
 ## Adding it to a product
 
+Run the index step below before you plan or write any UI. It is what tells a coding agent which widgets already exist, so it does not rebuild them.
+
 1. Add the dependency and import it.
 
    ```yaml
@@ -108,6 +110,10 @@ VAlert.success(
    You can pass several folders in a row (`raw_widgets lib/features lib/shared`). Start with the feature folders where new code goes. Replace raw widgets in the existing app shell (`lib/app` and the like) with V widgets when you first adopt the package, and leave the shell out of the check until then.
 
 Each widget has a doc with a parameter table under the package's `doc/` folder (the paths in the index are relative to that folder).
+
+## When something is missing
+
+If a widget almost fits, try its style parameters first. If one detail still cannot be done, write only that detail by hand in the product, mark it `// TODO(library: <what is missing>)` with what you tried, and open an issue in this repository. Do not copy or rebuild the whole widget. When the package gets the detail, upgrade it and delete the marker. Search for `TODO(library:` to see what is still open.
 
 ## Components
 
