@@ -23,7 +23,7 @@ dependencies:
   volo_flutter_ui:
     git:
       url: https://github.com/volo-uti/volo-flutter-ui.git
-      ref: v0.1.0 # a release tag
+      ref: v0.1.1 # a release tag
 ```
 
 The package is distributed through GitHub, not pub.dev: a release tag (`v<version>`, equal to `version` in `pubspec.yaml`) is the version a product depends on.
@@ -80,7 +80,7 @@ Run the index step below before you plan or write any UI. It is what tells a cod
      volo_flutter_ui:
        git:
          url: https://github.com/volo-uti/volo-flutter-ui.git
-         ref: v0.1.0 # a release tag
+         ref: v0.1.1 # a release tag
    ```
 
 2. Wrap the app root in `VApp` (or `VTheme` + `WidgetsApp`). `VApp` wraps `VTheme` and follows the system brightness.
