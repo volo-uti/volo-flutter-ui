@@ -211,6 +211,7 @@ class _VListTileState extends State<VListTile> {
           ),
         Expanded(
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

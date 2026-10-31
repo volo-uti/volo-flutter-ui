@@ -173,12 +173,17 @@ class _VCheckListTileState extends State<VCheckListTile> {
       color: colors.mutedForeground,
     );
 
-    final checkbox = VCheckbox(
-      value: widget.value,
-      onChanged: widget.enabled ? widget.onChanged : null,
+    // WHY: The row is the one checked node (it carries the title and the tap
+    // action), so the inner checkbox is not a second one.
+    final checkbox = ExcludeSemantics(
+      child: VCheckbox(
+        value: widget.value,
+        onChanged: widget.enabled ? widget.onChanged : null,
+      ),
     );
 
     final contentColumn = Column(
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -276,4 +276,25 @@ void main() {
       expect(semanticsOf(tester).properties.button, isTrue);
     });
   });
+
+  Widget looseHost(Widget child) => VTheme(
+    data: VThemeData.light(),
+    child: Directionality(
+      textDirection: TextDirection.ltr,
+      child: MediaQuery(
+        data: const MediaQueryData(),
+        child: Align(alignment: Alignment.topCenter, child: child),
+      ),
+    ),
+  );
+
+  group('VListTile layout', () {
+    testWidgets('hugs its content in a loose parent', (tester) async {
+      await tester.pumpWidget(
+        looseHost(const VListTile(title: Text('Alerts'))),
+      );
+
+      expect(tester.getSize(find.byType(VListTile)).height, lessThan(120));
+    });
+  });
 }

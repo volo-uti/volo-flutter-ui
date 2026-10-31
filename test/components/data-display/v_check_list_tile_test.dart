@@ -245,4 +245,51 @@ void main() {
       expect(taps, 2);
     });
   });
+
+  Widget looseHost(Widget child) => VTheme(
+    data: VThemeData.light(),
+    child: Directionality(
+      textDirection: TextDirection.ltr,
+      child: MediaQuery(
+        data: const MediaQueryData(),
+        child: Align(alignment: Alignment.topCenter, child: child),
+      ),
+    ),
+  );
+
+  group('VCheckListTile semantics and layout', () {
+    testWidgets('the row is one node, not a row plus an inner control', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        looseHost(
+          VCheckListTile(
+            title: const Text('Alerts'),
+            value: true,
+            onChanged: (_) {},
+          ),
+        ),
+      );
+
+      final node = tester.getSemantics(find.byType(VCheckListTile));
+      expect(node.label, 'Alerts');
+      expect(node.childrenCount, 0);
+      handle.dispose();
+    });
+
+    testWidgets('hugs its content in a loose parent', (tester) async {
+      await tester.pumpWidget(
+        looseHost(
+          VCheckListTile(
+            title: const Text('Alerts'),
+            value: true,
+            onChanged: (_) {},
+          ),
+        ),
+      );
+
+      expect(tester.getSize(find.byType(VCheckListTile)).height, lessThan(120));
+    });
+  });
 }

@@ -157,13 +157,18 @@ class _VSwitchListTileState extends State<VSwitchListTile> {
       color: colors.mutedForeground,
     );
 
-    final Widget switchWidget = VSwitch(
-      value: widget.value,
-      onChanged: widget.enabled ? widget.onChanged : null,
-      activeColor: resolvedStyle?.activeColor ?? widget.activeColor,
+    // WHY: The row is the one toggled node (it carries the title and the tap
+    // action), so the inner switch is not a second one.
+    final Widget switchWidget = ExcludeSemantics(
+      child: VSwitch(
+        value: widget.value,
+        onChanged: widget.enabled ? widget.onChanged : null,
+        activeColor: resolvedStyle?.activeColor ?? widget.activeColor,
+      ),
     );
 
     final Widget contentColumn = Column(
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

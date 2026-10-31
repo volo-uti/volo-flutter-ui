@@ -249,4 +249,54 @@ void main() {
       expect(taps, 2);
     });
   });
+
+  Widget looseHost(Widget child) => VTheme(
+    data: VThemeData.light(),
+    child: Directionality(
+      textDirection: TextDirection.ltr,
+      child: MediaQuery(
+        data: const MediaQueryData(),
+        child: Align(alignment: Alignment.topCenter, child: child),
+      ),
+    ),
+  );
+
+  group('VSwitchListTile semantics and layout', () {
+    testWidgets('the row is one node, not a row plus an inner control', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        looseHost(
+          VSwitchListTile(
+            title: const Text('Alerts'),
+            value: true,
+            onChanged: (_) {},
+          ),
+        ),
+      );
+
+      final node = tester.getSemantics(find.byType(VSwitchListTile));
+      expect(node.label, 'Alerts');
+      expect(node.childrenCount, 0);
+      handle.dispose();
+    });
+
+    testWidgets('hugs its content in a loose parent', (tester) async {
+      await tester.pumpWidget(
+        looseHost(
+          VSwitchListTile(
+            title: const Text('Alerts'),
+            value: true,
+            onChanged: (_) {},
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSize(find.byType(VSwitchListTile)).height,
+        lessThan(120),
+      );
+    });
+  });
 }

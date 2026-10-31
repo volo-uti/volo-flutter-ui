@@ -14,6 +14,8 @@ class VBottomNavStyle implements VComponentStyle {
     this.activeColor,
     this.inactiveColor,
     this.borderColor,
+    this.indicatorColor,
+    this.indicatorHeight,
     this.elevation,
   });
 
@@ -29,8 +31,16 @@ class VBottomNavStyle implements VComponentStyle {
   /// Inactive item color.
   final Color? inactiveColor;
 
-  /// Top border color.
+  /// Color of the 1px line along the top edge of the bar.
   final Color? borderColor;
+
+  /// Color of the bar drawn along the top edge of the selected item, or
+  /// `null` to draw none.
+  final Color? indicatorColor;
+
+  /// Thickness of the selected item's top bar, 4 when null. Used only when
+  /// [indicatorColor] is set.
+  final double? indicatorHeight;
 
   /// Elevation (shadow depth).
   final double? elevation;
@@ -42,6 +52,8 @@ class VBottomNavStyle implements VComponentStyle {
     Color? activeColor,
     Color? inactiveColor,
     Color? borderColor,
+    Color? indicatorColor,
+    double? indicatorHeight,
     double? elevation,
   }) => VBottomNavStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -49,6 +61,8 @@ class VBottomNavStyle implements VComponentStyle {
     activeColor: activeColor ?? this.activeColor,
     inactiveColor: inactiveColor ?? this.inactiveColor,
     borderColor: borderColor ?? this.borderColor,
+    indicatorColor: indicatorColor ?? this.indicatorColor,
+    indicatorHeight: indicatorHeight ?? this.indicatorHeight,
     elevation: elevation ?? this.elevation,
   );
 
@@ -62,6 +76,8 @@ class VBottomNavStyle implements VComponentStyle {
       activeColor: other.activeColor ?? activeColor,
       inactiveColor: other.inactiveColor ?? inactiveColor,
       borderColor: other.borderColor ?? borderColor,
+      indicatorColor: other.indicatorColor ?? indicatorColor,
+      indicatorHeight: other.indicatorHeight ?? indicatorHeight,
       elevation: other.elevation ?? elevation,
     );
   }
@@ -75,6 +91,8 @@ class VBottomNavStyle implements VComponentStyle {
         other.activeColor == activeColor &&
         other.inactiveColor == inactiveColor &&
         other.borderColor == borderColor &&
+        other.indicatorColor == indicatorColor &&
+        other.indicatorHeight == indicatorHeight &&
         other.elevation == elevation;
   }
 
@@ -85,6 +103,8 @@ class VBottomNavStyle implements VComponentStyle {
     activeColor,
     inactiveColor,
     borderColor,
+    indicatorColor,
+    indicatorHeight,
     elevation,
   );
 }

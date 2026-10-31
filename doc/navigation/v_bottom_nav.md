@@ -150,11 +150,13 @@ Supports cascade: theme override → instance override.
 | `foregroundColor` | `Color?` |  |  | Text foreground color. |
 | `activeColor` | `Color?` |  |  | Active item color. |
 | `inactiveColor` | `Color?` |  |  | Inactive item color. |
-| `borderColor` | `Color?` |  |  | Top border color. |
+| `borderColor` | `Color?` |  |  | Color of the 1px line along the top edge of the bar. |
+| `indicatorColor` | `Color?` |  |  | Color of the bar drawn along the top edge of the selected item, or `null` to draw none. |
+| `indicatorHeight` | `double?` |  |  | Thickness of the selected item's top bar, 4 when null. Used only when [indicatorColor] is set. |
 | `elevation` | `double?` |  |  | Elevation (shadow depth). |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VBottomNavStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? activeColor, Color? inactiveColor, Color? borderColor, double? elevation})` | Creates a copy with only the specified properties changed. |
+| `VBottomNavStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? activeColor, Color? inactiveColor, Color? borderColor, Color? indicatorColor, double? indicatorHeight, double? elevation})` | Creates a copy with only the specified properties changed. |

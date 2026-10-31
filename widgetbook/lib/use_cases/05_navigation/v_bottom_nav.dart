@@ -118,6 +118,19 @@ class _BottomNavShowcase extends StatelessWidget {
         ],
       ),
 
+      const WidgetbookSection(
+        title: 'Top Bar',
+        children: [
+          WidgetbookSubsection(
+            title: 'indicator',
+            labels: ['VBottomNavStyle(indicatorColor, borderColor)'],
+            children: [
+              _InteractiveBottomNav(variant: 'labeled', showIndicator: true),
+            ],
+          ),
+        ],
+      ),
+
       // Usage Guidelines
       _buildUsageGuidelines(context),
     ],
@@ -324,10 +337,15 @@ class _BottomNavSample extends StatelessWidget {
 // =============================================================================
 
 class _InteractiveBottomNav extends StatefulWidget {
-  const _InteractiveBottomNav({required this.variant, this.showBadge = false});
+  const _InteractiveBottomNav({
+    required this.variant,
+    this.showBadge = false,
+    this.showIndicator = false,
+  });
 
   final String variant;
   final bool showBadge;
+  final bool showIndicator;
 
   @override
   State<_InteractiveBottomNav> createState() => _InteractiveBottomNavState();
@@ -341,17 +359,26 @@ class _InteractiveBottomNavState extends State<_InteractiveBottomNav> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = VTheme.of(context).colors;
+    final style = widget.showIndicator
+        ? VBottomNavStyle(
+            indicatorColor: colors.primary,
+            borderColor: colors.border,
+          )
+        : null;
     switch (widget.variant) {
       case 'labeled':
         return VBottomNav.labeled(
           items: _items,
           selectedIndex: _selectedIndex,
+          style: style,
           onTap: (index) => setState(() => _selectedIndex = index),
         );
       default:
         return VBottomNav(
           items: _items,
           selectedIndex: _selectedIndex,
+          style: style,
           onTap: (index) => setState(() => _selectedIndex = index),
         );
     }

@@ -275,6 +275,7 @@ class _VSettingTileState extends State<VSettingTile> {
                 ),
               Expanded(
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -287,7 +288,14 @@ class _VSettingTileState extends State<VSettingTile> {
                   ],
                 ),
               ),
-              _buildTrailing(colors, typography),
+              // WHY: The row is the one toggled node (it carries the title and
+              // the tap action), so the inner control is not a second one.
+              ExcludeSemantics(
+                excluding:
+                    widget._variant == _VSettingTileVariant.switchTile ||
+                    widget._variant == _VSettingTileVariant.checkbox,
+                child: _buildTrailing(colors, typography),
+              ),
             ],
           ),
         ),

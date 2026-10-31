@@ -176,4 +176,108 @@ void main() {
       );
     });
   });
+
+  group('VBottomNav accessibility and style', () {
+    const red = Color(0xFFFF0000);
+    const green = Color(0xFF00FF00);
+
+    testWidgets('announces each label once', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        buildTestWidget(VBottomNav.labeled(items: testItems)),
+      );
+
+      expect(find.bySemanticsLabel('Home'), findsOneWidget);
+      expect(find.bySemanticsLabel('Search'), findsOneWidget);
+      handle.dispose();
+    });
+
+    testWidgets('draws no indicator unless indicatorColor is set', (
+      tester,
+    ) async {
+      await tester.pumpWidget(buildTestWidget(VBottomNav(items: testItems)));
+
+      expect(find.byType(ColoredBox), findsNothing);
+    });
+
+    testWidgets('draws a 4px bar on the top edge of the selected item only', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          VBottomNav(
+            items: testItems,
+            selectedIndex: 1,
+            style: const VBottomNavStyle(indicatorColor: red),
+          ),
+        ),
+      );
+
+      final bar = find.byWidgetPredicate(
+        (w) => w is ColoredBox && w.color == red,
+      );
+      expect(bar, findsOneWidget);
+      expect(tester.getSize(bar).height, 4);
+      expect(
+        tester.getTopLeft(bar).dy,
+        tester.getTopLeft(find.byType(VBottomNav)).dy,
+      );
+      final itemWidth = tester.getSize(find.byType(VBottomNav)).width / 3;
+      expect(tester.getSize(bar).width, closeTo(itemWidth, 0.5));
+      expect(tester.getTopLeft(bar).dx, closeTo(itemWidth, 0.5));
+    });
+
+    testWidgets('indicatorHeight sets the bar thickness', (tester) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          VBottomNav(
+            items: testItems,
+            style: const VBottomNavStyle(
+              indicatorColor: red,
+              indicatorHeight: 6,
+            ),
+          ),
+        ),
+      );
+
+      final bar = find.byWidgetPredicate(
+        (w) => w is ColoredBox && w.color == red,
+      );
+      expect(tester.getSize(bar).height, 6);
+    });
+
+    testWidgets('borderColor draws a line on the top edge of the bar', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          VBottomNav(
+            items: testItems,
+            style: const VBottomNavStyle(borderColor: green),
+          ),
+        ),
+      );
+
+      expect(
+        find.byWidgetPredicate(
+          (w) =>
+              w is DecoratedBox &&
+              w.decoration is BoxDecoration &&
+              (w.decoration as BoxDecoration).border?.top.color == green,
+        ),
+        findsOneWidget,
+      );
+    });
+
+    test('style merges and compares the indicator fields', () {
+      const base = VBottomNavStyle(indicatorColor: red);
+      final merged = base.merge(const VBottomNavStyle(indicatorHeight: 6));
+
+      expect(merged.indicatorColor, red);
+      expect(merged.indicatorHeight, 6);
+      expect(base.copyWith(indicatorHeight: 6), merged);
+      expect(base.copyWith(indicatorHeight: 6).hashCode, merged.hashCode);
+      expect(base == merged, isFalse);
+    });
+  });
 }
