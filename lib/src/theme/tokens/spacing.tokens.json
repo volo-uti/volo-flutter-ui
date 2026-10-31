@@ -1,0 +1,16 @@
+{
+  "spacing": {
+    "$type": "dimension",
+    "xxs":  { "$value": "2px",  "$description": "Fine adjustment within icons" },
+    "xs":   { "$value": "4px",  "$description": "Extra small spacing" },
+    "sm":   { "$value": "8px",  "$description": "Default spacing between elements" },
+    "md":   { "$value": "12px", "$description": "Card inner spacing" },
+    "lg":   { "$value": "16px", "$description": "Default spacing between sections" },
+    "xl":   { "$value": "20px", "$description": "Spacing between large elements" },
+    "xxl":  { "$value": "24px", "$description": "Page padding" },
+    "xxxl": { "$value": "32px", "$description": "Section separator" },
+    "4xl":  { "$value": "40px", "$description": "Large section gap, wide padding" },
+    "5xl":  { "$value": "48px", "$description": "Page margin, hero padding" },
+    "6xl":  { "$value": "64px", "$description": "Major section divider, landing page" }
+  }
+}

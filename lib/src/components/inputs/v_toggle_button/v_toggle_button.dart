@@ -1,0 +1,666 @@
+import 'dart:async';
+
+import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+
+import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_debug.dart';
+import 'v_toggle_button_style.dart';
+
+/// Keys that activate the focused control.
+const Map<ShortcutActivator, Intent> _activateShortcuts =
+    <ShortcutActivator, Intent>{
+      SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+      SingleActivator(LogicalKeyboardKey.numpadEnter): ActivateIntent(),
+      SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+    };
+
+/// Visual style of a [VToggleButton] or [VToggleButtonGroup] while unselected.
+enum VToggleButtonType {
+  /// Filled background.
+  filled,
+
+  /// No background (default).
+  ghost,
+
+  /// Bordered style.
+  outlined,
+}
+
+/// Five-step size of a [VToggleButton] or [VToggleButtonGroup].
+enum VToggleButtonSize {
+  /// Extra small (24px).
+  xs,
+
+  /// Small (32px).
+  sm,
+
+  /// Medium (40px) - default.
+  md,
+
+  /// Large (48px).
+  lg,
+
+  /// Extra large (56px).
+  xl,
+}
+
+/// Standalone on/off button that is drawn selected while [isSelected] is true.
+///
+/// Without [onChanged] the button is disabled. For a set of related toggles
+/// use [VToggleButtonGroup].
+///
+/// ```dart
+/// VToggleButton(
+///   isSelected: isBold,
+///   onChanged: (value) => setState(() => isBold = value),
+///   child: const Icon(Icons.format_bold),
+/// )
+/// ```
+class VToggleButton extends StatefulWidget {
+  /// Creates a toggle button showing [child].
+  const VToggleButton({
+    required this.isSelected,
+    required this.child,
+    super.key,
+    this.name,
+    this.onChanged,
+    this.enabled = true,
+    this.type = VToggleButtonType.ghost,
+    this.size,
+    this.style,
+  });
+
+  /// Key identifying this button in debug logs.
+  final String? name;
+
+  /// Whether the button is on and drawn selected.
+  final bool isSelected;
+
+  /// Content of the button; inherits the button's text and icon style.
+  final Widget child;
+
+  /// Called with the new state when the user taps the button.
+  final ValueChanged<bool>? onChanged;
+
+  /// Whether the button reacts to input.
+  final bool enabled;
+
+  /// Look of the button while it is off.
+  final VToggleButtonType type;
+
+  /// Button size; defaults to medium.
+  final VToggleButtonSize? size;
+
+  /// Style override merged over the theme's [VToggleButtonStyle].
+  final VToggleButtonStyle? style;
+
+  @override
+  State<VToggleButton> createState() => _VToggleButtonState();
+}
+
+class _VToggleButtonState extends State<VToggleButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  bool _isHovered = false;
+  bool _isFocused = false;
+  late final FocusNode _focusNode;
+
+  void _handleFocusChange() {
+    setState(() => _isFocused = _focusNode.hasFocus);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode()..addListener(_handleFocusChange);
+    _controller = AnimationController(vsync: this);
+    _scaleAnimation = Tween<double>(
+      begin: 1,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final theme = VTheme.of(context);
+    _controller.duration = theme.animations.fast;
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: theme.animations.curveEaseOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _focusNode
+      ..removeListener(_handleFocusChange)
+      ..dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  bool get _isEnabled => widget.enabled && widget.onChanged != null;
+
+  void _handleTapDown(TapDownDetails details) {
+    if (!_isEnabled) return;
+    unawaited(_controller.forward());
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    if (!_isEnabled) return;
+    unawaited(_controller.reverse());
+  }
+
+  void _handleTapCancel() {
+    if (!_isEnabled) return;
+    unawaited(_controller.reverse());
+  }
+
+  void _handleTap() {
+    if (!_isEnabled) return;
+    final newValue = !widget.isSelected;
+
+    VDebug.log(
+      category: VDebugCategory.input,
+      component: 'VToggleButton',
+      name: widget.name,
+      action: 'toggled',
+      value: newValue,
+    );
+
+    widget.onChanged?.call(newValue);
+  }
+
+  void _handleMouseEnter(PointerEnterEvent event) {
+    if (!_isEnabled) return;
+    setState(() => _isHovered = true);
+  }
+
+  void _handleMouseExit(PointerExitEvent event) {
+    setState(() => _isHovered = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = VTheme.of(context);
+
+    // Apply style overrides (Level 3 → Level 4 cascade)
+    final themeStyle = theme.componentOverrides.get<VToggleButtonStyle>();
+    final resolvedStyle = themeStyle?.merge(widget.style) ?? widget.style;
+
+    // Size
+    final sizeToken = switch (widget.size) {
+      VToggleButtonSize.xs => theme.sizes.xs,
+      VToggleButtonSize.sm => theme.sizes.sm,
+      VToggleButtonSize.lg => theme.sizes.lg,
+      VToggleButtonSize.xl => theme.sizes.xl,
+      _ => theme.sizes.md,
+    };
+    final height = sizeToken.height;
+    final padding = sizeToken.paddingHorizontal;
+
+    // Style
+    Color backgroundColor;
+    Color foregroundColor;
+    BoxBorder? border;
+
+    if (widget.isSelected) {
+      backgroundColor = theme.colors.accent;
+      foregroundColor = theme.colors.accentForeground;
+      border = null;
+    } else {
+      switch (widget.type) {
+        case VToggleButtonType.filled:
+          backgroundColor = _isHovered && _isEnabled
+              ? theme.colors.secondary
+              : theme.colors.muted;
+          foregroundColor = theme.colors.foreground;
+          border = null;
+        case VToggleButtonType.ghost:
+          backgroundColor = _isHovered && _isEnabled
+              ? theme.colors.accent
+              : VColors.transparent;
+          foregroundColor = theme.colors.foreground;
+          border = null;
+        case VToggleButtonType.outlined:
+          backgroundColor = _isHovered && _isEnabled
+              ? theme.colors.accent
+              : VColors.transparent;
+          foregroundColor = theme.colors.foreground;
+          border = Border.all(
+            color: _isHovered && _isEnabled
+                ? theme.colors.primary
+                : theme.colors.border,
+          );
+      }
+    }
+
+    // Apply resolvedStyle overrides
+    if (resolvedStyle != null) {
+      if (widget.isSelected) {
+        backgroundColor =
+            resolvedStyle.selectedBackgroundColor ?? backgroundColor;
+        foregroundColor =
+            resolvedStyle.selectedForegroundColor ?? foregroundColor;
+      } else {
+        backgroundColor = resolvedStyle.backgroundColor ?? backgroundColor;
+        foregroundColor = resolvedStyle.foregroundColor ?? foregroundColor;
+      }
+      if (resolvedStyle.borderColor != null) {
+        border = Border.all(color: resolvedStyle.borderColor!);
+      }
+    }
+
+    final textStyle = TextStyle(
+      fontSize: sizeToken.fontSize,
+      fontWeight: FontWeight.w500,
+      color: foregroundColor,
+    );
+
+    Widget toggle = AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) => Transform.scale(
+        scale: _scaleAnimation.value,
+        child: AnimatedContainer(
+          duration: theme.animations.fast,
+          height: height,
+          padding:
+              resolvedStyle?.padding ??
+              EdgeInsets.symmetric(horizontal: padding),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius:
+                resolvedStyle?.borderRadius ??
+                BorderRadius.circular(sizeToken.borderRadius),
+            border: border,
+          ),
+          child: Center(
+            child: IconTheme(
+              data: IconThemeData(
+                color: foregroundColor,
+                size: sizeToken.iconSize,
+              ),
+              child: DefaultTextStyle.merge(
+                style: textStyle,
+                child: widget.child,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // WCAG 2.5.8: Minimum touch target 24x24
+    toggle = ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+      child: toggle,
+    );
+
+    // Opacity when disabled
+    toggle = Opacity(opacity: _isEnabled ? 1.0 : 0.5, child: toggle);
+
+    // MouseRegion + gesture wrapping
+    toggle = MouseRegion(
+      onEnter: _handleMouseEnter,
+      onExit: _handleMouseExit,
+      cursor: _isEnabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      child: GestureDetector(
+        onTapDown: _handleTapDown,
+        onTapUp: _handleTapUp,
+        onTapCancel: _handleTapCancel,
+        onTap: _handleTap,
+        behavior: HitTestBehavior.opaque,
+        child: toggle,
+      ),
+    );
+
+    // Focus ring for keyboard navigation (WCAG 2.4.7)
+    toggle = FocusableActionDetector(
+      focusNode: _focusNode,
+      enabled: _isEnabled,
+      shortcuts: _activateShortcuts,
+      actions: <Type, Action<Intent>>{
+        ActivateIntent: CallbackAction<ActivateIntent>(
+          onInvoke: (_) {
+            _handleTap();
+            return null;
+          },
+        ),
+      },
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(sizeToken.borderRadius),
+          border: _isFocused
+              ? Border.all(color: theme.colors.ring, width: 2)
+              : null,
+        ),
+        child: toggle,
+      ),
+    );
+
+    // Semantics (outside the focus detector, so it is the outermost node)
+    toggle = Semantics(
+      toggled: widget.isSelected,
+      enabled: _isEnabled,
+      child: toggle,
+    );
+
+    return FocusTraversalGroup(child: toggle);
+  }
+}
+
+/// One option of a [VToggleButtonGroup], shown as an [icon] or a [label].
+class VToggleButtonItem<T> {
+  /// Creates a toggle button option.
+  const VToggleButtonItem({
+    required this.value,
+    required this.label,
+    this.icon,
+    this.enabled = true,
+  });
+
+  /// Value reported when this option is selected.
+  final T value;
+
+  /// Content of the option; replaced by [icon] when one is given.
+  final Widget label;
+
+  /// Icon shown instead of [label].
+  final Widget? icon;
+
+  /// Whether this option reacts to input.
+  final bool enabled;
+}
+
+/// Segmented row of [VToggleButtonItem]s selecting one value or several.
+///
+/// ```dart
+/// VToggleButtonGroup<String>(
+///   value: viewMode,
+///   items: [
+///     VToggleButtonItem(
+///       value: 'grid',
+///       label: Text('Grid'),
+///       icon: Icon(Icons.grid_view),
+///     ),
+///     VToggleButtonItem(
+///       value: 'list',
+///       label: Text('List'),
+///       icon: Icon(Icons.list),
+///     ),
+///   ],
+///   onChanged: (mode) => setState(() => viewMode = mode),
+/// )
+/// ```
+class VToggleButtonGroup<T> extends StatelessWidget {
+  /// Creates a toggle group; set [allowMultiple] to select several values.
+  const VToggleButtonGroup({
+    required this.items,
+    super.key,
+    this.name,
+    this.value,
+    this.values = const [],
+    this.onChanged,
+    this.onValuesChanged,
+    this.allowMultiple = false,
+    this.allowEmpty = true,
+    this.type = VToggleButtonType.ghost,
+    this.size,
+    this.fullWidth = false,
+  });
+
+  /// Key identifying this group in debug logs.
+  final String? name;
+
+  /// Selected value when [allowMultiple] is false.
+  final T? value;
+
+  /// Selected values when [allowMultiple] is true.
+  final List<T> values;
+
+  /// Options of the group, in display order.
+  final List<VToggleButtonItem<T>> items;
+
+  /// Called with the new value (or `null` when deselected) in single mode.
+  final ValueChanged<T?>? onChanged;
+
+  /// Called with the new list in multiple mode.
+  final ValueChanged<List<T>>? onValuesChanged;
+
+  /// Whether several options can be selected at once.
+  final bool allowMultiple;
+
+  /// Whether the last selected option can be deselected.
+  final bool allowEmpty;
+
+  /// Look of the unselected options.
+  final VToggleButtonType type;
+
+  /// Option height; defaults to medium.
+  final VToggleButtonSize? size;
+
+  /// Whether the group fills the available width.
+  final bool fullWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = VTheme.of(context);
+
+    // Determine height from size token
+    final sizeToken = switch (size) {
+      VToggleButtonSize.xs => theme.sizes.xs,
+      VToggleButtonSize.sm => theme.sizes.sm,
+      VToggleButtonSize.lg => theme.sizes.lg,
+      VToggleButtonSize.xl => theme.sizes.xl,
+      _ => theme.sizes.md,
+    };
+    final height = sizeToken.height;
+
+    return FocusTraversalGroup(
+      child: Container(
+        decoration: BoxDecoration(
+          color: type == VToggleButtonType.filled ? theme.colors.muted : null,
+          border: type == VToggleButtonType.outlined
+              ? Border.all(color: theme.colors.border)
+              : null,
+          borderRadius: BorderRadius.circular(theme.radius.md),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(theme.radius.md),
+          child: Row(
+            mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
+            children: List.generate(items.length, (index) {
+              final item = items[index];
+              final isSelected = allowMultiple
+                  ? values.contains(item.value)
+                  : value == item.value;
+
+              // Corner radius
+              BorderRadius? borderRadius;
+              if (items.length == 1) {
+                borderRadius = BorderRadius.circular(theme.radius.md);
+              } else if (index == 0) {
+                borderRadius = BorderRadius.only(
+                  topLeft: Radius.circular(theme.radius.md),
+                  bottomLeft: Radius.circular(theme.radius.md),
+                );
+              } else if (index == items.length - 1) {
+                borderRadius = BorderRadius.only(
+                  topRight: Radius.circular(theme.radius.md),
+                  bottomRight: Radius.circular(theme.radius.md),
+                );
+              }
+
+              final itemWidget = _ToggleButtonGroupItem<T>(
+                item: item,
+                isSelected: isSelected,
+                borderRadius: borderRadius,
+                height: height,
+                fullWidth: fullWidth,
+                onTap: !item.enabled
+                    ? null
+                    : () => _handleItemTap(item.value, isSelected),
+              );
+
+              return fullWidth ? Expanded(child: itemWidget) : itemWidget;
+            }),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleItemTap(T itemValue, bool isCurrentlySelected) {
+    if (allowMultiple) {
+      final newValues = List<T>.from(values);
+      if (isCurrentlySelected) {
+        if (allowEmpty || newValues.length > 1) {
+          newValues.remove(itemValue);
+        }
+      } else {
+        newValues.add(itemValue);
+      }
+
+      VDebug.log(
+        category: VDebugCategory.input,
+        component: 'VToggleButtonGroup',
+        name: name,
+        action: 'selected',
+        value: newValues,
+      );
+
+      onValuesChanged?.call(newValues);
+    } else {
+      final newValue = isCurrentlySelected && allowEmpty ? null : itemValue;
+
+      VDebug.log(
+        category: VDebugCategory.input,
+        component: 'VToggleButtonGroup',
+        name: name,
+        action: 'selected',
+        value: newValue,
+      );
+
+      if (isCurrentlySelected) {
+        if (allowEmpty) {
+          onChanged?.call(null);
+        }
+      } else {
+        onChanged?.call(itemValue);
+      }
+    }
+  }
+}
+
+class _ToggleButtonGroupItem<T> extends StatefulWidget {
+  const _ToggleButtonGroupItem({
+    required this.item,
+    required this.isSelected,
+    required this.borderRadius,
+    required this.height,
+    required this.onTap,
+    this.fullWidth = false,
+  });
+
+  final VToggleButtonItem<T> item;
+  final bool isSelected;
+  final BorderRadius? borderRadius;
+  final double height;
+  final VoidCallback? onTap;
+  final bool fullWidth;
+
+  @override
+  State<_ToggleButtonGroupItem<T>> createState() =>
+      _ToggleButtonGroupItemState<T>();
+}
+
+class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
+  bool _isHovered = false;
+
+  bool get _isEnabled => widget.item.enabled && widget.onTap != null;
+
+  void _handleMouseEnter(PointerEnterEvent event) {
+    if (!_isEnabled) return;
+    setState(() => _isHovered = true);
+  }
+
+  void _handleMouseExit(PointerExitEvent event) {
+    setState(() => _isHovered = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = VTheme.of(context);
+
+    // Background color on hover
+    Color backgroundColor;
+    if (widget.isSelected) {
+      backgroundColor = theme.colors.accent;
+    } else if (_isHovered && _isEnabled) {
+      backgroundColor = theme.colors.accent;
+    } else {
+      backgroundColor = VColors.transparent;
+    }
+    final foregroundColor = widget.isSelected
+        ? theme.colors.accentForeground
+        : theme.colors.foreground;
+
+    final textStyle = TextStyle(
+      fontSize: theme.sizes.md.fontSize,
+      fontWeight: FontWeight.w500,
+      color: foregroundColor,
+    );
+
+    Widget content;
+    if (widget.item.icon != null) {
+      content = IconTheme(
+        data: IconThemeData(
+          color: foregroundColor,
+          size: theme.sizes.lg.iconSize,
+        ),
+        child: widget.item.icon!,
+      );
+    } else {
+      content = DefaultTextStyle.merge(
+        style: textStyle,
+        child: widget.item.label,
+      );
+    }
+
+    Widget toggle = AnimatedContainer(
+      duration: theme.animations.fast,
+      height: widget.height,
+      padding: EdgeInsets.symmetric(horizontal: theme.spacing.md),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: widget.borderRadius,
+      ),
+      child: Center(child: content),
+    );
+
+    // Opacity when disabled
+    toggle = Opacity(opacity: widget.item.enabled ? 1.0 : 0.5, child: toggle);
+
+    // MouseRegion + gesture wrapping
+    toggle = MouseRegion(
+      onEnter: _handleMouseEnter,
+      onExit: _handleMouseExit,
+      cursor: _isEnabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      child: widget.onTap != null
+          ? GestureDetector(
+              onTap: widget.onTap,
+              behavior: HitTestBehavior.opaque,
+              child: toggle,
+            )
+          : toggle,
+    );
+
+    return toggle;
+  }
+}

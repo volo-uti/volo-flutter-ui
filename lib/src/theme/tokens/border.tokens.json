@@ -1,0 +1,54 @@
+{
+  "border": {
+    "$type": "border",
+    "default": {
+      "$value": {
+        "color": "#e4e4e7",
+        "width": "1px",
+        "style": "solid"
+      },
+      "$description": "Default border"
+    },
+    "strong": {
+      "$value": {
+        "color": "#18181b",
+        "width": "1px",
+        "style": "solid"
+      },
+      "$description": "Emphasized border (focus ring, active state)"
+    },
+    "subtle": {
+      "$value": {
+        "color": "#f4f4f5",
+        "width": "1px",
+        "style": "solid"
+      },
+      "$description": "Subtle divider or separator"
+    }
+  },
+  "border-dark": {
+    "$type": "border",
+    "$extensions": { "volo.mode": "dark" },
+    "default": {
+      "$value": {
+        "color": "#27272a",
+        "width": "1px",
+        "style": "solid"
+      }
+    },
+    "strong": {
+      "$value": {
+        "color": "#fafafa",
+        "width": "1px",
+        "style": "solid"
+      }
+    },
+    "subtle": {
+      "$value": {
+        "color": "#18181b",
+        "width": "1px",
+        "style": "solid"
+      }
+    }
+  }
+}

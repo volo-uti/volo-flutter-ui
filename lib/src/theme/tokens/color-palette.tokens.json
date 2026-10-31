@@ -1,0 +1,61 @@
+{
+  "color": {
+    "$type": "color",
+    "brand-primary": {
+      "1":  { "$value": "#EEF2FF", "$description": "Lightest primary tint (app background)" },
+      "2":  { "$value": "#E0E7FF", "$description": "Subtle background" },
+      "3":  { "$value": "#C7D2FE", "$description": "Component background (normal)" },
+      "4":  { "$value": "#A5B4FC", "$description": "Component background (hover)" },
+      "5":  { "$value": "#818CF8", "$description": "Component background (active)" },
+      "6":  { "$value": "#7C7FE4", "$description": "Subtle border" },
+      "7":  { "$value": "#6D6DD6", "$description": "Interactive border" },
+      "8":  { "$value": "#4F46E5", "$description": "Strong border / focus ring" },
+      "9":  { "$value": "#6366F1", "$description": "Primary Key Color (solid)" },
+      "10": { "$value": "#4338CA", "$description": "Solid background (hover)" },
+      "11": { "$value": "#3730A3", "$description": "Low-contrast text" },
+      "12": { "$value": "#312E81", "$description": "High-contrast text" }
+    },
+    "brand-secondary": {
+      "1":  { "$value": "#ECFEFF", "$description": "Lightest secondary tint" },
+      "2":  { "$value": "#CFFAFE", "$description": "Subtle background" },
+      "3":  { "$value": "#A5F3FC", "$description": "Component background (normal)" },
+      "4":  { "$value": "#67E8F9", "$description": "Component background (hover)" },
+      "5":  { "$value": "#22D3EE", "$description": "Component background (active)" },
+      "6":  { "$value": "#17B8D6", "$description": "Subtle border" },
+      "7":  { "$value": "#0E9CC2", "$description": "Interactive border" },
+      "8":  { "$value": "#0284C7", "$description": "Strong border" },
+      "9":  { "$value": "#0EA5E9", "$description": "Secondary Key Color (solid)" },
+      "10": { "$value": "#0369A1", "$description": "Solid background (hover)" },
+      "11": { "$value": "#075985", "$description": "Low-contrast text" },
+      "12": { "$value": "#0C4A6E", "$description": "High-contrast text" }
+    },
+    "brand-tertiary": {
+      "1":  { "$value": "#F5F3FF", "$description": "Lightest tertiary tint" },
+      "2":  { "$value": "#EDE9FE", "$description": "Subtle background" },
+      "3":  { "$value": "#DDD6FE", "$description": "Component background (normal)" },
+      "4":  { "$value": "#C4B5FD", "$description": "Component background (hover)" },
+      "5":  { "$value": "#A78BFA", "$description": "Component background (active)" },
+      "6":  { "$value": "#9979F0", "$description": "Subtle border" },
+      "7":  { "$value": "#8467E3", "$description": "Interactive border" },
+      "8":  { "$value": "#7C3AED", "$description": "Strong border" },
+      "9":  { "$value": "#8B5CF6", "$description": "Tertiary Key Color (solid)" },
+      "10": { "$value": "#6D28D9", "$description": "Solid background (hover)" },
+      "11": { "$value": "#5B21B6", "$description": "Low-contrast text" },
+      "12": { "$value": "#4C1D95", "$description": "High-contrast text" }
+    },
+    "neutral": {
+      "1":  { "$value": "#FAFAFA", "$description": "Page background" },
+      "2":  { "$value": "#F4F4F5", "$description": "Subtle background (muted)" },
+      "3":  { "$value": "#E4E4E7", "$description": "Component background" },
+      "4":  { "$value": "#D4D4D8", "$description": "Hover" },
+      "5":  { "$value": "#A1A1AA", "$description": "Active / disabled" },
+      "6":  { "$value": "#71717A", "$description": "Muted foreground" },
+      "7":  { "$value": "#52525B", "$description": "Interactive border" },
+      "8":  { "$value": "#3F3F46", "$description": "Strong border" },
+      "9":  { "$value": "#27272A", "$description": "Solid background" },
+      "10": { "$value": "#18181B", "$description": "Default text / foreground" },
+      "11": { "$value": "#0F0F10", "$description": "Dark background" },
+      "12": { "$value": "#09090B", "$description": "Darkest" }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "font": {
+    "family": {
+      "$type": "fontFamily",
+      "sans": {
+        "$value": ["Pretendard Variable", "Pretendard", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+        "$description": "Default sans-serif font stack"
+      },
+      "mono": {
+        "$value": ["JetBrains Mono", "Fira Code", "ui-monospace", "Cascadia Code", "monospace"],
+        "$description": "Monospace font for code and numbers"
+      }
+    }
+  }
+}

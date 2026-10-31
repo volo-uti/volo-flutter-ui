@@ -1,0 +1,65 @@
+{
+  "shadow": {
+    "$type": "shadow",
+    "xs": {
+      "$value": {
+        "color": "#00000033",
+        "offsetX": "0px",
+        "offsetY": "1px",
+        "blur": "2px",
+        "spread": "0px"
+      },
+      "$description": "Subtle depth (dark)"
+    },
+    "sm": {
+      "$value": {
+        "color": "#00000040",
+        "offsetX": "0px",
+        "offsetY": "2px",
+        "blur": "4px",
+        "spread": "0px"
+      },
+      "$description": "Card (dark)"
+    },
+    "md": {
+      "$value": {
+        "color": "#0000004d",
+        "offsetX": "0px",
+        "offsetY": "4px",
+        "blur": "8px",
+        "spread": "-1px"
+      },
+      "$description": "Dropdown (dark)"
+    },
+    "lg": {
+      "$value": {
+        "color": "#00000059",
+        "offsetX": "0px",
+        "offsetY": "8px",
+        "blur": "16px",
+        "spread": "-2px"
+      },
+      "$description": "Modal (dark)"
+    },
+    "xl": {
+      "$value": {
+        "color": "#00000066",
+        "offsetX": "0px",
+        "offsetY": "12px",
+        "blur": "24px",
+        "spread": "-4px"
+      },
+      "$description": "Floating element (dark)"
+    },
+    "glow": {
+      "$value": {
+        "color": "#00000099",
+        "offsetX": "0px",
+        "offsetY": "0px",
+        "blur": "20px",
+        "spread": "0px"
+      },
+      "$description": "Emphasis glow effect (dark)"
+    }
+  }
+}

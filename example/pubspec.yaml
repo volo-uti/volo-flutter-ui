@@ -1,0 +1,12 @@
+name: volo_flutter_ui_example
+description: Example app demonstrating volo_flutter_ui components.
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  volo_flutter_ui:
+    path: ../

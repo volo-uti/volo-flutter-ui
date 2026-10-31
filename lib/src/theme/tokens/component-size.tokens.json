@@ -1,0 +1,74 @@
+{
+  "component-size": {
+    "xs": {
+      "$type": "dimension",
+      "$value": "24px",
+      "$extensions": {
+        "volo.preset": {
+          "paddingX":  "8px",
+          "paddingY":  "2px",
+          "fontSize":  "11px",
+          "iconSize":  "14px",
+          "gap":       "4px",
+          "radius":    "2px"
+        }
+      }
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": "32px",
+      "$extensions": {
+        "volo.preset": {
+          "paddingX":  "12px",
+          "paddingY":  "6px",
+          "fontSize":  "13px",
+          "iconSize":  "16px",
+          "gap":       "6px",
+          "radius":    "4px"
+        }
+      }
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "40px",
+      "$extensions": {
+        "volo.preset": {
+          "paddingX":  "16px",
+          "paddingY":  "10px",
+          "fontSize":  "14px",
+          "iconSize":  "18px",
+          "gap":       "8px",
+          "radius":    "8px"
+        }
+      }
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "48px",
+      "$extensions": {
+        "volo.preset": {
+          "paddingX":  "24px",
+          "paddingY":  "14px",
+          "fontSize":  "16px",
+          "iconSize":  "20px",
+          "gap":       "10px",
+          "radius":    "8px"
+        }
+      }
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "56px",
+      "$extensions": {
+        "volo.preset": {
+          "paddingX":  "32px",
+          "paddingY":  "18px",
+          "fontSize":  "18px",
+          "iconSize":  "24px",
+          "gap":       "12px",
+          "radius":    "8px"
+        }
+      }
+    }
+  }
+}

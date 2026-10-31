@@ -1,0 +1,10 @@
+{
+  "easing": {
+    "$type": "cubicBezier",
+    "linear":      { "$value": [0, 0, 1, 1],          "$description": "No acceleration (color, opacity, progress bar)" },
+    "ease-in":     { "$value": [0.42, 0, 1, 1],       "$description": "Accelerate (exit, move off-screen)" },
+    "ease-out":    { "$value": [0, 0, 0.58, 1],       "$description": "Decelerate (enter, move on-screen)" },
+    "ease-in-out": { "$value": [0.42, 0, 0.58, 1],    "$description": "Symmetric transition (default animation)" },
+    "emphasized":  { "$value": [0.33, 1, 0.68, 1],    "$description": "Dramatic deceleration (hero entrance, emphasis)" }
+  }
+}

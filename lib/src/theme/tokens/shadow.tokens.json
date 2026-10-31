@@ -1,0 +1,65 @@
+{
+  "shadow": {
+    "$type": "shadow",
+    "xs": {
+      "$value": {
+        "color": "#0000000d",
+        "offsetX": "0px",
+        "offsetY": "1px",
+        "blur": "2px",
+        "spread": "0px"
+      },
+      "$description": "Subtle depth (input, divider)"
+    },
+    "sm": {
+      "$value": {
+        "color": "#0000000d",
+        "offsetX": "0px",
+        "offsetY": "2px",
+        "blur": "4px",
+        "spread": "0px"
+      },
+      "$description": "Card, small popup"
+    },
+    "md": {
+      "$value": {
+        "color": "#00000014",
+        "offsetX": "0px",
+        "offsetY": "4px",
+        "blur": "8px",
+        "spread": "-1px"
+      },
+      "$description": "Dropdown, hover card"
+    },
+    "lg": {
+      "$value": {
+        "color": "#0000001a",
+        "offsetX": "0px",
+        "offsetY": "8px",
+        "blur": "16px",
+        "spread": "-2px"
+      },
+      "$description": "Modal, dialog"
+    },
+    "xl": {
+      "$value": {
+        "color": "#0000001f",
+        "offsetX": "0px",
+        "offsetY": "12px",
+        "blur": "24px",
+        "spread": "-4px"
+      },
+      "$description": "Floating element, FAB"
+    },
+    "glow": {
+      "$value": {
+        "color": "#18181b4d",
+        "offsetX": "0px",
+        "offsetY": "0px",
+        "blur": "20px",
+        "spread": "0px"
+      },
+      "$description": "Emphasis glow effect"
+    }
+  }
+}

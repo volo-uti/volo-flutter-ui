@@ -1,0 +1,15 @@
+{
+  "duration": {
+    "$type": "duration",
+    "instant":          { "$value": "0ms",    "$description": "Instant toggle" },
+    "micro":            { "$value": "75ms",   "$description": "Micro-interaction (ripple, checkbox, switch)" },
+    "fast":             { "$value": "150ms",  "$description": "Hover, focus feedback" },
+    "normal":           { "$value": "300ms",  "$description": "Modal, dropdown, page section" },
+    "slow":             { "$value": "500ms",  "$description": "Page transition, complex animation" },
+    "slower":           { "$value": "700ms",  "$description": "Multi-step sequence, elaborate entrance" },
+    "very-slow":        { "$value": "1000ms", "$description": "Loading, fade-in, long animation" },
+    "extra-slow":       { "$value": "1500ms", "$description": "Skeleton, progress bar" },
+    "snackbar":           { "$value": "4000ms", "$description": "Snackbar display duration" },
+    "toast":              { "$value": "5000ms", "$description": "Toast display duration" }
+  }
+}

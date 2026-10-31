@@ -1,0 +1,13 @@
+{
+  "radius": {
+    "$type": "dimension",
+    "none": { "$value": "0px",    "$description": "Square corners" },
+    "xs":   { "$value": "2px",    "$description": "Minimal rounding (tag, badge outline)" },
+    "sm":   { "$value": "4px",    "$description": "Badge, chip" },
+    "md":   { "$value": "8px",    "$description": "Button, input" },
+    "lg":   { "$value": "12px",   "$description": "Modal" },
+    "card": { "$value": "16px",   "$description": "Card" },
+    "xl":   { "$value": "20px",   "$description": "Extra large (pill tabs, large containers)" },
+    "full": { "$value": "9999px", "$description": "Avatar, switch" }
+  }
+}

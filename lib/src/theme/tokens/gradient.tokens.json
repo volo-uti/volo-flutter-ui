@@ -1,0 +1,25 @@
+{
+  "gradient": {
+    "$type": "gradient",
+    "brand": {
+      "$value": [
+        { "color": "#6366F1", "position": 0 },
+        { "color": "#0EA5E9", "position": 1 }
+      ],
+      "$description": "Primary brand gradient (Indigo to Cyan)",
+      "$extensions": {
+        "volo.direction": { "begin": "topLeft", "end": "bottomRight" }
+      }
+    },
+    "surface": {
+      "$value": [
+        { "color": "#fafafa", "position": 0 },
+        { "color": "#f4f4f5", "position": 1 }
+      ],
+      "$description": "Subtle surface gradient",
+      "$extensions": {
+        "volo.direction": { "begin": "topCenter", "end": "bottomCenter" }
+      }
+    }
+  }
+}

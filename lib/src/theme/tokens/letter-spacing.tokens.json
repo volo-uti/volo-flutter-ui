@@ -1,0 +1,8 @@
+{
+  "letter-spacing": {
+    "$type": "dimension",
+    "tight":  { "$value": "-0.025em", "$description": "Tighter letter spacing" },
+    "normal": { "$value": "0em", "$description": "Default letter spacing" },
+    "wide":   { "$value": "0.025em", "$description": "Wider letter spacing" }
+  }
+}
