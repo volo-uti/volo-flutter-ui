@@ -89,6 +89,23 @@ Run the index step below before you plan or write any UI. It is what tells a cod
    void main() => runApp(const VApp(home: MyHomePage()));
    ```
 
+   If the app already has a `MaterialApp` (or `MaterialApp.router`) with its own `themeMode`, keep that as the one owner of light and dark: wrap the routes in `VTheme` from its `builder`, so V widgets follow the theme it resolved. A `VTheme` with fixed data above the app stays light when the app switches to dark.
+
+   ```dart
+   MaterialApp.router(
+     theme: lightTheme,
+     darkTheme: darkTheme,
+     themeMode: themeMode,
+     routerConfig: router,
+     builder: (context, child) => VTheme(
+       data: Theme.of(context).brightness == Brightness.dark
+           ? VThemeData.dark()
+           : VThemeData.light(),
+       child: child!,
+     ),
+   )
+   ```
+
 3. Write the index once so coding agents can find the existing widgets. A `volo-flutter-ui-index` block appears in the product's `AGENTS.md`.
 
    ```bash
