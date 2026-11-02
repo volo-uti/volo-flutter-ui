@@ -48,7 +48,7 @@ Creates a form footer.
 | `counter` | `Widget?` |  |  | Replaces the generated `current/max` counter. |
 | `maxLength` | `int?` |  |  | Character limit; when set, a `current/max` counter is generated. |
 | `currentLength` | `int` | `0` |  | Characters entered so far, used by the generated counter. |
-| `style` | `VFormFooterStyle?` |  |  | Style override. |
+| `style` | `VFormFooterStyle?` |  |  | Style override merged over the theme's [VFormFooterStyle]. |
 
 ## VFormFooterStyle
 
@@ -63,11 +63,13 @@ Supports cascade: theme override → instance override.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `padding` | `EdgeInsets?` |  |  | Internal padding. |
-| `spacing` | `double?` |  |  | Spacing between footer actions. |
+| `padding` | `EdgeInsets?` |  |  | Padding around the message rows; defaults to a small gap above them. |
+| `spacing` | `double?` |  |  | Gap above the extra note; defaults to the smallest spacing token. |
+| `helperStyle` | `TextStyle?` |  |  | Text style of the helper text, merged over the label small type style.<br>Its color wins over the muted foreground color. |
+| `errorStyle` | `TextStyle?` |  |  | Text style of the error text, merged over the label small type style.<br>Its color wins over the destructive color. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VFormFooterStyle copyWith({EdgeInsets? padding, double? spacing})` | Creates a copy with only the specified properties changed. |
+| `VFormFooterStyle copyWith({EdgeInsets? padding, double? spacing, TextStyle? helperStyle, TextStyle? errorStyle})` | Creates a copy with only the specified properties changed. |

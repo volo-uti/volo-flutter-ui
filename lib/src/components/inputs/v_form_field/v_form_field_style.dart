@@ -20,10 +20,14 @@ class VFormFieldStyle implements VComponentStyle {
   /// Wins over the theme's `VFormHeaderStyle.titleStyle`.
   final TextStyle? labelStyle;
 
-  /// Helper text style.
+  /// Text style of the generated footer's helper text.
+  ///
+  /// Wins over the theme's `VFormFooterStyle.helperStyle`.
   final TextStyle? helperStyle;
 
-  /// Error text style.
+  /// Text style of the generated footer's error text.
+  ///
+  /// Wins over the theme's `VFormFooterStyle.errorStyle`.
   final TextStyle? errorStyle;
 
   /// Spacing between label, field, and helper/error.

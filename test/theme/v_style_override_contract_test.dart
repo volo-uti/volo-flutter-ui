@@ -812,13 +812,33 @@ void main() {
   _contract<VFormFooterStyle>(
     name: 'VFormFooterStyle',
     empty: const VFormFooterStyle(),
-    a: const VFormFooterStyle(padding: _ei8, spacing: 8),
-    b: const VFormFooterStyle(spacing: 16),
-    mergeResult: const VFormFooterStyle(padding: _ei8, spacing: 16),
-    nullFields: [(s) => s.padding, (s) => s.spacing],
+    a: const VFormFooterStyle(
+      padding: _ei8,
+      spacing: 8,
+      helperStyle: _ts14,
+      errorStyle: _ts14,
+    ),
+    b: const VFormFooterStyle(spacing: 16, errorStyle: _ts18),
+    mergeResult: const VFormFooterStyle(
+      padding: _ei8,
+      spacing: 16,
+      helperStyle: _ts14,
+      errorStyle: _ts18,
+    ),
+    nullFields: [
+      (s) => s.padding,
+      (s) => s.spacing,
+      (s) => s.helperStyle,
+      (s) => s.errorStyle,
+    ],
     merge: (s, o) => s.merge(o),
-    copyWithOverride: (s) => s.copyWith(padding: _ei16),
-    copyWithResult: const VFormFooterStyle(padding: _ei16, spacing: 8),
+    copyWithOverride: (s) => s.copyWith(padding: _ei16, helperStyle: _ts18),
+    copyWithResult: const VFormFooterStyle(
+      padding: _ei16,
+      spacing: 8,
+      helperStyle: _ts18,
+      errorStyle: _ts14,
+    ),
   );
 
   _contract<VLabelStyle>(

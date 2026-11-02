@@ -77,7 +77,7 @@ class VFormFooter extends StatefulWidget {
   /// Characters entered so far, used by the generated counter.
   final int currentLength;
 
-  /// Style override.
+  /// Style override merged over the theme's [VFormFooterStyle].
   final VFormFooterStyle? style;
 
   @override
@@ -149,25 +149,32 @@ class _VFormFooterState extends State<VFormFooter>
     // Apply resolvedStyle overrides
     final footerPadding = resolvedStyle?.padding;
 
-    // Message priority: error > success > helper
+    // Message priority: error > success > helper. The style's helperStyle or
+    // errorStyle is merged over the label small type style; its color wins
+    // over the token color.
     String? activeMessage;
+    TextStyle? styleOverride;
     Color messageColor;
 
     if (widget.error && widget.errorText != null) {
       activeMessage = widget.errorText;
+      styleOverride = resolvedStyle?.errorStyle;
       messageColor = colors.destructive;
     } else if (widget.success && widget.successText != null) {
       activeMessage = widget.successText;
       messageColor = colors.success;
     } else if (widget.helper != null) {
       activeMessage = widget.helper;
+      styleOverride = resolvedStyle?.helperStyle;
       messageColor = colors.mutedForeground;
     } else {
       activeMessage = null;
       messageColor = colors.mutedForeground;
     }
 
-    final messageStyle = typography.labelSmall.copyWith(color: messageColor);
+    final messageStyle = typography.labelSmall
+        .merge(styleOverride)
+        .copyWith(color: styleOverride?.color ?? messageColor);
 
     final extraStyle = typography.labelSmall.copyWith(
       color: colors.mutedForeground,

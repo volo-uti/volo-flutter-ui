@@ -78,8 +78,8 @@ Supports cascade: theme override → instance override.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `labelStyle` | `TextStyle?` |  |  | Text style of the generated header's label.<br>Wins over the theme's `VFormHeaderStyle.titleStyle`. |
-| `helperStyle` | `TextStyle?` |  |  | Helper text style. |
-| `errorStyle` | `TextStyle?` |  |  | Error text style. |
+| `helperStyle` | `TextStyle?` |  |  | Text style of the generated footer's helper text.<br>Wins over the theme's `VFormFooterStyle.helperStyle`. |
+| `errorStyle` | `TextStyle?` |  |  | Text style of the generated footer's error text.<br>Wins over the theme's `VFormFooterStyle.errorStyle`. |
 | `spacing` | `double?` |  |  | Spacing between label, field, and helper/error. |
 
 ### Members

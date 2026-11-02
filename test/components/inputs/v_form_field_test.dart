@@ -161,5 +161,67 @@ void main() {
 
       expect(tester.widget<Text>(find.text('Label')).style!.fontSize, 20);
     });
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('helperStyle and errorStyle reach the footer ($via)', (
+        tester,
+      ) async {
+        const style = VFormFieldStyle(
+          helperStyle: TextStyle(fontSize: 15, color: Color(0xFF00AA00)),
+          errorStyle: TextStyle(fontSize: 16, color: Color(0xFFAA0000)),
+        );
+        Widget field({required bool error}) => VTheme(
+          data: VThemeData.light().copyWith(
+            componentOverrides: VComponentOverrides(viaTheme ? [style] : []),
+          ),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: VFormField(
+              helper: 'Help',
+              error: error,
+              errorText: 'Wrong',
+              style: viaTheme ? null : style,
+              child: const Text('Content'),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(field(error: false));
+        final help = tester.widget<Text>(find.text('Help')).style!;
+        expect(help.fontSize, 15);
+        expect(help.color, const Color(0xFF00AA00));
+
+        await tester.pumpWidget(field(error: true));
+        final error = tester.widget<Text>(find.text('Wrong')).style!;
+        expect(error.fontSize, 16);
+        expect(error.color, const Color(0xFFAA0000));
+      });
+    }
+
+    testWidgets('helperStyle wins over the theme footer helperStyle', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        VTheme(
+          data: VThemeData.light().copyWith(
+            componentOverrides: const VComponentOverrides([
+              VFormFooterStyle(helperStyle: TextStyle(fontSize: 9)),
+            ]),
+          ),
+          child: const Directionality(
+            textDirection: TextDirection.ltr,
+            child: VFormField(
+              helper: 'Help',
+              style: VFormFieldStyle(helperStyle: TextStyle(fontSize: 15)),
+              child: Text('Content'),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.widget<Text>(find.text('Help')).style!.fontSize, 15);
+    });
   });
 }

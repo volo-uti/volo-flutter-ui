@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_form_footer/v_form_footer.dart';
+import 'package:volo_flutter_ui/src/components/inputs/v_form_footer/v_form_footer_style.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_form_header/v_form_header.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_form_header/v_form_header_style.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
@@ -142,6 +143,8 @@ class VFormField extends StatelessWidget {
     // Wrap with VFormFooter. WHY: always, even when it has nothing to show,
     // so the control keeps its place in the tree when a message appears.
     if (footer == null) {
+      final helperStyle = resolvedStyle?.helperStyle;
+      final errorStyle = resolvedStyle?.errorStyle;
       bodyWidget = VFormFooter(
         helper: helper,
         error: error,
@@ -152,6 +155,12 @@ class VFormField extends StatelessWidget {
         counter: counter,
         maxLength: maxLength,
         currentLength: currentLength,
+        style: helperStyle == null && errorStyle == null
+            ? null
+            : VFormFooterStyle(
+                helperStyle: helperStyle,
+                errorStyle: errorStyle,
+              ),
         child: bodyWidget,
       );
     } else {

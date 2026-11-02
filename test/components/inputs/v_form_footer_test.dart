@@ -101,5 +101,89 @@ void main() {
 
       expect(find.text('Additional info'), findsOneWidget);
     });
+
+    group('style fields', () {
+      final theme = VThemeData.light();
+      const style = VFormFooterStyle(
+        helperStyle: TextStyle(fontSize: 15, color: Color(0xFF00AA00)),
+        errorStyle: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+      );
+
+      // Applies [style] through the theme or as the instance style.
+      Widget styled({required bool viaTheme, required Widget child}) => VTheme(
+        data: theme.copyWith(
+          componentOverrides: VComponentOverrides(viaTheme ? [style] : []),
+        ),
+        child: Directionality(textDirection: TextDirection.ltr, child: child),
+      );
+
+      TextStyle styleOf(WidgetTester tester, String text) =>
+          tester.widget<Text>(find.text(text)).style!;
+
+      for (final viaTheme in [true, false]) {
+        final via = viaTheme ? 'theme' : 'instance';
+
+        testWidgets('helperStyle styles the helper text ($via)', (
+          tester,
+        ) async {
+          await tester.pumpWidget(
+            styled(
+              viaTheme: viaTheme,
+              child: VFormFooter(
+                helper: 'Help',
+                style: viaTheme ? null : style,
+                child: const SizedBox(),
+              ),
+            ),
+          );
+
+          final help = styleOf(tester, 'Help');
+          expect(help.fontSize, 15);
+          expect(help.color, const Color(0xFF00AA00));
+          // Fields the style leaves out come from the label small style.
+          expect(help.height, theme.typography.labelSmall.height);
+        });
+
+        testWidgets('errorStyle styles the error text ($via)', (tester) async {
+          await tester.pumpWidget(
+            styled(
+              viaTheme: viaTheme,
+              child: VFormFooter(
+                error: true,
+                errorText: 'Wrong',
+                style: viaTheme ? null : style,
+                child: const SizedBox(),
+              ),
+            ),
+          );
+
+          final error = styleOf(tester, 'Wrong');
+          expect(error.fontSize, 16);
+          expect(error.fontStyle, FontStyle.italic);
+          // Without its own color the error keeps the destructive color.
+          expect(error.color, theme.colors.destructive);
+        });
+      }
+
+      testWidgets('without a style, the tokens draw the messages', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          buildTestWidget(
+            const Column(
+              children: [
+                VFormFooter(helper: 'Help', child: SizedBox()),
+                VFormFooter(error: true, errorText: 'Wrong', child: SizedBox()),
+              ],
+            ),
+          ),
+        );
+
+        final help = styleOf(tester, 'Help');
+        expect(help.fontSize, theme.typography.labelSmall.fontSize);
+        expect(help.color, theme.colors.mutedForeground);
+        expect(styleOf(tester, 'Wrong').color, theme.colors.destructive);
+      });
+    });
   });
 }
