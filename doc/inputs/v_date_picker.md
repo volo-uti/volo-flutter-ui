@@ -249,13 +249,13 @@ Supports cascade: theme override → instance override.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
-| `foregroundColor` | `Color?` |  |  | Text foreground color. |
+| `foregroundColor` | `Color?` |  |  | Color of the picked value in the trigger; wins over the color of [textStyle].<br>The placeholder keeps the muted color. An instance style wins over the theme override. |
 | `borderColor` | `Color?` |  |  | Border color. |
-| `focusBorderColor` | `Color?` |  |  | Border color when focused. |
+| `focusBorderColor` | `Color?` |  |  | Border color of the trigger while it has keyboard focus.<br>The border is then 2px wide. The disabled and error colors win over it; defaults to the focus ring color token. An instance style wins over the theme override. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
 | `padding` | `EdgeInsets?` |  |  | Internal padding. |
-| `textStyle` | `TextStyle?` |  |  | Text style. |
-| `calendarStyle` | `VCalendarStyle?` |  |  | Nested calendar style override. |
+| `textStyle` | `TextStyle?` |  |  | Text style of the trigger, merged over the body type style at the size's font size.<br>An instance style wins over the theme override. |
+| `calendarStyle` | `VCalendarStyle?` |  |  | Colors and corners of the calendar in the popover, as on a [VCalendar].<br>The selected, today and day colors default to the same tokens as [VCalendar]. Its backgroundColor and borderRadius shape the calendar panel, which has no fill of its own when null. The theme's [VCalendarStyle] does not reach it, and an instance style's calendarStyle replaces the theme override's as a whole. |
 
 ### Members
 

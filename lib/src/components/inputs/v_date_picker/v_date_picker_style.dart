@@ -22,13 +22,20 @@ class VDatePickerStyle implements VComponentStyle {
   /// Background fill color.
   final Color? backgroundColor;
 
-  /// Text foreground color.
+  /// Color of the picked value in the trigger; wins over the color of [textStyle].
+  ///
+  /// The placeholder keeps the muted color. An instance style wins over the
+  /// theme override.
   final Color? foregroundColor;
 
   /// Border color.
   final Color? borderColor;
 
-  /// Border color when focused.
+  /// Border color of the trigger while it has keyboard focus.
+  ///
+  /// The border is then 2px wide. The disabled and error colors win over it;
+  /// defaults to the focus ring color token. An instance style wins over the
+  /// theme override.
   final Color? focusBorderColor;
 
   /// Border radius.
@@ -37,10 +44,18 @@ class VDatePickerStyle implements VComponentStyle {
   /// Internal padding.
   final EdgeInsets? padding;
 
-  /// Text style.
+  /// Text style of the trigger, merged over the body type style at the size's font size.
+  ///
+  /// An instance style wins over the theme override.
   final TextStyle? textStyle;
 
-  /// Nested calendar style override.
+  /// Colors and corners of the calendar in the popover, as on a [VCalendar].
+  ///
+  /// The selected, today and day colors default to the same tokens as
+  /// [VCalendar]. Its backgroundColor and borderRadius shape the calendar
+  /// panel, which has no fill of its own when null. The theme's
+  /// [VCalendarStyle] does not reach it, and an instance style's
+  /// calendarStyle replaces the theme override's as a whole.
   final VCalendarStyle? calendarStyle;
 
   /// Creates a copy with only the specified properties changed.

@@ -7,6 +7,7 @@ class _VDatePickerState extends State<VDatePicker> {
   final VPopoverController _popoverController = VPopoverController();
   late DateTime _displayMonth;
   DateTime? _rangeStart;
+  bool _hasFocus = false;
 
   @override
   void initState() {
@@ -156,6 +157,18 @@ class _VDatePickerState extends State<VDatePicker> {
   BorderRadius get _borderRadius =>
       BorderRadius.circular(_sizeToken.borderRadius);
 
+  // Enter and Space open and close the calendar of the focused picker.
+  KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
+    if (event is KeyDownEvent &&
+        (event.logicalKey == LogicalKeyboardKey.enter ||
+            event.logicalKey == LogicalKeyboardKey.numpadEnter ||
+            event.logicalKey == LogicalKeyboardKey.space)) {
+      _popoverController.toggle();
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = VTheme.of(context);
@@ -170,16 +183,35 @@ class _VDatePickerState extends State<VDatePicker> {
     final isError = widget.error;
     final isDisabled = !widget.enabled;
 
+    // Keyboard focus draws a thicker border in the focus color (WCAG 2.4.7).
+    final isFocused = _hasFocus && !isDisabled;
     Color borderColor;
     if (isDisabled) {
       borderColor = colors.muted;
     } else if (isError) {
       borderColor = colors.destructive;
+    } else if (isFocused) {
+      borderColor = resolvedStyle?.focusBorderColor ?? colors.ring;
     } else {
       borderColor = resolvedStyle?.borderColor ?? colors.input;
     }
 
     final sizeToken = _sizeToken;
+    final hasValue =
+        _displayText.isNotEmpty && _displayText != widget.placeholder;
+    // The body type style at the size's font size, then the style's
+    // textStyle; foregroundColor wins over its color, and the placeholder
+    // stays muted.
+    final triggerTextStyle = typography.bodyMedium
+        .copyWith(fontSize: sizeToken.fontSize)
+        .merge(resolvedStyle?.textStyle)
+        .copyWith(
+          color: hasValue
+              ? resolvedStyle?.foregroundColor ??
+                    resolvedStyle?.textStyle?.color ??
+                    colors.foreground
+              : colors.mutedForeground,
+        );
 
     final Widget trigger = Container(
       height: sizeToken.height,
@@ -188,7 +220,7 @@ class _VDatePickerState extends State<VDatePicker> {
           EdgeInsets.symmetric(horizontal: sizeToken.paddingHorizontal),
       decoration: BoxDecoration(
         color: resolvedStyle?.backgroundColor ?? colors.background,
-        border: Border.all(color: borderColor),
+        border: Border.all(color: borderColor, width: isFocused ? 2 : 1),
         borderRadius: resolvedStyle?.borderRadius ?? _borderRadius,
       ),
       child: Row(
@@ -196,14 +228,7 @@ class _VDatePickerState extends State<VDatePicker> {
           Expanded(
             child: Text(
               _displayText,
-              style: typography.bodyMedium.copyWith(
-                color:
-                    _displayText.isNotEmpty &&
-                        _displayText != widget.placeholder
-                    ? colors.foreground
-                    : colors.mutedForeground,
-                fontSize: sizeToken.fontSize,
-              ),
+              style: triggerTextStyle,
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -220,18 +245,33 @@ class _VDatePickerState extends State<VDatePicker> {
     if (widget._mode == _DatePickerMode.time) {
       content = _buildTimePicker(colors, typography);
     } else {
-      content = _buildCalendar(colors, typography);
+      content = _buildCalendar(
+        colors,
+        typography,
+        resolvedStyle?.calendarStyle,
+      );
     }
 
-    Widget picker = VPopover(
-      controller: _popoverController,
-      position: VPopoverPosition.bottomStart,
-      content: content,
-      child: Opacity(
-        opacity: isDisabled ? 0.5 : 1.0,
-        child: IgnorePointer(
-          ignoring: isDisabled || widget.readOnly,
-          child: trigger,
+    // WHY: The picker is one focus stop. Its own node takes the keyboard and
+    // draws the focus border, so the popover trigger inside may not take focus.
+    Widget picker = Focus(
+      canRequestFocus: !isDisabled && !widget.readOnly,
+      skipTraversal: isDisabled || widget.readOnly,
+      descendantsAreFocusable: false,
+      onFocusChange: (focused) {
+        if (mounted) setState(() => _hasFocus = focused);
+      },
+      onKeyEvent: _handleKeyEvent,
+      child: VPopover(
+        controller: _popoverController,
+        position: VPopoverPosition.bottomStart,
+        content: content,
+        child: Opacity(
+          opacity: isDisabled ? 0.5 : 1.0,
+          child: IgnorePointer(
+            ignoring: isDisabled || widget.readOnly,
+            child: trigger,
+          ),
         ),
       ),
     );
@@ -261,7 +301,11 @@ class _VDatePickerState extends State<VDatePicker> {
     );
   }
 
-  Widget _buildCalendar(VColors colors, VTypography typography) {
+  Widget _buildCalendar(
+    VColors colors,
+    VTypography typography,
+    VCalendarStyle? calendarStyle,
+  ) {
     final theme = VTheme.of(context);
     final daysInMonth = DateTime(
       _displayMonth.year,
@@ -280,9 +324,14 @@ class _VDatePickerState extends State<VDatePicker> {
     final today = DateTime.now();
     final todayDate = DateTime(today.year, today.month, today.day);
 
+    final calendarFill = calendarStyle?.backgroundColor;
+    final calendarRadius = calendarStyle?.borderRadius;
     return Container(
       width: _kCalendarWidth,
       padding: EdgeInsets.all(theme.spacing.md),
+      decoration: calendarFill == null && calendarRadius == null
+          ? null
+          : BoxDecoration(color: calendarFill, borderRadius: calendarRadius),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -382,11 +431,11 @@ class _VDatePickerState extends State<VDatePicker> {
                         margin: const EdgeInsets.symmetric(vertical: 1),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? colors.primary
+                              ? calendarStyle?.selectedColor ?? colors.primary
                               : isInRange
                               ? colors.accent
                               : isToday
-                              ? colors.accent
+                              ? calendarStyle?.todayColor ?? colors.accent
                               : VColors.transparent,
                           borderRadius: VTheme.of(context).radius.xsRadius,
                         ),
@@ -395,9 +444,11 @@ class _VDatePickerState extends State<VDatePicker> {
                           '$dayNumber',
                           style: typography.bodySmall.copyWith(
                             color: isSelected
-                                ? colors.primaryForeground
+                                ? calendarStyle?.selectedForegroundColor ??
+                                      colors.primaryForeground
                                 : isSelectable
-                                ? colors.foreground
+                                ? calendarStyle?.foregroundColor ??
+                                      colors.foreground
                                 : colors.mutedForeground,
                             fontWeight: isToday
                                 ? FontWeight.bold
