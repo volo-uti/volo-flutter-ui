@@ -400,6 +400,7 @@ void main() {
       textStyle: _ts14,
       dropdownBackgroundColor: _white,
       dropdownBorderRadius: _br8,
+      minWidth: 200,
     ),
     b: const VSelectStyle(dropdownBackgroundColor: _black),
     mergeResult: const VSelectStyle(
@@ -412,6 +413,7 @@ void main() {
       textStyle: _ts14,
       dropdownBackgroundColor: _black,
       dropdownBorderRadius: _br8,
+      minWidth: 200,
     ),
     nullFields: [
       (s) => s.backgroundColor,
@@ -423,6 +425,7 @@ void main() {
       (s) => s.textStyle,
       (s) => s.dropdownBackgroundColor,
       (s) => s.dropdownBorderRadius,
+      (s) => s.minWidth,
     ],
     merge: (s, o) => s.merge(o),
     copyWithOverride: (s) => s.copyWith(padding: _ei16),
@@ -436,6 +439,7 @@ void main() {
       textStyle: _ts14,
       dropdownBackgroundColor: _white,
       dropdownBorderRadius: _br8,
+      minWidth: 200,
     ),
   );
 
@@ -744,13 +748,41 @@ void main() {
   _contract<VFormBodyStyle>(
     name: 'VFormBodyStyle',
     empty: const VFormBodyStyle(),
-    a: const VFormBodyStyle(spacing: 12, padding: _ei8),
-    b: const VFormBodyStyle(spacing: 20),
-    mergeResult: const VFormBodyStyle(spacing: 20, padding: _ei8),
-    nullFields: [(s) => s.spacing, (s) => s.padding],
+    a: const VFormBodyStyle(
+      spacing: 12,
+      padding: _ei8,
+      backgroundColor: _white,
+      borderColor: _gray,
+      focusBorderColor: _blue,
+      borderRadius: _br4,
+    ),
+    b: const VFormBodyStyle(spacing: 20, focusBorderColor: _cyan),
+    mergeResult: const VFormBodyStyle(
+      spacing: 20,
+      padding: _ei8,
+      backgroundColor: _white,
+      borderColor: _gray,
+      focusBorderColor: _cyan,
+      borderRadius: _br4,
+    ),
+    nullFields: [
+      (s) => s.spacing,
+      (s) => s.padding,
+      (s) => s.backgroundColor,
+      (s) => s.borderColor,
+      (s) => s.focusBorderColor,
+      (s) => s.borderRadius,
+    ],
     merge: (s, o) => s.merge(o),
-    copyWithOverride: (s) => s.copyWith(padding: _ei16),
-    copyWithResult: const VFormBodyStyle(spacing: 12, padding: _ei16),
+    copyWithOverride: (s) => s.copyWith(padding: _ei16, borderRadius: _br8),
+    copyWithResult: const VFormBodyStyle(
+      spacing: 12,
+      padding: _ei16,
+      backgroundColor: _white,
+      borderColor: _gray,
+      focusBorderColor: _blue,
+      borderRadius: _br8,
+    ),
   );
 
   _contract<VFormHeaderStyle>(
