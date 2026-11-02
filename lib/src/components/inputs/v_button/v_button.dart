@@ -318,6 +318,9 @@ class VButton extends StatefulWidget {
   final VButtonCorner corner;
 
   /// Horizontal alignment of the content inside the button.
+  ///
+  /// A label that takes the full width, wrapped or cut, aligns its lines the
+  /// same way; pass [VButtonAlign.left] for a left-aligned label.
   final VButtonAlign align;
 
   /// Gap between [leading] and [child].

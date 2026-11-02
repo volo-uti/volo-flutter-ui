@@ -62,7 +62,7 @@ Creates a filled button.
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
 | `size` | `VButtonSize?` |  |  | Minimum height and text size preset.<br>Defaults to the enclosing [VButtonGroup]'s size, else [VButtonSize.md]. The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
 | `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
-| `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
+| `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button.<br>A label that takes the full width, wrapped or cut, aligns its lines the same way; pass [VButtonAlign.left] for a left-aligned label. |
 | `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `trailingGap` | `double?` |  |  | Gap between [child] and [trailing].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `fullWidth` | `bool` | `false` |  | Whether the button stretches to the full available width. |
@@ -88,7 +88,7 @@ Creates an outlined button.
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
 | `size` | `VButtonSize?` |  |  | Minimum height and text size preset.<br>Defaults to the enclosing [VButtonGroup]'s size, else [VButtonSize.md]. The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
 | `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
-| `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
+| `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button.<br>A label that takes the full width, wrapped or cut, aligns its lines the same way; pass [VButtonAlign.left] for a left-aligned label. |
 | `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `trailingGap` | `double?` |  |  | Gap between [child] and [trailing].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `fullWidth` | `bool` | `false` |  | Whether the button stretches to the full available width. |
@@ -114,7 +114,7 @@ Creates a text button without background.
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
 | `size` | `VButtonSize?` |  |  | Minimum height and text size preset.<br>Defaults to the enclosing [VButtonGroup]'s size, else [VButtonSize.md]. The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
 | `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
-| `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
+| `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button.<br>A label that takes the full width, wrapped or cut, aligns its lines the same way; pass [VButtonAlign.left] for a left-aligned label. |
 | `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `trailingGap` | `double?` |  |  | Gap between [child] and [trailing].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `fullWidth` | `bool` | `false` |  | Whether the button stretches to the full available width. |
@@ -140,7 +140,7 @@ Creates a square button sized for an icon child.
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
 | `size` | `VButtonSize?` |  |  | Minimum height and text size preset.<br>Defaults to the enclosing [VButtonGroup]'s size, else [VButtonSize.md]. The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
 | `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
-| `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
+| `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button.<br>A label that takes the full width, wrapped or cut, aligns its lines the same way; pass [VButtonAlign.left] for a left-aligned label. |
 | `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `trailingGap` | `double?` |  |  | Gap between [child] and [trailing].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `fullWidth` | `bool` | `false` |  | Whether the button stretches to the full available width. |
@@ -166,7 +166,7 @@ Creates a transparent button that shows the accent color on hover.
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
 | `size` | `VButtonSize?` |  |  | Minimum height and text size preset.<br>Defaults to the enclosing [VButtonGroup]'s size, else [VButtonSize.md]. The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
 | `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
-| `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
+| `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button.<br>A label that takes the full width, wrapped or cut, aligns its lines the same way; pass [VButtonAlign.left] for a left-aligned label. |
 | `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `trailingGap` | `double?` |  |  | Gap between [child] and [trailing].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `fullWidth` | `bool` | `false` |  | Whether the button stretches to the full available width. |
@@ -192,7 +192,7 @@ Creates an underlined link-style button.
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
 | `size` | `VButtonSize?` |  |  | Minimum height and text size preset.<br>Defaults to the enclosing [VButtonGroup]'s size, else [VButtonSize.md]. The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
 | `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
-| `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
+| `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button.<br>A label that takes the full width, wrapped or cut, aligns its lines the same way; pass [VButtonAlign.left] for a left-aligned label. |
 | `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `trailingGap` | `double?` |  |  | Gap between [child] and [trailing].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `fullWidth` | `bool` | `false` |  | Whether the button stretches to the full available width. |
