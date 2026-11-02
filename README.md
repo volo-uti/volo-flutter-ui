@@ -252,7 +252,7 @@ Requirements: [FVM](https://fvm.app) (the Flutter version is in `.fvmrc`) and Da
 ```bash
 dart pub global activate fvm   # install FVM
 make setup                     # install Flutter, fetch dependencies, install the git hook
-make check                     # gate: format, tokens, index, docs, raw widgets, analyze, tests
+make check                     # gate: format, tokens, index, docs, style fields, raw widgets, analyze, tests
 make tokens                    # rewrite theme/*.generated.dart from the token JSON
 make index                     # rewrite the AGENTS.md index blocks and doc/
 cd widgetbook && fvm flutter run -d macos   # run the Widgetbook catalog

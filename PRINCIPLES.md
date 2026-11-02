@@ -54,7 +54,7 @@ Enforced by: `dart run tool/gen_tokens.dart --check`, part of `make check`. Gene
 
 Every widget is `v_x/v_x.dart` plus `v_x/v_x_style.dart`, takes its look from a style object that apps can override through the theme, and follows Material's naming (`enabled`, `onChanged`, `onPressed`, `onTap`, `value`). Familiar names mean less to learn and fewer mistakes for people and agents alike.
 
-Enforced by: review and the widget tests under `test`, which wrap each widget in `VTheme`. The `///` rule is checked by `make check`, and `type_annotate_public_apis` by the analyzer.
+Enforced by: review and the widget tests under `test`, which wrap each widget in `VTheme`. The `///` rule is checked by `make check`, and `type_annotate_public_apis` by the analyzer. `dart run tool/style_fields.dart --check`, part of `make check`, fails on a style field that no widget in its folder reads, since an override that changes nothing breaks the promise that apps can restyle through the theme.
 
 ## Accessible by default
 

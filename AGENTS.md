@@ -13,7 +13,7 @@ A Flutter design system: the `volo_flutter_ui` package (this repository's root) 
 
 ## Commands
 
-- `make check` — the gate. Checks formatting, tokens, index, docs, raw widgets, analysis and tests. The `pre-push` hook (lefthook, installed by `make setup`) runs it; there is no test CI, and GitHub Actions only publish and deploy.
+- `make check` — the gate. Checks formatting, tokens, index, docs, unread style fields, raw widgets, analysis and tests. The `pre-push` hook (lefthook, installed by `make setup`) runs it; there is no test CI, and GitHub Actions only publish and deploy.
 - `make index` — rewrites the index block below, `doc/index.txt` and `doc/**/*.md`.
 - `make tokens` — rewrites `lib/src/theme/*.generated.dart` from the token JSON.
 
@@ -27,6 +27,7 @@ A Flutter design system: the `volo_flutter_ui` package (this repository's root) 
 ## Rules
 
 - A widget is `v_x/v_x.dart` + `v_x/v_x_style.dart`, and its test lives in `test/components/<category>/v_x_test.dart`.
+- Every field of `v_x_style.dart` is read by a widget in the `v_x` folder; otherwise `make check` fails with `file:line Class.field`, because an app that sets the field would see nothing change. A field that only another folder's widget reads goes in `styleFieldsReadElsewhere` (`lib/src/tooling/style_fields.dart`) with the reason.
 - Every public declaration needs a `///` first sentence. The index and docs are built from it, and without it `make check` fails with `file:line name`. The first sentence of the first paragraph becomes the one-line index entry, so keep it to 90 characters including the period and put details in the second sentence (longer fails with `file:line name (N chars)`; an index block must stay under 8,000 characters).
 - An index line is `<file>|<main declaration>: <first sentence>` and is grouped under a `[category]` line. The doc is `doc/<category>/<file>.md`.
 - Never edit `*.generated.dart` or `doc/` by hand. Produce them with `make tokens` and `make index`.
