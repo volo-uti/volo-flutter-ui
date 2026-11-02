@@ -668,6 +668,28 @@ void main() {
         );
       });
 
+      testWidgets('a pill stays fully rounded when a long label wraps', (
+        tester,
+      ) async {
+        await pumpLargeText(
+          tester,
+          Center(
+            child: VButton(
+              onPressed: () {},
+              corner: VButtonCorner.pill,
+              child: const Text(longLabel),
+            ),
+          ),
+        );
+
+        final height = tester.getSize(find.byType(VButton)).height;
+        expect(height, greaterThan(theme.sizes.md.height));
+        final radius =
+            decorationOf(tester, find.byType(VButton)).borderRadius!
+                as BorderRadius;
+        expect(radius.topLeft.x, greaterThanOrEqualTo(height / 2));
+      });
+
       testWidgets('a full-width long label wraps at 320 wide, 2x', (
         tester,
       ) async {
@@ -939,7 +961,7 @@ void main() {
 
           expect(
             decorationOf(tester, find.byKey(const Key('pill'))).borderRadius,
-            BorderRadius.circular(theme.sizes.md.height / 2),
+            theme.radius.fullRadius,
           );
           final r = Radius.circular(theme.sizes.md.borderRadius);
           expect(

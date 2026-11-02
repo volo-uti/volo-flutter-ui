@@ -253,7 +253,6 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
   BorderRadius _getBorderRadius(
     BuildContext context,
     double sizeRadius,
-    double height,
     double width,
     BorderRadius? styleRadius,
   ) {
@@ -268,7 +267,8 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
       case VButtonCorner.rounded:
         return styleRadius ?? BorderRadius.circular(sizeRadius);
       case VButtonCorner.pill:
-        return BorderRadius.circular(height / 2);
+        // Fully rounded at any height, also when the button grows.
+        return VTheme.of(context).radius.fullRadius;
       case VButtonCorner.circle:
         return BorderRadius.circular(width / 2);
     }
@@ -334,7 +334,6 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
     final borderRadius = _getBorderRadius(
       context,
       sizeProps.borderRadius,
-      sizeProps.height,
       buttonWidth ?? sizeProps.height,
       resolvedStyle?.borderRadius,
     );

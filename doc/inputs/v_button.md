@@ -228,7 +228,7 @@ Button corner style.
 |---|---|
 | `square` | Square corners. |
 | `rounded` | Rounded corners (default). |
-| `pill` | Pill shape. |
+| `pill` | Pill shape, fully rounded at any height. |
 | `circle` | Circle (for square buttons). |
 
 ## VButtonColor

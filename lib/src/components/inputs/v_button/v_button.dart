@@ -45,7 +45,7 @@ enum VButtonCorner {
   /// Rounded corners (default).
   rounded,
 
-  /// Pill shape.
+  /// Pill shape, fully rounded at any height.
   pill,
 
   /// Circle (for square buttons).
