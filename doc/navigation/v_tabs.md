@@ -11,7 +11,9 @@ A tabbed interface for switching views.
 ## Overview
 
 [VTabs] pairs a row or column of tabs with the content of the selected one.
-It keeps the selected index itself and reports changes through [onChanged].
+It keeps the selected index itself, or in a [controller], and reports the
+user's changes through [onChanged]. With [swipeable], the content can be
+swiped sideways to the next or previous tab.
 
 ## Basic Usage
 
@@ -91,6 +93,24 @@ VTabs(
 )
 ```
 
+## Tabs driven from outside, with swipeable content
+
+```dart
+final controller = VTabsController();
+
+VTabs(
+  controller: controller,
+  swipeable: true,
+  tabs: [
+    VTab(label: Text('Inbox'), content: InboxView()),
+    VTab(label: Text('Archive'), content: ArchiveView()),
+  ],
+)
+
+// Show the archive from a button elsewhere.
+controller.index = 1;
+```
+
 ## Scrollable tabs for many items
 
 ```dart
@@ -131,9 +151,11 @@ Creates tabs whose selected tab is filled with the card color.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `tabs` | `List<VTab>` |  | yes | Tabs to show, in order. |
-| `initialIndex` | `int` | `0` |  | Index selected first, clamped to the tab range. |
-| `onChanged` | `void Function(int)?` |  |  | Called with the new index when the selection changes by tap or key. |
+| `initialIndex` | `int` | `0` |  | Index selected first, clamped to the tab range.<br>It is read once; to change the selection later, use [controller]. It is ignored when [controller] is set. |
+| `controller` | `VTabsController?` |  |  | Reads and changes the selected tab from outside the tabs.<br>When null, the tabs keep their own selection, starting at [initialIndex]. |
+| `onChanged` | `void Function(int)?` |  |  | Called with the new index when the user selects a tab by tap, key or swipe.<br>It is not called when code sets [VTabsController.index]. |
 | `isScrollable` | `bool` | `false` |  | Whether the tab bar scrolls instead of sharing the width evenly. |
+| `swipeable` | `bool` | `false` |  | Whether the content can be swiped sideways to the next or previous tab.<br>The content is then a page view that follows the selected tab, and the tab follows the page a swipe settles on. A swipe that settles on a disabled tab slides back. |
 | `orientation` | `Axis` | `Axis.horizontal` |  | Direction of the tab bar; vertical puts a column at the start. |
 | `backgroundColor` | `Color?` |  |  | Fill color of the tab bar. |
 | `selectedColor` | `Color?` |  |  | Color of the selected tab's fill or text, depending on the variant. |
@@ -153,9 +175,11 @@ Creates tabs whose selected tab is a primary-colored pill.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `tabs` | `List<VTab>` |  | yes | Tabs to show, in order. |
-| `initialIndex` | `int` | `0` |  | Index selected first, clamped to the tab range. |
-| `onChanged` | `void Function(int)?` |  |  | Called with the new index when the selection changes by tap or key. |
+| `initialIndex` | `int` | `0` |  | Index selected first, clamped to the tab range.<br>It is read once; to change the selection later, use [controller]. It is ignored when [controller] is set. |
+| `controller` | `VTabsController?` |  |  | Reads and changes the selected tab from outside the tabs.<br>When null, the tabs keep their own selection, starting at [initialIndex]. |
+| `onChanged` | `void Function(int)?` |  |  | Called with the new index when the user selects a tab by tap, key or swipe.<br>It is not called when code sets [VTabsController.index]. |
 | `isScrollable` | `bool` | `false` |  | Whether the tab bar scrolls instead of sharing the width evenly. |
+| `swipeable` | `bool` | `false` |  | Whether the content can be swiped sideways to the next or previous tab.<br>The content is then a page view that follows the selected tab, and the tab follows the page a swipe settles on. A swipe that settles on a disabled tab slides back. |
 | `orientation` | `Axis` | `Axis.horizontal` |  | Direction of the tab bar; vertical puts a column at the start. |
 | `backgroundColor` | `Color?` |  |  | Fill color of the tab bar. |
 | `selectedColor` | `Color?` |  |  | Color of the selected tab's fill or text, depending on the variant. |
@@ -175,9 +199,11 @@ Creates tabs whose selected tab has an underline.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `tabs` | `List<VTab>` |  | yes | Tabs to show, in order. |
-| `initialIndex` | `int` | `0` |  | Index selected first, clamped to the tab range. |
-| `onChanged` | `void Function(int)?` |  |  | Called with the new index when the selection changes by tap or key. |
+| `initialIndex` | `int` | `0` |  | Index selected first, clamped to the tab range.<br>It is read once; to change the selection later, use [controller]. It is ignored when [controller] is set. |
+| `controller` | `VTabsController?` |  |  | Reads and changes the selected tab from outside the tabs.<br>When null, the tabs keep their own selection, starting at [initialIndex]. |
+| `onChanged` | `void Function(int)?` |  |  | Called with the new index when the user selects a tab by tap, key or swipe.<br>It is not called when code sets [VTabsController.index]. |
 | `isScrollable` | `bool` | `false` |  | Whether the tab bar scrolls instead of sharing the width evenly. |
+| `swipeable` | `bool` | `false` |  | Whether the content can be swiped sideways to the next or previous tab.<br>The content is then a page view that follows the selected tab, and the tab follows the page a swipe settles on. A swipe that settles on a disabled tab slides back. |
 | `orientation` | `Axis` | `Axis.horizontal` |  | Direction of the tab bar; vertical puts a column at the start. |
 | `backgroundColor` | `Color?` |  |  | Fill color of the tab bar. |
 | `selectedColor` | `Color?` |  |  | Color of the selected tab's fill or text, depending on the variant. |
@@ -219,6 +245,40 @@ Creates a tab.
 | `content` | `Widget` |  | yes | Widget shown below or beside the tab bar while this tab is selected. |
 | `icon` | `Widget?` |  |  | Icon shown before the label. |
 | `enabled` | `bool` | `true` |  | Whether the tab can be selected; a disabled tab is dimmed and skipped. |
+
+## VTabsController
+
+Selected tab index of a [VTabs] that code outside it can read and change.
+
+Pass it to [VTabs.controller]. Setting [index] selects that tab, and
+listeners hear every change, whether it comes from code, a tap, a key or a
+swipe. Code may select a disabled tab; only taps, keys and swipes skip it.
+Dispose the controller when it is no longer needed.
+
+```dart
+final controller = VTabsController(initialIndex: 1);
+
+VTabs(controller: controller, tabs: tabs);
+
+// Select the first tab from elsewhere.
+controller.index = 0;
+```
+
+### Constructors
+
+#### `VTabsController`
+
+Creates a controller whose selected index starts at [initialIndex].
+
+| Parameter | Type | Default | Required | Description |
+|---|---|---|---|---|
+| `initialIndex` | `int` | `0` |  |  |
+
+### Members
+
+| Member | Description |
+|---|---|
+| `int get index` | Index of the selected tab.<br>An index outside the tab range shows the nearest tab, and [VTabs] moves the index into range after the frame. |
 
 ## VTabsStyle
 

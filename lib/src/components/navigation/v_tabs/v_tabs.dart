@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -47,6 +49,41 @@ class VTab {
   final bool enabled;
 }
 
+/// Selected tab index of a [VTabs] that code outside it can read and change.
+///
+/// Pass it to [VTabs.controller]. Setting [index] selects that tab, and
+/// listeners hear every change, whether it comes from code, a tap, a key or a
+/// swipe. Code may select a disabled tab; only taps, keys and swipes skip it.
+/// Dispose the controller when it is no longer needed.
+///
+/// ```dart
+/// final controller = VTabsController(initialIndex: 1);
+///
+/// VTabs(controller: controller, tabs: tabs);
+///
+/// // Select the first tab from elsewhere.
+/// controller.index = 0;
+/// ```
+class VTabsController extends ChangeNotifier {
+  /// Creates a controller whose selected index starts at [initialIndex].
+  VTabsController({int initialIndex = 0}) : _index = initialIndex;
+
+  int _index;
+
+  /// Index of the selected tab.
+  ///
+  /// An index outside the tab range shows the nearest tab, and [VTabs] moves
+  /// the index into range after the frame.
+  int get index => _index;
+
+  /// Selects the tab at [value] and notifies listeners when it changes.
+  set index(int value) {
+    if (value == _index) return;
+    _index = value;
+    notifyListeners();
+  }
+}
+
 /// A tabbed interface for switching views.
 ///
 /// {@category Navigation}
@@ -54,7 +91,9 @@ class VTab {
 /// ## Overview
 ///
 /// [VTabs] pairs a row or column of tabs with the content of the selected one.
-/// It keeps the selected index itself and reports changes through [onChanged].
+/// It keeps the selected index itself, or in a [controller], and reports the
+/// user's changes through [onChanged]. With [swipeable], the content can be
+/// swiped sideways to the next or previous tab.
 ///
 /// ## Basic Usage
 ///
@@ -134,6 +173,24 @@ class VTab {
 /// )
 /// ```
 ///
+/// ## Tabs driven from outside, with swipeable content
+///
+/// ```dart
+/// final controller = VTabsController();
+///
+/// VTabs(
+///   controller: controller,
+///   swipeable: true,
+///   tabs: [
+///     VTab(label: Text('Inbox'), content: InboxView()),
+///     VTab(label: Text('Archive'), content: ArchiveView()),
+///   ],
+/// )
+///
+/// // Show the archive from a button elsewhere.
+/// controller.index = 1;
+/// ```
+///
 /// ## Scrollable tabs for many items
 ///
 /// ```dart
@@ -170,8 +227,10 @@ class VTabs extends StatefulWidget {
     required this.tabs,
     super.key,
     this.initialIndex = 0,
+    this.controller,
     this.onChanged,
     this.isScrollable = false,
+    this.swipeable = false,
     this.orientation = Axis.horizontal,
     this.backgroundColor,
     this.selectedColor,
@@ -190,8 +249,10 @@ class VTabs extends StatefulWidget {
     required this.tabs,
     super.key,
     this.initialIndex = 0,
+    this.controller,
     this.onChanged,
     this.isScrollable = false,
+    this.swipeable = false,
     this.orientation = Axis.horizontal,
     this.backgroundColor,
     this.selectedColor,
@@ -210,8 +271,10 @@ class VTabs extends StatefulWidget {
     required this.tabs,
     super.key,
     this.initialIndex = 0,
+    this.controller,
     this.onChanged,
     this.isScrollable = false,
+    this.swipeable = false,
     this.orientation = Axis.horizontal,
     this.backgroundColor,
     this.selectedColor,
@@ -231,13 +294,30 @@ class VTabs extends StatefulWidget {
   final List<VTab> tabs;
 
   /// Index selected first, clamped to the tab range.
+  ///
+  /// It is read once; to change the selection later, use [controller]. It is
+  /// ignored when [controller] is set.
   final int initialIndex;
 
-  /// Called with the new index when the selection changes by tap or key.
+  /// Reads and changes the selected tab from outside the tabs.
+  ///
+  /// When null, the tabs keep their own selection, starting at [initialIndex].
+  final VTabsController? controller;
+
+  /// Called with the new index when the user selects a tab by tap, key or swipe.
+  ///
+  /// It is not called when code sets [VTabsController.index].
   final ValueChanged<int>? onChanged;
 
   /// Whether the tab bar scrolls instead of sharing the width evenly.
   final bool isScrollable;
+
+  /// Whether the content can be swiped sideways to the next or previous tab.
+  ///
+  /// The content is then a page view that follows the selected tab, and the
+  /// tab follows the page a swipe settles on. A swipe that settles on a
+  /// disabled tab slides back.
+  final bool swipeable;
 
   /// Direction of the tab bar; vertical puts a column at the start.
   final Axis orientation;
@@ -277,42 +357,140 @@ class VTabs extends StatefulWidget {
 }
 
 class _VTabsState extends State<VTabs> {
-  late int _selectedIndex;
+  VTabsController? _internalController;
+  late VTabsController _controller;
   late FocusNode _focusNode;
   final List<FocusNode> _tabNodes = [];
+  PageController? _pageController;
+  late VAnimations _animations;
+  // Page animations started by a selection change that have not finished; the
+  // pages they pass on the way must not select tabs.
+  int _pageAnimations = 0;
+  bool _selectingFromPage = false;
+
+  VTabsController get _effectiveController =>
+      widget.controller ??
+      (_internalController ??= VTabsController(
+        initialIndex: widget.tabs.isEmpty
+            ? 0
+            : widget.initialIndex.clamp(0, widget.tabs.length - 1),
+      ));
+
+  int get _selectedIndex => widget.tabs.isEmpty
+      ? 0
+      : _controller.index.clamp(0, widget.tabs.length - 1);
 
   @override
   void initState() {
     super.initState();
     _focusNode = FocusNode();
-    if (widget.tabs.isEmpty) {
-      _selectedIndex = 0;
-    } else {
-      _selectedIndex = widget.initialIndex.clamp(0, widget.tabs.length - 1);
-    }
+    _controller = _effectiveController..addListener(_handleControllerChange);
     _syncTabNodes();
+    _keepIndexInRange();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _animations = VTheme.of(context).animations;
   }
 
   @override
   void didUpdateWidget(VTabs oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // WHY: The parent may shrink the tab list (a filtered or permission-gated
-    // list) while a later tab is selected; keep the selection in range.
-    if (widget.tabs.isEmpty) {
-      _selectedIndex = 0;
-    } else if (_selectedIndex >= widget.tabs.length) {
-      _selectedIndex = widget.tabs.length - 1;
+    if (widget.controller != oldWidget.controller) {
+      _controller.removeListener(_handleControllerChange);
+      _controller = _effectiveController..addListener(_handleControllerChange);
+    }
+    if (widget.controller != oldWidget.controller ||
+        (widget.swipeable && !oldWidget.swipeable)) {
+      _jumpPageAfterFrame();
     }
     _syncTabNodes();
+    // WHY: The parent may shrink the tab list (a filtered or permission-gated
+    // list) while a later tab is selected; keep the selection in range.
+    _keepIndexInRange();
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_handleControllerChange);
+    _internalController?.dispose();
+    _pageController?.dispose();
     _focusNode.dispose();
     for (final node in _tabNodes) {
       node.dispose();
     }
     super.dispose();
+  }
+
+  void _handleControllerChange() {
+    setState(() {});
+    if (!_selectingFromPage) _animatePageToSelection();
+  }
+
+  // An index outside the tabs shows the nearest tab now and is moved into range
+  // after the frame, so listeners are not notified during a build.
+  void _keepIndexInRange() {
+    final index = _controller.index;
+    if (widget.tabs.isEmpty || (index >= 0 && index < widget.tabs.length)) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || widget.tabs.isEmpty) return;
+      _controller.index = _selectedIndex;
+    });
+  }
+
+  // Moves the page view to the selected tab without passing other pages.
+  void _jumpPageAfterFrame() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final pages = _pageController;
+      if (!mounted || pages == null || !pages.hasClients) return;
+      if (pages.page?.round() != _selectedIndex) {
+        pages.jumpToPage(_selectedIndex);
+      }
+    });
+  }
+
+  void _animatePageToSelection() {
+    final pages = _pageController;
+    if (pages == null || !pages.hasClients) return;
+    final target = _selectedIndex;
+    if (pages.page?.round() == target) return;
+    _pageAnimations++;
+    unawaited(
+      pages
+          .animateToPage(
+            target,
+            duration: _animations.normal,
+            curve: _animations.curveEaseOut,
+          )
+          .whenComplete(() => _pageAnimations--),
+    );
+  }
+
+  // The tab follows the page a swipe settles on.
+  bool _handlePageScroll(ScrollNotification notification) {
+    if (notification.depth != 0 || notification is! ScrollEndNotification) {
+      return false;
+    }
+    final page = _pageController?.page?.round();
+    if (_pageAnimations > 0 || page == null || page == _selectedIndex) {
+      return false;
+    }
+    if (page >= 0 && page < widget.tabs.length && widget.tabs[page].enabled) {
+      _selectingFromPage = true;
+      _selectTab(page);
+      _selectingFromPage = false;
+    } else {
+      // A disabled tab cannot be selected, so its page slides back. The
+      // scroll position is still ending its activity, so start after it.
+      scheduleMicrotask(() {
+        if (mounted) _animatePageToSelection();
+      });
+    }
+    return false;
   }
 
   // One focus node per tab, so a key press can move focus with the selection.
@@ -353,7 +531,7 @@ class _VTabsState extends State<VTabs> {
       value: 'index: $index',
     );
 
-    setState(() => _selectedIndex = index);
+    _controller.index = index;
     widget.onChanged?.call(index);
   }
 
@@ -447,15 +625,25 @@ class _VTabsState extends State<VTabs> {
       indicatorHeight: resolvedStyle?.indicatorHeight,
     );
 
-    final selectedIndex = _selectedIndex.clamp(0, widget.tabs.length - 1);
+    final selectedIndex = _selectedIndex;
     final contentWidget = Expanded(
-      child: AnimatedSwitcher(
-        duration: theme.animations.fast,
-        child: KeyedSubtree(
-          key: ValueKey(selectedIndex),
-          child: widget.tabs[selectedIndex].content,
-        ),
-      ),
+      child: widget.swipeable
+          ? NotificationListener<ScrollNotification>(
+              onNotification: _handlePageScroll,
+              child: PageView(
+                controller: _pageController ??= PageController(
+                  initialPage: selectedIndex,
+                ),
+                children: [for (final tab in widget.tabs) tab.content],
+              ),
+            )
+          : AnimatedSwitcher(
+              duration: theme.animations.fast,
+              child: KeyedSubtree(
+                key: ValueKey(selectedIndex),
+                child: widget.tabs[selectedIndex].content,
+              ),
+            ),
     );
 
     // WHY: FocusTraversalGroup wraps both tab bar and content — ensures

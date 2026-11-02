@@ -1971,4 +1971,267 @@ void main() {
       expect(underlineOf(tester, 'Tab 1').width, 3);
     });
   });
+
+  group('VTabsController', () {
+    bool isSelected(WidgetTester tester, String label) =>
+        tester
+            .getSemantics(find.text(label))
+            .getSemanticsData()
+            .flagsCollection
+            .isSelected ==
+        Tristate.isTrue;
+
+    testWidgets('setting index selects the tab without calling onChanged', (
+      tester,
+    ) async {
+      final controller = VTabsController();
+      addTearDown(controller.dispose);
+      final changes = <int>[];
+      await tester.pumpWidget(
+        buildTestWidget(
+          VTabs(controller: controller, onChanged: changes.add, tabs: testTabs),
+        ),
+      );
+      expect(find.text('Content 1'), findsOneWidget);
+
+      controller.index = 2;
+      await tester.pumpAndSettle();
+
+      expect(find.text('Content 3'), findsOneWidget);
+      expect(isSelected(tester, 'Tab 3'), isTrue);
+      expect(isSelected(tester, 'Tab 1'), isFalse);
+      expect(changes, isEmpty);
+    });
+
+    testWidgets('a tap or a key updates the controller and its listeners', (
+      tester,
+    ) async {
+      final controller = VTabsController(initialIndex: 1);
+      addTearDown(controller.dispose);
+      final heard = <int>[];
+      controller.addListener(() => heard.add(controller.index));
+      final changes = <int>[];
+      await tester.pumpWidget(
+        buildTestWidget(
+          VTabs(
+            controller: controller,
+            initialIndex: 2,
+            onChanged: changes.add,
+            tabs: testTabs,
+          ),
+        ),
+      );
+      // The controller's own index wins over initialIndex.
+      expect(find.text('Content 2'), findsOneWidget);
+
+      await tester.tap(find.text('Tab 3'));
+      await tester.pumpAndSettle();
+      expect(controller.index, 2);
+
+      Focus.of(tester.element(find.text('Tab 3'))).requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+
+      expect(controller.index, 1);
+      expect(heard, [2, 1]);
+      expect(changes, [2, 1]);
+      expect(Focus.of(tester.element(find.text('Tab 2'))).hasFocus, isTrue);
+    });
+
+    testWidgets('an index past the tabs shows the last and moves into range', (
+      tester,
+    ) async {
+      final controller = VTabsController(initialIndex: 7);
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        buildTestWidget(VTabs(controller: controller, tabs: testTabs)),
+      );
+
+      expect(find.text('Content 3'), findsOneWidget);
+      await tester.pump();
+      expect(controller.index, 2);
+    });
+
+    testWidgets('a new controller takes over the selection', (tester) async {
+      final first = VTabsController();
+      final second = VTabsController(initialIndex: 2);
+      addTearDown(first.dispose);
+      addTearDown(second.dispose);
+      await tester.pumpWidget(
+        buildTestWidget(VTabs(controller: first, tabs: testTabs)),
+      );
+      await tester.pumpWidget(
+        buildTestWidget(VTabs(controller: second, tabs: testTabs)),
+      );
+      expect(find.text('Content 3'), findsOneWidget);
+
+      // The old controller no longer drives the tabs.
+      first.index = 1;
+      await tester.pumpAndSettle();
+      expect(find.text('Content 3'), findsOneWidget);
+
+      second.index = 0;
+      await tester.pumpAndSettle();
+      expect(find.text('Content 1'), findsOneWidget);
+    });
+  });
+
+  group('VTabs swipeable', () {
+    bool isSelected(WidgetTester tester, String label) =>
+        tester
+            .getSemantics(find.text(label))
+            .getSemanticsData()
+            .flagsCollection
+            .isSelected ==
+        Tristate.isTrue;
+
+    testWidgets('swiping the content selects the next tab', (tester) async {
+      final controller = VTabsController();
+      addTearDown(controller.dispose);
+      final changes = <int>[];
+      await tester.pumpWidget(
+        buildTestWidget(
+          VTabs(
+            controller: controller,
+            swipeable: true,
+            onChanged: changes.add,
+            tabs: testTabs,
+          ),
+        ),
+      );
+      expect(find.byType(PageView), findsOneWidget);
+
+      await tester.fling(find.byType(PageView), const Offset(-300, 0), 1000);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Content 2'), findsOneWidget);
+      expect(controller.index, 1);
+      expect(isSelected(tester, 'Tab 2'), isTrue);
+      expect(changes, [1]);
+
+      await tester.fling(find.byType(PageView), const Offset(300, 0), 1000);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Content 1'), findsOneWidget);
+      expect(controller.index, 0);
+      expect(changes, [1, 0]);
+    });
+
+    testWidgets('a tap moves the page without selecting the pages between', (
+      tester,
+    ) async {
+      final controller = VTabsController();
+      addTearDown(controller.dispose);
+      final heard = <int>[];
+      controller.addListener(() => heard.add(controller.index));
+      final changes = <int>[];
+      await tester.pumpWidget(
+        buildTestWidget(
+          VTabs(
+            controller: controller,
+            swipeable: true,
+            onChanged: changes.add,
+            tabs: testTabs,
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Tab 3'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Content 3'), findsOneWidget);
+      expect(find.text('Content 2'), findsNothing);
+      expect(heard, [2]);
+      expect(changes, [2]);
+    });
+
+    testWidgets('setting the controller index moves the page', (tester) async {
+      final controller = VTabsController();
+      addTearDown(controller.dispose);
+      final changes = <int>[];
+      await tester.pumpWidget(
+        buildTestWidget(
+          VTabs(
+            controller: controller,
+            swipeable: true,
+            onChanged: changes.add,
+            tabs: testTabs,
+          ),
+        ),
+      );
+
+      controller.index = 2;
+      await tester.pumpAndSettle();
+
+      expect(find.text('Content 3'), findsOneWidget);
+      expect(isSelected(tester, 'Tab 3'), isTrue);
+      expect(changes, isEmpty);
+    });
+
+    testWidgets('arrow keys still move focus and selection, and the page', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestWidget(VTabs(swipeable: true, tabs: testTabs)),
+      );
+
+      Focus.of(tester.element(find.text('Tab 1'))).requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Content 2'), findsOneWidget);
+      expect(isSelected(tester, 'Tab 2'), isTrue);
+      expect(Focus.of(tester.element(find.text('Tab 2'))).hasFocus, isTrue);
+      final data = tester.getSemantics(find.text('Tab 2')).getSemanticsData();
+      expect(data.flagsCollection.isButton, isTrue);
+    });
+
+    testWidgets('a swipe onto a disabled tab slides back', (tester) async {
+      final controller = VTabsController();
+      addTearDown(controller.dispose);
+      final changes = <int>[];
+      await tester.pumpWidget(
+        buildTestWidget(
+          VTabs(
+            controller: controller,
+            swipeable: true,
+            onChanged: changes.add,
+            tabs: const [
+              VTab(label: Text('A'), content: Text('a')),
+              VTab(label: Text('B'), content: Text('b'), enabled: false),
+              VTab(label: Text('C'), content: Text('c')),
+            ],
+          ),
+        ),
+      );
+
+      await tester.fling(find.byType(PageView), const Offset(-300, 0), 1000);
+      await tester.pumpAndSettle();
+
+      expect(find.text('a'), findsOneWidget);
+      expect(find.text('b'), findsNothing);
+      expect(controller.index, 0);
+      expect(changes, isEmpty);
+    });
+
+    testWidgets('turning swipeable on starts on the selected tab', (
+      tester,
+    ) async {
+      final controller = VTabsController(initialIndex: 2);
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        buildTestWidget(VTabs(controller: controller, tabs: testTabs)),
+      );
+      await tester.pumpWidget(
+        buildTestWidget(
+          VTabs(controller: controller, swipeable: true, tabs: testTabs),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Content 3'), findsOneWidget);
+    });
+  });
 }

@@ -190,6 +190,17 @@ class _TabsShowcase extends StatelessWidget {
         ],
       ),
 
+      const WidgetbookSection(
+        title: 'Controller and Swipe',
+        children: [
+          WidgetbookSubsection(
+            title: 'controlled, swipeable',
+            labels: ['controller: VTabsController()', 'swipeable: true'],
+            children: [_ControlledTabsExample()],
+          ),
+        ],
+      ),
+
       // Usage Guidelines
       _buildUsageGuidelines(context),
     ],
@@ -234,6 +245,16 @@ class _TabsShowcase extends StatelessWidget {
               theme,
               'Disabled',
               'Disable tabs that are temporarily unavailable',
+            ),
+            _guidelineRow(
+              theme,
+              'Controller',
+              'Read or change the selected tab from outside with VTabsController',
+            ),
+            _guidelineRow(
+              theme,
+              'Swipeable',
+              'Let people swipe the content to the next or previous tab',
             ),
             _guidelineRow(
               theme,
@@ -284,6 +305,78 @@ class _TabsShowcase extends StatelessWidget {
           ),
         ],
       );
+}
+
+/// Swipeable tabs that buttons outside them move through a controller.
+class _ControlledTabsExample extends StatefulWidget {
+  const _ControlledTabsExample();
+
+  @override
+  State<_ControlledTabsExample> createState() => _ControlledTabsExampleState();
+}
+
+class _ControlledTabsExampleState extends State<_ControlledTabsExample> {
+  final _controller = VTabsController();
+  static const _count = 3;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    spacing: 8,
+    children: [
+      SizedBox(
+        height: 150,
+        child: VTabs.underline(
+          controller: _controller,
+          swipeable: true,
+          tabs: const [
+            VTab(
+              label: Text('Inbox'),
+              content: Center(child: Text('Swipe sideways to change tabs.')),
+            ),
+            VTab(
+              label: Text('Sent'),
+              content: Center(child: Text('Sent messages.')),
+            ),
+            VTab(
+              label: Text('Archive'),
+              content: Center(child: Text('Archived messages.')),
+            ),
+          ],
+        ),
+      ),
+      ListenableBuilder(
+        listenable: _controller,
+        builder: (context, _) {
+          final index = _controller.index;
+          return Row(
+            spacing: 8,
+            children: [
+              VButton.outlined(
+                onPressed: index > 0
+                    ? () => _controller.index = index - 1
+                    : null,
+                child: const Text('Previous'),
+              ),
+              VButton.outlined(
+                onPressed: index < _count - 1
+                    ? () => _controller.index = index + 1
+                    : null,
+                child: const Text('Next'),
+              ),
+              Text('index: $index'),
+            ],
+          );
+        },
+      ),
+    ],
+  );
 }
 
 // =============================================================================
