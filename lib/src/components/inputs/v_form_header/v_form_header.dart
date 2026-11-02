@@ -47,6 +47,8 @@ class VFormHeader extends StatefulWidget {
   final Widget child;
 
   /// Label text. No header is drawn when null.
+  ///
+  /// A label too long for the row wraps onto more lines.
   final String? label;
 
   /// Note shown at the right end of the label row.
@@ -116,11 +118,14 @@ class _VFormHeaderState extends State<VFormHeader> {
       color: colors.destructive,
     );
 
-    // Label widget composition
+    // Label widget composition. The label text is flexible, so a long label
+    // wraps and the required mark and tooltip stay next to it.
     final Widget labelWidget = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Semantics(header: true, child: Text(label, style: labelStyle)),
+        Flexible(
+          child: Semantics(header: true, child: Text(label, style: labelStyle)),
+        ),
         if (widget.required)
           Padding(
             padding: EdgeInsetsDirectional.only(start: theme.spacing.xxs),
@@ -173,8 +178,12 @@ class _VFormHeaderState extends State<VFormHeader> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              labelWidget,
-              if (widget.more != null) Text(widget.more!, style: moreStyle),
+              Flexible(child: labelWidget),
+              if (widget.more != null)
+                Padding(
+                  padding: EdgeInsetsDirectional.only(start: theme.spacing.sm),
+                  child: Text(widget.more!, style: moreStyle),
+                ),
             ],
           ),
         ),

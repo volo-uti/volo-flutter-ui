@@ -100,5 +100,71 @@ void main() {
         const Color(0xFF123456),
       );
     });
+
+    testWidgets('a long label wraps at 320 wide and 2x text', (tester) async {
+      tester.view
+        ..physicalSize = const Size(320, 640)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      const label = 'Mailing address for paper statements and notices';
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(
+            size: Size(320, 640),
+            textScaler: TextScaler.linear(2),
+          ),
+          child: buildTestWidget(
+            VFormHeader(
+              label: label,
+              required: true,
+              tooltip: const SizedBox(width: 16, height: 16),
+              more: 'Optional',
+              child: Container(height: 40),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      final theme = VThemeData.light();
+      final labelRect = tester.getRect(find.text(label));
+      // Two or more lines of the scaled label font.
+      expect(
+        labelRect.height,
+        greaterThanOrEqualTo(2 * 2 * theme.typography.labelMedium.fontSize!),
+      );
+      // The required mark and the side note stay on the row, inside the screen.
+      final markRect = tester.getRect(find.text('*'));
+      expect(markRect.left, greaterThanOrEqualTo(labelRect.right));
+      expect(markRect.top, greaterThanOrEqualTo(labelRect.top));
+      expect(markRect.bottom, lessThanOrEqualTo(labelRect.bottom));
+      final moreRect = tester.getRect(find.text('Optional'));
+      expect(moreRect.left, greaterThan(markRect.right));
+      expect(moreRect.right, lessThanOrEqualTo(320));
+    });
+
+    testWidgets('a short label keeps the side note at the row end', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          Center(
+            child: SizedBox(
+              width: 300,
+              child: VFormHeader(
+                label: 'Name',
+                more: 'Optional',
+                child: Container(height: 40),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        tester.getTopRight(find.text('Optional')).dx,
+        tester.getTopRight(find.byType(VFormHeader)).dx,
+      );
+    });
   });
 }

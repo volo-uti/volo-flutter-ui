@@ -40,7 +40,7 @@ Creates a form header.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `child` | `Widget` |  | yes | The control the label belongs to. |
-| `label` | `String?` |  |  | Label text. No header is drawn when null. |
+| `label` | `String?` |  |  | Label text. No header is drawn when null.<br>A label too long for the row wraps onto more lines. |
 | `more` | `String?` |  |  | Note shown at the right end of the label row. |
 | `required` | `bool` | `false` |  | Whether to show [requiredMark] after the label. |
 | `requiredMark` | `String` | `'*'` |  | Character shown after the label when [required] is true. |
