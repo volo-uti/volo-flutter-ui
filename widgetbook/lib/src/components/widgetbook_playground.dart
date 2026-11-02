@@ -144,24 +144,20 @@ class _InfoChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = VTheme.of(context);
-    final isFixed = label.contains('@fixed');
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: isFixed
-            ? theme.colors.muted
-            : theme.colors.info.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
+    final colors = VTheme.of(context).colors;
+    if (label.contains('@fixed')) {
+      return VChip(
+        size: VChipSize.sm,
+        label: Text(label.replaceAll('@fixed', '')),
+      );
+    }
+    return VChip(
+      size: VChipSize.sm,
+      style: VChipStyle(
+        backgroundColor: colors.info.withValues(alpha: 0.1),
+        foregroundColor: colors.info,
       ),
-      child: Text(
-        isFixed ? label.replaceAll('@fixed', '') : label,
-        style: theme.typography.labelSmall.copyWith(
-          color: isFixed ? theme.colors.mutedForeground : theme.colors.info,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      label: Text(label),
     );
   }
 }

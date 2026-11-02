@@ -71,19 +71,19 @@ class _AboutOverview extends StatelessWidget {
               const SizedBox(height: 24),
               Row(
                 children: [
-                  _StatBadge(
+                  _Stat(
                     label: '67',
                     description: 'Components',
                     color: theme.colors.primaryForeground,
                   ),
                   const SizedBox(width: 24),
-                  _StatBadge(
+                  _Stat(
                     label: '6',
                     description: 'Categories',
                     color: theme.colors.primaryForeground,
                   ),
                   const SizedBox(width: 24),
-                  _StatBadge(
+                  _Stat(
                     label: '100%',
                     description: 'Dart/Flutter',
                     color: theme.colors.primaryForeground,
@@ -133,8 +133,8 @@ class _AboutOverview extends StatelessWidget {
   }
 }
 
-class _StatBadge extends StatelessWidget {
-  const _StatBadge({
+class _Stat extends StatelessWidget {
+  const _Stat({
     required this.label,
     required this.description,
     required this.color,
