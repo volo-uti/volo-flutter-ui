@@ -823,28 +823,24 @@ void main() {
     a: const VLinkStyle(
       foregroundColor: _blue,
       hoverColor: _cyan,
-      visitedColor: _magenta,
       textStyle: _ts14,
     ),
     b: const VLinkStyle(hoverColor: _red),
     mergeResult: const VLinkStyle(
       foregroundColor: _blue,
       hoverColor: _red,
-      visitedColor: _magenta,
       textStyle: _ts14,
     ),
     nullFields: [
       (s) => s.foregroundColor,
       (s) => s.hoverColor,
-      (s) => s.visitedColor,
       (s) => s.textStyle,
     ],
     merge: (s, o) => s.merge(o),
-    copyWithOverride: (s) => s.copyWith(visitedColor: _gray),
+    copyWithOverride: (s) => s.copyWith(foregroundColor: _magenta),
     copyWithResult: const VLinkStyle(
-      foregroundColor: _blue,
+      foregroundColor: _magenta,
       hoverColor: _cyan,
-      visitedColor: _gray,
       textStyle: _ts14,
     ),
   );

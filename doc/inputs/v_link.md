@@ -74,11 +74,10 @@ Supports cascade: theme override → instance override.
 |---|---|---|---|---|
 | `foregroundColor` | `Color?` |  |  | Text foreground color. |
 | `hoverColor` | `Color?` |  |  | Color on hover. |
-| `visitedColor` | `Color?` |  |  | Color for visited links. |
 | `textStyle` | `TextStyle?` |  |  | Text style. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VLinkStyle copyWith({Color? foregroundColor, Color? hoverColor, Color? visitedColor, TextStyle? textStyle})` | Creates a copy with only the specified properties changed. |
+| `VLinkStyle copyWith({Color? foregroundColor, Color? hoverColor, TextStyle? textStyle})` | Creates a copy with only the specified properties changed. |
