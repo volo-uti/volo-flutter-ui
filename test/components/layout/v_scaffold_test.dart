@@ -366,4 +366,102 @@ void main() {
       expect(tester.getRect(find.byType(VDrawer)).right, 400);
     });
   });
+
+  group('VScaffold style fields', () {
+    final theme = VThemeData.light();
+    const color = Color(0xFF123456);
+
+    // Builds a scaffold styled through the theme or as the instance style.
+    Widget styled(
+      VScaffoldStyle? style, {
+      bool viaTheme = false,
+      Color? backgroundColor,
+    }) => VTheme(
+      data: theme.copyWith(
+        componentOverrides: VComponentOverrides([
+          if (viaTheme && style != null) style,
+        ]),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: const MediaQueryData(size: Size(400, 800)),
+          child: VScaffold(
+            backgroundColor: backgroundColor,
+            style: viaTheme ? null : style,
+            body: const Text('Body'),
+          ),
+        ),
+      ),
+    );
+
+    Color? screenColor(WidgetTester tester) => tester
+        .widget<Container>(
+          find
+              .descendant(
+                of: find.byType(VScaffold),
+                matching: find.byType(Container),
+              )
+              .first,
+        )
+        .color;
+
+    testWidgets('defaults to the theme background', (tester) async {
+      await tester.pumpWidget(styled(null));
+      expect(screenColor(tester), theme.colors.background);
+    });
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('backgroundColor fills the screen ($via)', (tester) async {
+        await tester.pumpWidget(
+          styled(
+            const VScaffoldStyle(backgroundColor: color),
+            viaTheme: viaTheme,
+          ),
+        );
+        expect(screenColor(tester), color);
+      });
+
+      testWidgets('the backgroundColor argument wins over the style ($via)', (
+        tester,
+      ) async {
+        const argument = Color(0xFF654321);
+        await tester.pumpWidget(
+          styled(
+            const VScaffoldStyle(backgroundColor: color),
+            viaTheme: viaTheme,
+            backgroundColor: argument,
+          ),
+        );
+        expect(screenColor(tester), argument);
+      });
+    }
+
+    testWidgets('an instance style wins over the theme override', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        VTheme(
+          data: theme.copyWith(
+            componentOverrides: const VComponentOverrides([
+              VScaffoldStyle(backgroundColor: Color(0xFFFF0000)),
+            ]),
+          ),
+          child: const Directionality(
+            textDirection: TextDirection.ltr,
+            child: MediaQuery(
+              data: MediaQueryData(size: Size(400, 800)),
+              child: VScaffold(
+                style: VScaffoldStyle(backgroundColor: color),
+                body: Text('Body'),
+              ),
+            ),
+          ),
+        ),
+      );
+      expect(screenColor(tester), color);
+    });
+  });
 }

@@ -5,6 +5,8 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 
+import 'v_scaffold_style.dart';
+
 /// Where [VScaffold] places its floating action button.
 enum VFabLocation {
   /// Bottom right (default).
@@ -105,6 +107,7 @@ class VScaffold extends StatefulWidget {
     this.resizeToAvoidBottomInset = true,
     this.extendBody = false,
     this.extendBodyBehindAppBar = false,
+    this.style,
   });
 
   /// Main content, placed between the app bar and the bottom navigation.
@@ -128,7 +131,9 @@ class VScaffold extends StatefulWidget {
   /// Where [floatingActionButton] sits; docked values overlap the bottom nav.
   final VFabLocation floatingActionButtonLocation;
 
-  /// Screen background; defaults to the theme background.
+  /// Screen background; wins over [VScaffoldStyle.backgroundColor].
+  ///
+  /// Defaults to the style's color, else the theme background.
   final Color? backgroundColor;
 
   /// Whether the bottom of the screen moves up with the on-screen keyboard.
@@ -139,6 +144,9 @@ class VScaffold extends StatefulWidget {
 
   /// Whether the body extends behind [appBar], which then floats over it.
   final bool extendBodyBehindAppBar;
+
+  /// Per-instance style override merged over the theme's [VScaffoldStyle].
+  final VScaffoldStyle? style;
 
   // WHY: Static methods with findAncestorStateOfType instead of
   // ScaffoldMessenger — avoids Material dependency and follows the same
@@ -259,7 +267,13 @@ class _VScaffoldState extends State<VScaffold> with TickerProviderStateMixin {
     final colors = theme.colors;
     final mediaQuery = MediaQuery.of(context);
 
-    final bgColor = widget.backgroundColor ?? colors.background;
+    // Apply style overrides (Level 3 → Level 4 cascade)
+    final themeStyle = theme.componentOverrides.get<VScaffoldStyle>();
+    final resolvedStyle = themeStyle?.merge(widget.style) ?? widget.style;
+    final bgColor =
+        widget.backgroundColor ??
+        resolvedStyle?.backgroundColor ??
+        colors.background;
 
     // Calculate bottom inset for keyboard
     final bottomInset = widget.resizeToAvoidBottomInset

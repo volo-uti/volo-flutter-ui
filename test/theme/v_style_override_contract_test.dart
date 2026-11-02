@@ -72,7 +72,7 @@ const _ts14 = TextStyle(fontSize: 14);
 const _ts18 = TextStyle(fontSize: 18);
 
 // ---------------------------------------------------------------------------
-// main — registers contract tests for all 64 StyleOverride classes
+// main — registers contract tests for all 65 StyleOverride classes
 // ---------------------------------------------------------------------------
 void main() {
   // =========================================================================
@@ -2109,7 +2109,7 @@ void main() {
   );
 
   // =========================================================================
-  // LAYOUT (7)
+  // LAYOUT (8)
   // =========================================================================
   _contract<VBoxStyle>(
     name: 'VBoxStyle',
@@ -2253,6 +2253,18 @@ void main() {
       indicatorActiveColor: _blue,
       indicatorInactiveColor: _gray,
     ),
+  );
+
+  _contract<VScaffoldStyle>(
+    name: 'VScaffoldStyle',
+    empty: const VScaffoldStyle(),
+    a: const VScaffoldStyle(backgroundColor: _white),
+    b: const VScaffoldStyle(backgroundColor: _black),
+    mergeResult: const VScaffoldStyle(backgroundColor: _black),
+    nullFields: [(s) => s.backgroundColor],
+    merge: (s, o) => s.merge(o),
+    copyWithOverride: (s) => s.copyWith(backgroundColor: _gray),
+    copyWithResult: const VScaffoldStyle(backgroundColor: _gray),
   );
 
   _contract<VResizableStyle>(

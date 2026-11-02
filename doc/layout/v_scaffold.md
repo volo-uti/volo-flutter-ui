@@ -79,10 +79,11 @@ See also:
 | `endDrawer` | `Widget?` |  |  | Panel that slides in from the right edge, opened by [openEndDrawer]. |
 | `floatingActionButton` | `Widget?` |  |  | Floating button placed at [floatingActionButtonLocation]. |
 | `floatingActionButtonLocation` | `VFabLocation` | `VFabLocation.endFloat` |  | Where [floatingActionButton] sits; docked values overlap the bottom nav. |
-| `backgroundColor` | `Color?` |  |  | Screen background; defaults to the theme background. |
+| `backgroundColor` | `Color?` |  |  | Screen background; wins over [VScaffoldStyle.backgroundColor].<br>Defaults to the style's color, else the theme background. |
 | `resizeToAvoidBottomInset` | `bool` | `true` |  | Whether the bottom of the screen moves up with the on-screen keyboard. |
 | `extendBody` | `bool` | `false` |  | Whether the body extends behind [bottomNavigationBar]. |
 | `extendBodyBehindAppBar` | `bool` | `false` |  | Whether the body extends behind [appBar], which then floats over it. |
+| `style` | `VScaffoldStyle?` |  |  | Per-instance style override merged over the theme's [VScaffoldStyle]. |
 
 ### Members
 
@@ -120,12 +121,10 @@ Supports cascade: theme override → instance override.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `backgroundColor` | `Color?` |  |  | Background fill color for the scaffold body. |
-| `drawerBackgroundColor` | `Color?` |  |  | Background color for the drawer. |
-| `bottomNavBackgroundColor` | `Color?` |  |  | Background color for the bottom navigation bar. |
+| `backgroundColor` | `Color?` |  |  | Screen background behind the bars and body; the theme background when null.<br>[VScaffold.backgroundColor] wins over it, and an instance style wins over the theme override. The drawers and the bottom navigation paint their own backgrounds through their own styles. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VScaffoldStyle copyWith({Color? backgroundColor, Color? drawerBackgroundColor, Color? bottomNavBackgroundColor})` | Creates a copy with only the specified properties changed. |
+| `VScaffoldStyle copyWith({Color? backgroundColor})` | Creates a copy with only the specified properties changed. |
