@@ -152,7 +152,12 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
   })
   _getSizeProperties() {
     final sizes = VTheme.of(context).sizes;
-    switch (widget.size) {
+    // The button's own size, then the enclosing group's, then medium.
+    final size =
+        widget.size ??
+        VButtonGroupScope.maybeOf(context)?.size ??
+        VButtonSize.md;
+    switch (size) {
       case VButtonSize.xs:
         return (
           height: sizes.xs.height,

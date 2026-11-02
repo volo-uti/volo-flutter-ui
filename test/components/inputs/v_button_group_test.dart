@@ -235,5 +235,60 @@ void main() {
         expect(borderColorOf(tester, keys.first), theme.colors.primary);
       });
     });
+
+    testWidgets('size reaches buttons without a size of their own', (
+      tester,
+    ) async {
+      final theme = VThemeData.light();
+      await tester.pumpWidget(
+        buildTestWidget(
+          Column(
+            children: [
+              VButtonGroup(
+                size: VButtonSize.sm,
+                children: [
+                  VButton(
+                    key: const Key('inherits'),
+                    onPressed: () {},
+                    child: const Text('A'),
+                  ),
+                  VButton(
+                    key: const Key('own'),
+                    size: VButtonSize.lg,
+                    onPressed: () {},
+                    child: const Text('B'),
+                  ),
+                ],
+              ),
+              VButton(
+                key: const Key('outside'),
+                onPressed: () {},
+                child: const Text('C'),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      double heightOf(String key) =>
+          tester.getSize(find.byKey(Key(key))).height;
+      double fontSizeOf(String text) => tester
+          .widget<RichText>(
+            find.descendant(
+              of: find.text(text),
+              matching: find.byType(RichText),
+            ),
+          )
+          .text
+          .style!
+          .fontSize!;
+
+      expect(heightOf('inherits'), theme.sizes.sm.height);
+      expect(fontSizeOf('A'), theme.sizes.sm.fontSize);
+      // The button's own size wins over the group's.
+      expect(heightOf('own'), theme.sizes.lg.height);
+      // Outside a group the default is medium.
+      expect(heightOf('outside'), theme.sizes.md.height);
+    });
   });
 }

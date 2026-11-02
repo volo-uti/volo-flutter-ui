@@ -49,7 +49,7 @@ Creates a button group.
 |---|---|---|---|---|
 | `children` | `List<Widget>` |  | yes | Buttons in display order. |
 | `orientation` | `VButtonGroupOrientation` | `VButtonGroupOrientation.horizontal` |  | Direction of the layout. |
-| `size` | `VButtonSize?` |  |  | Size shared by all child buttons. |
+| `size` | `VButtonSize?` |  |  | Size shared by all child buttons; a button's own size wins over it. |
 | `spacing` | `double` | `0` |  | Gap between buttons; zero keeps them connected. |
 | `style` | `VButtonGroupStyle?` |  |  | Style override merged over the theme's [VButtonGroupStyle]. |
 

@@ -60,7 +60,7 @@ Creates a filled button.
 | `leading` | `Widget?` |  |  | Widget shown before [child], typically an icon. |
 | `trailing` | `Widget?` |  |  | Widget shown after [child], typically an icon. |
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
-| `size` | `VButtonSize` | `VButtonSize.md` |  | Minimum height and text size preset.<br>The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
+| `size` | `VButtonSize?` |  |  | Minimum height and text size preset.<br>Defaults to the enclosing [VButtonGroup]'s size, else [VButtonSize.md]. The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
 | `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
 | `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
 | `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
@@ -86,7 +86,7 @@ Creates an outlined button.
 | `leading` | `Widget?` |  |  | Widget shown before [child], typically an icon. |
 | `trailing` | `Widget?` |  |  | Widget shown after [child], typically an icon. |
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
-| `size` | `VButtonSize` | `VButtonSize.md` |  | Minimum height and text size preset.<br>The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
+| `size` | `VButtonSize?` |  |  | Minimum height and text size preset.<br>Defaults to the enclosing [VButtonGroup]'s size, else [VButtonSize.md]. The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
 | `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
 | `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
 | `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
@@ -112,7 +112,7 @@ Creates a text button without background.
 | `leading` | `Widget?` |  |  | Widget shown before [child], typically an icon. |
 | `trailing` | `Widget?` |  |  | Widget shown after [child], typically an icon. |
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
-| `size` | `VButtonSize` | `VButtonSize.md` |  | Minimum height and text size preset.<br>The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
+| `size` | `VButtonSize?` |  |  | Minimum height and text size preset.<br>Defaults to the enclosing [VButtonGroup]'s size, else [VButtonSize.md]. The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
 | `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
 | `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
 | `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
@@ -138,7 +138,7 @@ Creates a square button sized for an icon child.
 | `leading` | `Widget?` |  |  | Widget shown before [child], typically an icon. |
 | `trailing` | `Widget?` |  |  | Widget shown after [child], typically an icon. |
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
-| `size` | `VButtonSize` | `VButtonSize.md` |  | Minimum height and text size preset.<br>The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
+| `size` | `VButtonSize?` |  |  | Minimum height and text size preset.<br>Defaults to the enclosing [VButtonGroup]'s size, else [VButtonSize.md]. The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
 | `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
 | `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
 | `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
@@ -164,7 +164,7 @@ Creates a transparent button that shows the accent color on hover.
 | `leading` | `Widget?` |  |  | Widget shown before [child], typically an icon. |
 | `trailing` | `Widget?` |  |  | Widget shown after [child], typically an icon. |
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
-| `size` | `VButtonSize` | `VButtonSize.md` |  | Minimum height and text size preset.<br>The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
+| `size` | `VButtonSize?` |  |  | Minimum height and text size preset.<br>Defaults to the enclosing [VButtonGroup]'s size, else [VButtonSize.md]. The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
 | `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
 | `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
 | `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
@@ -190,7 +190,7 @@ Creates an underlined link-style button.
 | `leading` | `Widget?` |  |  | Widget shown before [child], typically an icon. |
 | `trailing` | `Widget?` |  |  | Widget shown after [child], typically an icon. |
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
-| `size` | `VButtonSize` | `VButtonSize.md` |  | Minimum height and text size preset.<br>The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
+| `size` | `VButtonSize?` |  |  | Minimum height and text size preset.<br>Defaults to the enclosing [VButtonGroup]'s size, else [VButtonSize.md]. The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
 | `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
 | `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
 | `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |

@@ -146,7 +146,7 @@ class VButton extends StatefulWidget {
     this.leading,
     this.trailing,
     this.color = VButtonColor.primary,
-    this.size = VButtonSize.md,
+    this.size,
     this.corner = VButtonCorner.rounded,
     this.align = VButtonAlign.center,
     this.leadingGap,
@@ -170,7 +170,7 @@ class VButton extends StatefulWidget {
     this.leading,
     this.trailing,
     this.color = VButtonColor.primary,
-    this.size = VButtonSize.md,
+    this.size,
     this.corner = VButtonCorner.rounded,
     this.align = VButtonAlign.center,
     this.leadingGap,
@@ -194,7 +194,7 @@ class VButton extends StatefulWidget {
     this.leading,
     this.trailing,
     this.color = VButtonColor.primary,
-    this.size = VButtonSize.md,
+    this.size,
     this.corner = VButtonCorner.rounded,
     this.align = VButtonAlign.center,
     this.leadingGap,
@@ -218,7 +218,7 @@ class VButton extends StatefulWidget {
     this.leading,
     this.trailing,
     this.color = VButtonColor.primary,
-    this.size = VButtonSize.md,
+    this.size,
     this.corner = VButtonCorner.rounded,
     this.align = VButtonAlign.center,
     this.leadingGap,
@@ -242,7 +242,7 @@ class VButton extends StatefulWidget {
     this.leading,
     this.trailing,
     this.color = VButtonColor.primary,
-    this.size = VButtonSize.md,
+    this.size,
     this.corner = VButtonCorner.rounded,
     this.align = VButtonAlign.center,
     this.leadingGap,
@@ -266,7 +266,7 @@ class VButton extends StatefulWidget {
     this.leading,
     this.trailing,
     this.color = VButtonColor.primary,
-    this.size = VButtonSize.md,
+    this.size,
     this.corner = VButtonCorner.rounded,
     this.align = VButtonAlign.center,
     this.leadingGap,
@@ -304,9 +304,10 @@ class VButton extends StatefulWidget {
 
   /// Minimum height and text size preset.
   ///
+  /// Defaults to the enclosing [VButtonGroup]'s size, else [VButtonSize.md].
   /// The height is a minimum: the button grows with the text scale and when a
   /// long label wraps onto more lines.
-  final VButtonSize size;
+  final VButtonSize? size;
 
   /// Corner radius style.
   ///

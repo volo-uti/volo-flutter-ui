@@ -85,7 +85,7 @@ class VButtonGroup extends StatelessWidget {
   /// Direction of the layout.
   final VButtonGroupOrientation orientation;
 
-  /// Size shared by all child buttons.
+  /// Size shared by all child buttons; a button's own size wins over it.
   final VButtonSize? size;
 
   /// Gap between buttons; zero keeps them connected.
