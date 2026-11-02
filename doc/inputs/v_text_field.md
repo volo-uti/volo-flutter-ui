@@ -69,7 +69,7 @@ Default text field.
 | `trailing` | `Widget?` |  |  | Widget shown after the input and its built-in buttons. |
 | `type` | `VFormBodyType` | `VFormBodyType.outlined` |  | Visual type: outlined, filled or underline. |
 | `color` | `VFormBodyColor` | `VFormBodyColor.primary` |  | Accent color used for focus and borders. |
-| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Height preset. |
+| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Minimum height preset; the field grows with the text scale. |
 | `corner` | `VFormBodyCorner` | `VFormBodyCorner.rounded` |  | Corner shape. |
 | `fullWidth` | `bool` | `false` |  | Whether the field stretches to the available width. |
 | `clearable` | `bool` | `false` |  | Whether a clear button appears while the field has text. |
@@ -117,7 +117,7 @@ Email input field.
 | `trailing` | `Widget?` |  |  | Widget shown after the input and its built-in buttons. |
 | `type` | `VFormBodyType` | `VFormBodyType.outlined` |  | Visual type: outlined, filled or underline. |
 | `color` | `VFormBodyColor` | `VFormBodyColor.primary` |  | Accent color used for focus and borders. |
-| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Height preset. |
+| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Minimum height preset; the field grows with the text scale. |
 | `corner` | `VFormBodyCorner` | `VFormBodyCorner.rounded` |  | Corner shape. |
 | `fullWidth` | `bool` | `false` |  | Whether the field stretches to the available width. |
 | `clearable` | `bool` | `false` |  | Whether a clear button appears while the field has text. |
@@ -163,7 +163,7 @@ Password input field.
 | `trailing` | `Widget?` |  |  | Widget shown after the input and its built-in buttons. |
 | `type` | `VFormBodyType` | `VFormBodyType.outlined` |  | Visual type: outlined, filled or underline. |
 | `color` | `VFormBodyColor` | `VFormBodyColor.primary` |  | Accent color used for focus and borders. |
-| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Height preset. |
+| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Minimum height preset; the field grows with the text scale. |
 | `corner` | `VFormBodyCorner` | `VFormBodyCorner.rounded` |  | Corner shape. |
 | `fullWidth` | `bool` | `false` |  | Whether the field stretches to the available width. |
 | `clearable` | `bool` | `false` |  | Whether a clear button appears while the field has text. |
@@ -209,7 +209,7 @@ Search input field.
 | `trailing` | `Widget?` |  |  | Widget shown after the input and its built-in buttons. |
 | `type` | `VFormBodyType` | `VFormBodyType.outlined` |  | Visual type: outlined, filled or underline. |
 | `color` | `VFormBodyColor` | `VFormBodyColor.primary` |  | Accent color used for focus and borders. |
-| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Height preset. |
+| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Minimum height preset; the field grows with the text scale. |
 | `corner` | `VFormBodyCorner` | `VFormBodyCorner.rounded` |  | Corner shape. |
 | `fullWidth` | `bool` | `false` |  | Whether the field stretches to the available width. |
 | `clearable` | `bool` | `false` |  | Whether a clear button appears while the field has text. |
@@ -255,7 +255,7 @@ Number input field.
 | `trailing` | `Widget?` |  |  | Widget shown after the input and its built-in buttons. |
 | `type` | `VFormBodyType` | `VFormBodyType.outlined` |  | Visual type: outlined, filled or underline. |
 | `color` | `VFormBodyColor` | `VFormBodyColor.primary` |  | Accent color used for focus and borders. |
-| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Height preset. |
+| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Minimum height preset; the field grows with the text scale. |
 | `corner` | `VFormBodyCorner` | `VFormBodyCorner.rounded` |  | Corner shape. |
 | `fullWidth` | `bool` | `false` |  | Whether the field stretches to the available width. |
 | `clearable` | `bool` | `false` |  | Whether a clear button appears while the field has text. |
@@ -301,7 +301,7 @@ Phone number input field.
 | `trailing` | `Widget?` |  |  | Widget shown after the input and its built-in buttons. |
 | `type` | `VFormBodyType` | `VFormBodyType.outlined` |  | Visual type: outlined, filled or underline. |
 | `color` | `VFormBodyColor` | `VFormBodyColor.primary` |  | Accent color used for focus and borders. |
-| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Height preset. |
+| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Minimum height preset; the field grows with the text scale. |
 | `corner` | `VFormBodyCorner` | `VFormBodyCorner.rounded` |  | Corner shape. |
 | `fullWidth` | `bool` | `false` |  | Whether the field stretches to the available width. |
 | `clearable` | `bool` | `false` |  | Whether a clear button appears while the field has text. |
@@ -347,7 +347,7 @@ URL input field.
 | `trailing` | `Widget?` |  |  | Widget shown after the input and its built-in buttons. |
 | `type` | `VFormBodyType` | `VFormBodyType.outlined` |  | Visual type: outlined, filled or underline. |
 | `color` | `VFormBodyColor` | `VFormBodyColor.primary` |  | Accent color used for focus and borders. |
-| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Height preset. |
+| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Minimum height preset; the field grows with the text scale. |
 | `corner` | `VFormBodyCorner` | `VFormBodyCorner.rounded` |  | Corner shape. |
 | `fullWidth` | `bool` | `false` |  | Whether the field stretches to the available width. |
 | `clearable` | `bool` | `false` |  | Whether a clear button appears while the field has text. |

@@ -973,5 +973,51 @@ void main() {
         expect((boxOf(tester).decoration! as BoxDecoration).color, isNull);
       });
     });
+
+    testWidgets('a single line is not clipped at 320 wide and 3x text', (
+      tester,
+    ) async {
+      final theme = VThemeData.light();
+      await pumpLargeText(
+        tester,
+        VTextField(
+          name: 'test',
+          controller: TextEditingController(text: 'Hello'),
+          fullWidth: true,
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      final body = theme.typography.bodyMedium;
+      final lineHeight = body.fontSize! * 3 * body.height!;
+      expect(
+        tester.getSize(find.byType(EditableText)).height,
+        greaterThanOrEqualTo(lineHeight - 0.5),
+      );
+      expect(
+        tester.getSize(find.byType(VFormBody)).height,
+        greaterThan(theme.sizes.md.height),
+      );
+    });
   });
+}
+
+// A 320 x 640 screen with text at three times the size.
+Future<void> pumpLargeText(WidgetTester tester, Widget child) async {
+  tester.view
+    ..physicalSize = const Size(320, 640)
+    ..devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(
+    MediaQuery(
+      data: const MediaQueryData(
+        size: Size(320, 640),
+        textScaler: TextScaler.linear(3),
+      ),
+      child: VTheme(
+        data: VThemeData.light(),
+        child: Directionality(textDirection: TextDirection.ltr, child: child),
+      ),
+    ),
+  );
 }

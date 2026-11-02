@@ -436,7 +436,7 @@ class VTextField extends StatefulWidget {
   /// Accent color used for focus and borders.
   final VFormBodyColor color;
 
-  /// Height preset.
+  /// Minimum height preset; the field grows with the text scale.
   final VFormBodySize size;
 
   /// Corner shape.

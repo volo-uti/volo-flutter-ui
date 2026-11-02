@@ -194,6 +194,9 @@ class VSelect<T> extends StatefulWidget {
   final String? extra;
 
   /// Trigger size; defaults to medium.
+  ///
+  /// Its height is a minimum: the trigger and the option rows grow with the
+  /// text scale.
   final VSelectSize? size;
 
   /// Whether the select reacts to input.
@@ -486,14 +489,16 @@ class _VSelectState<T> extends State<VSelect<T>> {
               : colors.mutedForeground,
         );
 
+    // The size's height is a minimum, so the trigger grows with the text
+    // scale instead of clipping its text.
     final Widget trigger = Container(
       key: _triggerKey,
-      height: sizeToken.height,
-      constraints: widget.fullWidth
-          ? null
-          : BoxConstraints(
-              minWidth: resolvedStyle?.minWidth ?? _triggerMinWidth,
-            ),
+      constraints: BoxConstraints(
+        minWidth: widget.fullWidth
+            ? 0
+            : resolvedStyle?.minWidth ?? _triggerMinWidth,
+        minHeight: sizeToken.height,
+      ),
       padding:
           resolvedStyle?.padding ??
           EdgeInsets.symmetric(horizontal: sizeToken.paddingHorizontal),
@@ -553,7 +558,7 @@ class _VSelectState<T> extends State<VSelect<T>> {
             Padding(
               padding: EdgeInsets.all(theme.spacing.sm),
               child: Container(
-                height: sizeToken.height,
+                constraints: BoxConstraints(minHeight: sizeToken.height),
                 padding: EdgeInsets.symmetric(
                   horizontal: sizeToken.paddingHorizontal,
                 ),
@@ -640,7 +645,9 @@ class _VSelectState<T> extends State<VSelect<T>> {
                                 setState(() => _hoveredIndex = index),
                             onExit: (_) => setState(() => _hoveredIndex = -1),
                             child: Container(
-                              height: sizeToken.height,
+                              constraints: BoxConstraints(
+                                minHeight: sizeToken.height,
+                              ),
                               padding: EdgeInsets.symmetric(
                                 horizontal: sizeToken.paddingHorizontal,
                               ),

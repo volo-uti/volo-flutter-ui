@@ -678,12 +678,12 @@ void main() {
         of: find.byType(VSelect<String>),
         matching: find.byWidgetPredicate(
           (widget) =>
-              widget is Container &&
-              widget.constraints?.maxHeight == 32 &&
-              widget.constraints?.minHeight == 32,
+              widget is Container && widget.constraints?.minHeight == 32,
         ),
       );
       expect(containerFinder, findsOneWidget);
+      // At 1x text the minimum is the drawn height.
+      expect(tester.getSize(containerFinder).height, 32);
     });
 
     testWidgets('VSelectSize.md height 40 (default)', (tester) async {
@@ -703,12 +703,12 @@ void main() {
         of: find.byType(VSelect<String>),
         matching: find.byWidgetPredicate(
           (widget) =>
-              widget is Container &&
-              widget.constraints?.maxHeight == 40 &&
-              widget.constraints?.minHeight == 40,
+              widget is Container && widget.constraints?.minHeight == 40,
         ),
       );
       expect(containerFinder, findsOneWidget);
+      // At 1x text the minimum is the drawn height.
+      expect(tester.getSize(containerFinder).height, 40);
     });
 
     testWidgets('VSelectSize.lg height 48', (tester) async {
@@ -728,12 +728,12 @@ void main() {
         of: find.byType(VSelect<String>),
         matching: find.byWidgetPredicate(
           (widget) =>
-              widget is Container &&
-              widget.constraints?.maxHeight == 48 &&
-              widget.constraints?.minHeight == 48,
+              widget is Container && widget.constraints?.minHeight == 48,
         ),
       );
       expect(containerFinder, findsOneWidget);
+      // At 1x text the minimum is the drawn height.
+      expect(tester.getSize(containerFinder).height, 48);
     });
   });
 
@@ -1034,12 +1034,12 @@ void main() {
         of: find.byType(VSelect<String>),
         matching: find.byWidgetPredicate(
           (widget) =>
-              widget is Container &&
-              widget.constraints?.maxHeight == 40 &&
-              widget.constraints?.minHeight == 40,
+              widget is Container && widget.constraints?.minHeight == 40,
         ),
       );
       expect(containerFinder, findsOneWidget);
+      // At 1x text the minimum is the drawn height.
+      expect(tester.getSize(containerFinder).height, 40);
     });
   });
 
@@ -1641,5 +1641,62 @@ void main() {
       expect(after.hasFocus, isTrue);
       expect(borderOf(tester).top.color, theme.colors.input);
     });
+  });
+
+  testWidgets('the trigger and the options are not clipped at 320 wide and '
+      '3x text', (tester) async {
+    final theme = VThemeData.light();
+    tester.view
+      ..physicalSize = const Size(320, 640)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(
+          size: Size(320, 640),
+          textScaler: TextScaler.linear(3),
+        ),
+        child: VTheme(
+          data: theme,
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Overlay(
+              initialEntries: [
+                OverlayEntry(
+                  builder: (_) => Align(
+                    alignment: Alignment.topCenter,
+                    child: VSelect<String>(
+                      items: const [
+                        VSelectItem(value: 'a', label: 'Alpha'),
+                        VSelectItem(value: 'b', label: 'Beta'),
+                      ],
+                      placeholder: 'Pick',
+                      onChanged: (_) {},
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final body = theme.typography.bodyMedium;
+    final lineHeight = theme.sizes.md.fontSize * 3 * body.height!;
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.getSize(find.text('Pick')).height,
+      greaterThanOrEqualTo(lineHeight - 0.5),
+    );
+
+    await tester.tap(find.byType(VSelect<String>));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.getSize(find.text('Beta')).height,
+      greaterThanOrEqualTo(lineHeight - 0.5),
+    );
   });
 }

@@ -112,7 +112,7 @@ class VFormBody extends StatefulWidget {
   /// Accent color used for focus and borders.
   final VFormBodyColor color;
 
-  /// Height preset.
+  /// Minimum height preset; the box grows with the text scale.
   final VFormBodySize size;
 
   /// Corner shape.
@@ -202,7 +202,8 @@ class _VFormBodyState extends State<VFormBody> {
         };
         return BorderRadius.circular(sizeToken.borderRadius);
       case VFormBodyCorner.pill:
-        return BorderRadius.circular(_getHeight() / 2);
+        // Fully rounded at any height, also when the box grows.
+        return theme.radius.fullRadius;
     }
   }
 
@@ -266,7 +267,9 @@ class _VFormBodyState extends State<VFormBody> {
         child: IgnorePointer(
           ignoring: !widget.enabled,
           child: Container(
-            height: _getHeight(),
+            // A minimum, not a fixed height: the box grows with the text
+            // scale instead of clipping the control.
+            constraints: BoxConstraints(minHeight: _getHeight()),
             width: widget.fullWidth ? double.infinity : null,
             padding: effectivePadding,
             decoration: BoxDecoration(

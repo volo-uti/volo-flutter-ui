@@ -291,5 +291,98 @@ void main() {
         );
       });
     });
+
+    testWidgets('grows with a child taller than the size height', (
+      tester,
+    ) async {
+      final theme = VThemeData.light();
+      await pumpLargeText(
+        tester,
+        const Center(
+          child: SizedBox(
+            width: 300,
+            child: VFormBody(
+              child: Text('Hello', style: TextStyle(fontSize: 14)),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      // The FlutterTest font draws a line as tall as the scaled font size.
+      const lineHeight = 14 * 3;
+      expect(
+        tester.getSize(find.text('Hello')).height,
+        greaterThanOrEqualTo(lineHeight),
+      );
+      expect(
+        tester.getSize(find.byType(VFormBody)).height,
+        greaterThan(theme.sizes.md.height),
+      );
+    });
+
+    testWidgets('keeps the size height at 1x text', (tester) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          const Center(
+            child: SizedBox(
+              width: 300,
+              child: VFormBody(size: VFormBodySize.lg, child: Text('Hello')),
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSize(find.byType(VFormBody)).height,
+        VThemeData.light().sizes.lg.height,
+      );
+    });
+
+    testWidgets('a pill stays fully rounded when it grows', (tester) async {
+      await pumpLargeText(
+        tester,
+        const Center(
+          child: SizedBox(
+            width: 300,
+            child: VFormBody(corner: VFormBodyCorner.pill, child: Text('Hi')),
+          ),
+        ),
+      );
+
+      final box = tester.widget<Container>(
+        find
+            .descendant(
+              of: find.byType(VFormBody),
+              matching: find.byType(Container),
+            )
+            .first,
+      );
+      final radius =
+          (box.decoration! as BoxDecoration).borderRadius! as BorderRadius;
+      final height = tester.getSize(find.byType(VFormBody)).height;
+      expect(height, greaterThan(VThemeData.light().sizes.md.height));
+      expect(radius.topLeft.x, greaterThanOrEqualTo(height / 2));
+    });
   });
+}
+
+// A 320 x 640 screen with text at three times the size.
+Future<void> pumpLargeText(WidgetTester tester, Widget child) async {
+  tester.view
+    ..physicalSize = const Size(320, 640)
+    ..devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(
+    MediaQuery(
+      data: const MediaQueryData(
+        size: Size(320, 640),
+        textScaler: TextScaler.linear(3),
+      ),
+      child: VTheme(
+        data: VThemeData.light(),
+        child: Directionality(textDirection: TextDirection.ltr, child: child),
+      ),
+    ),
+  );
 }

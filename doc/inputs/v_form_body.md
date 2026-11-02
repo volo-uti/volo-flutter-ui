@@ -44,7 +44,7 @@ Creates a form body.
 | `trailing` | `Widget?` |  |  | Widget shown after [child]. |
 | `type` | `VFormBodyType` | `VFormBodyType.outlined` |  | Visual type: outlined, filled or underline. |
 | `color` | `VFormBodyColor` | `VFormBodyColor.primary` |  | Accent color used for focus and borders. |
-| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Height preset. |
+| `size` | `VFormBodySize` | `VFormBodySize.md` |  | Minimum height preset; the box grows with the text scale. |
 | `corner` | `VFormBodyCorner` | `VFormBodyCorner.rounded` |  | Corner shape.<br>[VFormBodyCorner.rounded] takes [VFormBodyStyle.borderRadius] when one is set. |
 | `fullWidth` | `bool` | `false` |  | Whether the box stretches to the available width. |
 | `enabled` | `bool` | `true` |  | Whether the body accepts pointer input. When false it is dimmed and ignores taps. |

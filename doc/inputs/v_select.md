@@ -44,7 +44,7 @@ Creates a select that picks one [value].
 | `success` | `bool` | `false` |  | Whether the field is drawn in the success state. |
 | `successText` | `String?` |  |  | Message below the field while [success] is set. |
 | `extra` | `String?` |  |  | Note below the field that is always visible. |
-| `size` | `VSelectSize?` |  |  | Trigger size; defaults to medium. |
+| `size` | `VSelectSize?` |  |  | Trigger size; defaults to medium.<br>Its height is a minimum: the trigger and the option rows grow with the text scale. |
 | `enabled` | `bool` | `true` |  | Whether the select reacts to input. |
 | `readOnly` | `bool` | `false` |  | Whether the dropdown is blocked from opening while the value stays visible. |
 | `loading` | `bool` | `false` |  | Whether a spinner replaces the chevron. |
@@ -85,7 +85,7 @@ VSelect<String>.multiple(
 | `success` | `bool` | `false` |  | Whether the field is drawn in the success state. |
 | `successText` | `String?` |  |  | Message below the field while [success] is set. |
 | `extra` | `String?` |  |  | Note below the field that is always visible. |
-| `size` | `VSelectSize?` |  |  | Trigger size; defaults to medium. |
+| `size` | `VSelectSize?` |  |  | Trigger size; defaults to medium.<br>Its height is a minimum: the trigger and the option rows grow with the text scale. |
 | `enabled` | `bool` | `true` |  | Whether the select reacts to input. |
 | `readOnly` | `bool` | `false` |  | Whether the dropdown is blocked from opening while the value stays visible. |
 | `loading` | `bool` | `false` |  | Whether a spinner replaces the chevron. |
