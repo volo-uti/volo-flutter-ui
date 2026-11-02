@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/v_component_style.dart';
 
-/// Style override for [VToggleButton].
+/// Style override for [VToggleButton] and [VToggleButtonGroup].
 ///
 /// All properties are nullable — `null` means "use the theme default".
 /// Supports cascade: theme override → instance override.
@@ -18,25 +18,25 @@ class VToggleButtonStyle implements VComponentStyle {
     this.padding,
   });
 
-  /// Background fill color.
+  /// Background of an unselected button or group option, hovered or not.
   final Color? backgroundColor;
 
-  /// Text / icon foreground color.
+  /// Text and icon color of an unselected button or group option.
   final Color? foregroundColor;
 
-  /// Background color when selected.
+  /// Background of a selected button or group option.
   final Color? selectedBackgroundColor;
 
-  /// Foreground color when selected.
+  /// Text and icon color of a selected button or group option.
   final Color? selectedForegroundColor;
 
-  /// Border color.
+  /// Border color of a single button, or of the outline around a group.
   final Color? borderColor;
 
-  /// Border radius.
+  /// Corner radius of a single button, or of the outer corners of a group.
   final BorderRadius? borderRadius;
 
-  /// Internal padding.
+  /// Padding inside a single button or a group option.
   final EdgeInsets? padding;
 
   /// Creates a copy with only the specified properties changed.

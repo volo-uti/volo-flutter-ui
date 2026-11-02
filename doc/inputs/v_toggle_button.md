@@ -76,6 +76,7 @@ Creates a toggle group; set [allowMultiple] to select several values.
 | `type` | `VToggleButtonType` | `VToggleButtonType.ghost` |  | Look of the unselected options. |
 | `size` | `VToggleButtonSize?` |  |  | Option height; defaults to medium. |
 | `fullWidth` | `bool` | `false` |  | Whether the group fills the available width. |
+| `style` | `VToggleButtonStyle?` |  |  | Style override merged over the theme's [VToggleButtonStyle].<br>The same style a single [VToggleButton] reads: its colors and padding apply to each option, its borderRadius and borderColor to the group. |
 
 ## VToggleButtonType
 
@@ -122,7 +123,7 @@ Creates a toggle button option.
 
 ## VToggleButtonStyle
 
-Style override for [VToggleButton].
+Style override for [VToggleButton] and [VToggleButtonGroup].
 
 All properties are nullable — `null` means "use the theme default".
 Supports cascade: theme override → instance override.
@@ -133,13 +134,13 @@ Supports cascade: theme override → instance override.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `backgroundColor` | `Color?` |  |  | Background fill color. |
-| `foregroundColor` | `Color?` |  |  | Text / icon foreground color. |
-| `selectedBackgroundColor` | `Color?` |  |  | Background color when selected. |
-| `selectedForegroundColor` | `Color?` |  |  | Foreground color when selected. |
-| `borderColor` | `Color?` |  |  | Border color. |
-| `borderRadius` | `BorderRadius?` |  |  | Border radius. |
-| `padding` | `EdgeInsets?` |  |  | Internal padding. |
+| `backgroundColor` | `Color?` |  |  | Background of an unselected button or group option, hovered or not. |
+| `foregroundColor` | `Color?` |  |  | Text and icon color of an unselected button or group option. |
+| `selectedBackgroundColor` | `Color?` |  |  | Background of a selected button or group option. |
+| `selectedForegroundColor` | `Color?` |  |  | Text and icon color of a selected button or group option. |
+| `borderColor` | `Color?` |  |  | Border color of a single button, or of the outline around a group. |
+| `borderRadius` | `BorderRadius?` |  |  | Corner radius of a single button, or of the outer corners of a group. |
+| `padding` | `EdgeInsets?` |  |  | Padding inside a single button or a group option. |
 
 ### Members
 

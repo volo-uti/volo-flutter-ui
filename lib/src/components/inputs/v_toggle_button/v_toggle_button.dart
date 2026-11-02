@@ -413,6 +413,7 @@ class VToggleButtonGroup<T> extends StatelessWidget {
     this.type = VToggleButtonType.ghost,
     this.size,
     this.fullWidth = false,
+    this.style,
   });
 
   /// Key identifying this group in debug logs.
@@ -448,9 +449,24 @@ class VToggleButtonGroup<T> extends StatelessWidget {
   /// Whether the group fills the available width.
   final bool fullWidth;
 
+  /// Style override merged over the theme's [VToggleButtonStyle].
+  ///
+  /// The same style a single [VToggleButton] reads: its colors and padding
+  /// apply to each option, its borderRadius and borderColor to the group.
+  final VToggleButtonStyle? style;
+
   @override
   Widget build(BuildContext context) {
     final theme = VTheme.of(context);
+
+    // Apply style overrides (Level 3 → Level 4 cascade)
+    final themeStyle = theme.componentOverrides.get<VToggleButtonStyle>();
+    final resolvedStyle = themeStyle?.merge(style) ?? style;
+    final groupRadius =
+        resolvedStyle?.borderRadius ?? BorderRadius.circular(theme.radius.md);
+    final borderColor =
+        resolvedStyle?.borderColor ??
+        (type == VToggleButtonType.outlined ? theme.colors.border : null);
 
     // Determine height from size token
     final sizeToken = switch (size) {
@@ -466,13 +482,11 @@ class VToggleButtonGroup<T> extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: type == VToggleButtonType.filled ? theme.colors.muted : null,
-          border: type == VToggleButtonType.outlined
-              ? Border.all(color: theme.colors.border)
-              : null,
-          borderRadius: BorderRadius.circular(theme.radius.md),
+          border: borderColor != null ? Border.all(color: borderColor) : null,
+          borderRadius: groupRadius,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(theme.radius.md),
+          borderRadius: groupRadius,
           child: Row(
             mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
             children: List.generate(items.length, (index) {
@@ -481,19 +495,19 @@ class VToggleButtonGroup<T> extends StatelessWidget {
                   ? values.contains(item.value)
                   : value == item.value;
 
-              // Corner radius
+              // Corner radius: the group's outer corners only
               BorderRadius? borderRadius;
               if (items.length == 1) {
-                borderRadius = BorderRadius.circular(theme.radius.md);
+                borderRadius = groupRadius;
               } else if (index == 0) {
                 borderRadius = BorderRadius.only(
-                  topLeft: Radius.circular(theme.radius.md),
-                  bottomLeft: Radius.circular(theme.radius.md),
+                  topLeft: groupRadius.topLeft,
+                  bottomLeft: groupRadius.bottomLeft,
                 );
               } else if (index == items.length - 1) {
                 borderRadius = BorderRadius.only(
-                  topRight: Radius.circular(theme.radius.md),
-                  bottomRight: Radius.circular(theme.radius.md),
+                  topRight: groupRadius.topRight,
+                  bottomRight: groupRadius.bottomRight,
                 );
               }
 
@@ -503,6 +517,7 @@ class VToggleButtonGroup<T> extends StatelessWidget {
                 borderRadius: borderRadius,
                 height: height,
                 fullWidth: fullWidth,
+                style: resolvedStyle,
                 onTap: !item.enabled
                     ? null
                     : () => _handleItemTap(item.value, isSelected),
@@ -566,6 +581,7 @@ class _ToggleButtonGroupItem<T> extends StatefulWidget {
     required this.height,
     required this.onTap,
     this.fullWidth = false,
+    this.style,
   });
 
   final VToggleButtonItem<T> item;
@@ -574,6 +590,7 @@ class _ToggleButtonGroupItem<T> extends StatefulWidget {
   final double height;
   final VoidCallback? onTap;
   final bool fullWidth;
+  final VToggleButtonStyle? style;
 
   @override
   State<_ToggleButtonGroupItem<T>> createState() =>
@@ -597,19 +614,23 @@ class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
   @override
   Widget build(BuildContext context) {
     final theme = VTheme.of(context);
+    final style = widget.style;
 
-    // Background color on hover
+    // Colors: the style wins over the tokens, as on a single VToggleButton.
     Color backgroundColor;
+    Color foregroundColor;
     if (widget.isSelected) {
-      backgroundColor = theme.colors.accent;
-    } else if (_isHovered && _isEnabled) {
-      backgroundColor = theme.colors.accent;
+      backgroundColor = style?.selectedBackgroundColor ?? theme.colors.accent;
+      foregroundColor =
+          style?.selectedForegroundColor ?? theme.colors.accentForeground;
     } else {
-      backgroundColor = VColors.transparent;
+      backgroundColor =
+          style?.backgroundColor ??
+          (_isHovered && _isEnabled
+              ? theme.colors.accent
+              : VColors.transparent);
+      foregroundColor = style?.foregroundColor ?? theme.colors.foreground;
     }
-    final foregroundColor = widget.isSelected
-        ? theme.colors.accentForeground
-        : theme.colors.foreground;
 
     final textStyle = TextStyle(
       fontSize: theme.sizes.md.fontSize,
@@ -636,7 +657,8 @@ class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
     Widget toggle = AnimatedContainer(
       duration: theme.animations.fast,
       height: widget.height,
-      padding: EdgeInsets.symmetric(horizontal: theme.spacing.md),
+      padding:
+          style?.padding ?? EdgeInsets.symmetric(horizontal: theme.spacing.md),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: widget.borderRadius,

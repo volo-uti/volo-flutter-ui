@@ -1130,5 +1130,151 @@ void main() {
         expect(find.text('G'), findsOneWidget);
       });
     });
+
+    // ── Style ────────────────────────────────────────────────────────
+
+    group('style', () {
+      final theme = VThemeData.light();
+      const style = VToggleButtonStyle(
+        backgroundColor: Color(0xFFF0F0F0),
+        foregroundColor: Color(0xFF333333),
+        selectedBackgroundColor: Color(0xFF0000AA),
+        selectedForegroundColor: Color(0xFFFFFFFF),
+        borderColor: Color(0xFF00AA00),
+        borderRadius: BorderRadius.all(Radius.circular(3)),
+        padding: EdgeInsets.symmetric(horizontal: 30),
+      );
+
+      // Applies [style] through the theme or as the instance style.
+      Widget styled({
+        required bool viaTheme,
+        required Widget Function(VToggleButtonStyle? instanceStyle) build,
+      }) => VTheme(
+        data: theme.copyWith(
+          componentOverrides: VComponentOverrides(viaTheme ? [style] : []),
+        ),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Center(child: build(viaTheme ? null : style)),
+        ),
+      );
+
+      List<BoxDecoration> optionDecorations(WidgetTester tester) => tester
+          .widgetList<AnimatedContainer>(
+            find.descendant(
+              of: find.byType(VToggleButtonGroup<String>),
+              matching: find.byType(AnimatedContainer),
+            ),
+          )
+          .map((c) => c.decoration! as BoxDecoration)
+          .toList();
+
+      BoxDecoration groupDecoration(WidgetTester tester) =>
+          tester
+                  .widget<Container>(
+                    find
+                        .descendant(
+                          of: find.byType(VToggleButtonGroup<String>),
+                          matching: find.byType(Container),
+                        )
+                        .first,
+                  )
+                  .decoration!
+              as BoxDecoration;
+
+      Color? textColorOf(WidgetTester tester, String text) => tester
+          .widget<RichText>(
+            find.descendant(
+              of: find.text(text),
+              matching: find.byType(RichText),
+            ),
+          )
+          .text
+          .style!
+          .color;
+
+      for (final viaTheme in [true, false]) {
+        final via = viaTheme ? 'theme' : 'instance';
+
+        testWidgets('colors, corners, border and padding follow the style '
+            '($via)', (tester) async {
+          await tester.pumpWidget(
+            styled(
+              viaTheme: viaTheme,
+              build: (s) => VToggleButtonGroup<String>(
+                items: testItems,
+                value: 'grid',
+                onChanged: (_) {},
+                style: s,
+              ),
+            ),
+          );
+
+          final options = optionDecorations(tester);
+          expect(options[0].color, style.selectedBackgroundColor);
+          expect(options[1].color, style.backgroundColor);
+          expect(textColorOf(tester, 'Grid'), style.selectedForegroundColor);
+          expect(textColorOf(tester, 'List'), style.foregroundColor);
+
+          const r = Radius.circular(3);
+          expect(
+            options.first.borderRadius,
+            const BorderRadius.only(topLeft: r, bottomLeft: r),
+          );
+          expect(
+            options.last.borderRadius,
+            const BorderRadius.only(topRight: r, bottomRight: r),
+          );
+          final group = groupDecoration(tester);
+          expect(group.borderRadius, style.borderRadius);
+          expect((group.border! as Border).top.color, style.borderColor);
+          expect(
+            tester
+                .widget<ClipRRect>(
+                  find.descendant(
+                    of: find.byType(VToggleButtonGroup<String>),
+                    matching: find.byType(ClipRRect),
+                  ),
+                )
+                .borderRadius,
+            style.borderRadius,
+          );
+
+          final option = find
+              .descendant(
+                of: find.byType(VToggleButtonGroup<String>),
+                matching: find.byType(AnimatedContainer),
+              )
+              .at(1);
+          expect(
+            tester.getTopLeft(find.text('List')).dx -
+                tester.getTopLeft(option).dx,
+            30,
+          );
+        });
+      }
+
+      testWidgets('without a style, the tokens draw the group', (tester) async {
+        await tester.pumpWidget(
+          buildTestWidget(
+            VToggleButtonGroup<String>(
+              items: testItems,
+              value: 'grid',
+              type: VToggleButtonType.outlined,
+              onChanged: (_) {},
+            ),
+          ),
+        );
+
+        final options = optionDecorations(tester);
+        expect(options[0].color, theme.colors.accent);
+        expect(options[1].color, VColors.transparent);
+        expect(textColorOf(tester, 'Grid'), theme.colors.accentForeground);
+        expect(textColorOf(tester, 'List'), theme.colors.foreground);
+        final group = groupDecoration(tester);
+        expect(group.borderRadius, BorderRadius.circular(theme.radius.md));
+        expect((group.border! as Border).top.color, theme.colors.border);
+      });
+    });
   });
 }
