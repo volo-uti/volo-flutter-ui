@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_form_field/v_form_field.dart';
 import 'package:volo_flutter_ui/src/components/surfaces/v_popover/v_popover.dart';
+import 'package:volo_flutter_ui/src/components/surfaces/v_popover/v_popover_style.dart';
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/utils/v_debug.dart';
@@ -233,6 +234,7 @@ class _VSelectState<T> extends State<VSelect<T>> {
   String _searchQuery = '';
   double? _triggerWidth;
   int _hoveredIndex = -1;
+  bool _hasFocus = false;
 
   // Internal selection state (for multiple selection)
   late List<T> _internalValues;
@@ -454,29 +456,50 @@ class _VSelectState<T> extends State<VSelect<T>> {
     final isDisabled = !widget.enabled;
     final sizeToken = _sizeToken;
 
+    // Keyboard focus draws a thicker border in the focus color (WCAG 2.4.7).
+    final isFocused = _hasFocus && !isDisabled;
     Color borderColor;
     if (isDisabled) {
       borderColor = colors.muted;
     } else if (isError) {
       borderColor = colors.destructive;
+    } else if (isFocused) {
+      borderColor = resolvedStyle?.focusBorderColor ?? colors.ring;
     } else {
       borderColor = resolvedStyle?.borderColor ?? colors.input;
     }
 
     final displayText = _displayText(context);
+    final hasValue =
+        displayText.isNotEmpty && displayText != widget.placeholder;
+    // The body type style at the size's font size, then the style's
+    // textStyle; foregroundColor wins over its color, and the placeholder
+    // stays muted.
+    final triggerTextStyle = typography.bodyMedium
+        .copyWith(fontSize: sizeToken.fontSize)
+        .merge(resolvedStyle?.textStyle)
+        .copyWith(
+          color: hasValue
+              ? resolvedStyle?.foregroundColor ??
+                    resolvedStyle?.textStyle?.color ??
+                    colors.foreground
+              : colors.mutedForeground,
+        );
 
     final Widget trigger = Container(
       key: _triggerKey,
       height: sizeToken.height,
       constraints: widget.fullWidth
           ? null
-          : BoxConstraints(minWidth: _triggerMinWidth),
+          : BoxConstraints(
+              minWidth: resolvedStyle?.minWidth ?? _triggerMinWidth,
+            ),
       padding:
           resolvedStyle?.padding ??
           EdgeInsets.symmetric(horizontal: sizeToken.paddingHorizontal),
       decoration: BoxDecoration(
         color: resolvedStyle?.backgroundColor ?? colors.background,
-        border: Border.all(color: borderColor),
+        border: Border.all(color: borderColor, width: isFocused ? 2 : 1),
         borderRadius: resolvedStyle?.borderRadius ?? _borderRadius,
       ),
       child: Row(
@@ -484,13 +507,7 @@ class _VSelectState<T> extends State<VSelect<T>> {
           Expanded(
             child: Text(
               displayText,
-              style: typography.bodyMedium.copyWith(
-                color:
-                    displayText.isNotEmpty && displayText != widget.placeholder
-                    ? colors.foreground
-                    : colors.mutedForeground,
-                fontSize: sizeToken.fontSize,
-              ),
+              style: triggerTextStyle,
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -663,13 +680,28 @@ class _VSelectState<T> extends State<VSelect<T>> {
       ),
     );
 
+    final dropdownBackgroundColor = resolvedStyle?.dropdownBackgroundColor;
+    final dropdownBorderRadius = resolvedStyle?.dropdownBorderRadius;
+
+    // WHY: The select is one focus stop. Its own node takes the keyboard and
+    // draws the focus border, so the popover trigger inside may not take focus.
     Widget select = Focus(
       canRequestFocus: !isDisabled && !widget.readOnly,
       skipTraversal: isDisabled || widget.readOnly,
+      descendantsAreFocusable: false,
+      onFocusChange: (focused) {
+        if (mounted) setState(() => _hasFocus = focused);
+      },
       onKeyEvent: _handleKeyEvent,
       child: VPopover(
         controller: _popoverController,
         position: widget.popoverPosition,
+        style: dropdownBackgroundColor == null && dropdownBorderRadius == null
+            ? null
+            : VPopoverStyle(
+                backgroundColor: dropdownBackgroundColor,
+                borderRadius: dropdownBorderRadius,
+              ),
         content: dropdown,
         child: Opacity(
           opacity: isDisabled ? 0.5 : 1.0,

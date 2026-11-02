@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
@@ -1401,6 +1402,244 @@ void main() {
       );
 
       expect(find.byType(VSelect<String>), findsOneWidget);
+    });
+  });
+
+  group('style fields', () {
+    final theme = VThemeData.light();
+    const items = [
+      VSelectItem(value: 'a', label: 'Alpha'),
+      VSelectItem(value: 'b', label: 'Beta'),
+    ];
+    const style = VSelectStyle(
+      foregroundColor: Color(0xFF0000AA),
+      textStyle: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+      focusBorderColor: Color(0xFFAA00AA),
+      dropdownBackgroundColor: Color(0xFFFAFAF0),
+      dropdownBorderRadius: BorderRadius.all(Radius.circular(3)),
+      minWidth: 260,
+    );
+
+    // Applies [style] through the theme or as the instance style.
+    Widget styled({
+      required bool viaTheme,
+      required Widget Function(VSelectStyle? instanceStyle) build,
+    }) => VTheme(
+      data: theme.copyWith(
+        componentOverrides: VComponentOverrides(viaTheme ? [style] : []),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: const MediaQueryData(size: Size(800, 800)),
+          child: Overlay(
+            initialEntries: [
+              OverlayEntry(
+                builder: (_) => Align(
+                  alignment: Alignment.topCenter,
+                  child: build(viaTheme ? null : style),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    Finder trigger() => find
+        .descendant(of: find.byType(VPopover), matching: find.byType(Container))
+        .first;
+
+    Border borderOf(WidgetTester tester) =>
+        (tester.widget<Container>(trigger()).decoration! as BoxDecoration)
+                .border!
+            as Border;
+
+    void focusSelect(WidgetTester tester) =>
+        Focus.of(tester.element(find.byType(VPopover))).requestFocus();
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('the picked value takes foregroundColor and textStyle '
+          '($via)', (tester) async {
+        await tester.pumpWidget(
+          styled(
+            viaTheme: viaTheme,
+            build: (s) => VSelect<String>(
+              items: items,
+              value: 'a',
+              onChanged: (_) {},
+              style: s,
+            ),
+          ),
+        );
+
+        final text = tester.widget<Text>(find.text('Alpha')).style!;
+        expect(text.color, style.foregroundColor);
+        expect(text.fontSize, 18);
+        expect(text.fontStyle, FontStyle.italic);
+      });
+
+      testWidgets('the placeholder stays muted ($via)', (tester) async {
+        await tester.pumpWidget(
+          styled(
+            viaTheme: viaTheme,
+            build: (s) => VSelect<String>(
+              items: items,
+              placeholder: 'Pick one',
+              onChanged: (_) {},
+              style: s,
+            ),
+          ),
+        );
+
+        final text = tester.widget<Text>(find.text('Pick one')).style!;
+        expect(text.color, theme.colors.mutedForeground);
+        expect(text.fontSize, 18);
+      });
+
+      testWidgets('keyboard focus draws focusBorderColor ($via)', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          styled(
+            viaTheme: viaTheme,
+            build: (s) =>
+                VSelect<String>(items: items, onChanged: (_) {}, style: s),
+          ),
+        );
+        expect(borderOf(tester).top.color, theme.colors.input);
+        expect(borderOf(tester).top.width, 1);
+
+        focusSelect(tester);
+        await tester.pump();
+
+        expect(borderOf(tester).top.color, style.focusBorderColor);
+        expect(borderOf(tester).top.width, 2);
+      });
+
+      testWidgets('minWidth sets the shrink-wrapped trigger width ($via)', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          styled(
+            viaTheme: viaTheme,
+            // The trigger fills a bounded width; minWidth shows when the
+            // select is sized to its content.
+            build: (s) => IntrinsicWidth(
+              child: VSelect<String>(items: items, onChanged: (_) {}, style: s),
+            ),
+          ),
+        );
+
+        expect(tester.getSize(trigger()).width, 260);
+      });
+
+      testWidgets('the dropdown takes its background and radius ($via)', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          styled(
+            viaTheme: viaTheme,
+            build: (s) =>
+                VSelect<String>(items: items, onChanged: (_) {}, style: s),
+          ),
+        );
+        await tester.tap(find.byType(VSelect<String>));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is Container &&
+                widget.decoration is BoxDecoration &&
+                (widget.decoration! as BoxDecoration).color ==
+                    style.dropdownBackgroundColor &&
+                (widget.decoration! as BoxDecoration).borderRadius ==
+                    style.dropdownBorderRadius,
+          ),
+          findsOneWidget,
+        );
+      });
+    }
+
+    testWidgets('without a style, focus draws the ring color', (tester) async {
+      await tester.pumpWidget(
+        buildOverlayTestWidget(
+          VSelect<String>(items: items, onChanged: (_) {}),
+        ),
+      );
+      focusSelect(tester);
+      await tester.pump();
+
+      expect(borderOf(tester).top.color, theme.colors.ring);
+      expect(borderOf(tester).top.width, 2);
+    });
+
+    testWidgets('without minWidth, a shrink-wrapped trigger keeps the size '
+        'default', (tester) async {
+      await tester.pumpWidget(
+        buildOverlayTestWidget(
+          IntrinsicWidth(
+            child: VSelect<String>(items: items, onChanged: (_) {}),
+          ),
+        ),
+      );
+
+      // The md trigger's default minimum width.
+      expect(tester.getSize(trigger()).width, 208);
+    });
+
+    testWidgets('error keeps its color while focused', (tester) async {
+      await tester.pumpWidget(
+        buildOverlayTestWidget(
+          VSelect<String>(items: items, error: true, onChanged: (_) {}),
+        ),
+      );
+      focusSelect(tester);
+      await tester.pump();
+
+      expect(borderOf(tester).top.color, theme.colors.destructive);
+      expect(borderOf(tester).top.width, 2);
+    });
+
+    testWidgets('Tab stops on the select once and shows its focus', (
+      tester,
+    ) async {
+      final before = FocusNode();
+      final after = FocusNode();
+      addTearDown(before.dispose);
+      addTearDown(after.dispose);
+      await tester.pumpWidget(
+        buildOverlayTestWidget(
+          Shortcuts(
+            shortcuts: WidgetsApp.defaultShortcuts,
+            child: Actions(
+              actions: WidgetsApp.defaultActions,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Focus(focusNode: before, child: const SizedBox(height: 10)),
+                  VSelect<String>(items: items, onChanged: (_) {}),
+                  Focus(focusNode: after, child: const SizedBox(height: 10)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      before.requestFocus();
+      await tester.pump();
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      expect(borderOf(tester).top.color, theme.colors.ring);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      expect(after.hasFocus, isTrue);
+      expect(borderOf(tester).top.color, theme.colors.input);
     });
   });
 }
