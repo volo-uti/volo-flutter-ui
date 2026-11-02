@@ -45,7 +45,7 @@ Creates a 56x56 FAB.
 | `tooltip` | `String?` |  |  | Label announced by screen readers. |
 | `backgroundColor` | `Color?` |  |  | Fill color; defaults to the primary color. |
 | `foregroundColor` | `Color?` |  |  | Icon and label color; defaults to the primary foreground color. |
-| `elevation` | `double?` |  |  | Shadow depth in logical pixels; defaults to the theme's medium shadow. |
+| `elevation` | `double?` |  |  | Shadow depth in logical pixels; defaults to the theme's medium shadow.<br>When set it wins over [VFabStyle.shadows]. |
 | `heroTag` | `Object?` |  |  | Tag that makes the FAB a [Hero] across route transitions. |
 | `enabled` | `bool` | `true` |  | Whether the FAB reacts to input; `false` dims it and blocks presses. |
 | `style` | `VFabStyle?` |  |  | Per-instance style override merged over the theme's [VFabStyle]. |
@@ -61,7 +61,7 @@ Creates a 40x40 FAB.
 | `tooltip` | `String?` |  |  | Label announced by screen readers. |
 | `backgroundColor` | `Color?` |  |  | Fill color; defaults to the primary color. |
 | `foregroundColor` | `Color?` |  |  | Icon and label color; defaults to the primary foreground color. |
-| `elevation` | `double?` |  |  | Shadow depth in logical pixels; defaults to the theme's medium shadow. |
+| `elevation` | `double?` |  |  | Shadow depth in logical pixels; defaults to the theme's medium shadow.<br>When set it wins over [VFabStyle.shadows]. |
 | `heroTag` | `Object?` |  |  | Tag that makes the FAB a [Hero] across route transitions. |
 | `enabled` | `bool` | `true` |  | Whether the FAB reacts to input; `false` dims it and blocks presses. |
 | `style` | `VFabStyle?` |  |  | Per-instance style override merged over the theme's [VFabStyle]. |
@@ -77,7 +77,7 @@ Creates a 96x96 FAB.
 | `tooltip` | `String?` |  |  | Label announced by screen readers. |
 | `backgroundColor` | `Color?` |  |  | Fill color; defaults to the primary color. |
 | `foregroundColor` | `Color?` |  |  | Icon and label color; defaults to the primary foreground color. |
-| `elevation` | `double?` |  |  | Shadow depth in logical pixels; defaults to the theme's medium shadow. |
+| `elevation` | `double?` |  |  | Shadow depth in logical pixels; defaults to the theme's medium shadow.<br>When set it wins over [VFabStyle.shadows]. |
 | `heroTag` | `Object?` |  |  | Tag that makes the FAB a [Hero] across route transitions. |
 | `enabled` | `bool` | `true` |  | Whether the FAB reacts to input; `false` dims it and blocks presses. |
 | `style` | `VFabStyle?` |  |  | Per-instance style override merged over the theme's [VFabStyle]. |
@@ -94,7 +94,7 @@ Creates a pill-shaped FAB with an icon and a text label.
 | `tooltip` | `String?` |  |  | Label announced by screen readers. |
 | `backgroundColor` | `Color?` |  |  | Fill color; defaults to the primary color. |
 | `foregroundColor` | `Color?` |  |  | Icon and label color; defaults to the primary foreground color. |
-| `elevation` | `double?` |  |  | Shadow depth in logical pixels; defaults to the theme's medium shadow. |
+| `elevation` | `double?` |  |  | Shadow depth in logical pixels; defaults to the theme's medium shadow.<br>When set it wins over [VFabStyle.shadows]. |
 | `heroTag` | `Object?` |  |  | Tag that makes the FAB a [Hero] across route transitions. |
 | `enabled` | `bool` | `true` |  | Whether the FAB reacts to input; `false` dims it and blocks presses. |
 | `style` | `VFabStyle?` |  |  | Per-instance style override merged over the theme's [VFabStyle]. |
@@ -115,12 +115,12 @@ Supports cascade: theme override → instance override.
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
 | `foregroundColor` | `Color?` |  |  | Text / icon foreground color. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
-| `elevation` | `double?` |  |  | Elevation (shadow depth). |
-| `overlayColor` | `Color?` |  |  | Press / hover overlay color. |
-| `iconColor` | `Color?` |  |  | Icon tint color. |
+| `shadows` | `List<BoxShadow>?` |  |  | Shadows under the FAB; the theme's medium shadow, large while pressed, when null.<br>The list replaces both, and an empty list draws none. [VFab.elevation] wins over it, and an instance style wins over the theme override. |
+| `overlayColor` | `Color?` |  |  | Color laid over the fill while the FAB is hovered or pressed; none when null.<br>An instance style wins over the theme override. |
+| `iconColor` | `Color?` |  |  | Color of the icon; the FAB's foreground color when null.<br>The label keeps the foreground color. An instance style wins over the theme override. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VFabStyle copyWith({Color? backgroundColor, Color? foregroundColor, BorderRadius? borderRadius, double? elevation, Color? overlayColor, Color? iconColor})` | Creates a copy with only the specified properties changed. |
+| `VFabStyle copyWith({Color? backgroundColor, Color? foregroundColor, BorderRadius? borderRadius, List<BoxShadow>? shadows, Color? overlayColor, Color? iconColor})` | Creates a copy with only the specified properties changed. |

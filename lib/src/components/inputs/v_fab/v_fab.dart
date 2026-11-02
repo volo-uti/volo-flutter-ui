@@ -125,6 +125,8 @@ class VFab extends StatefulWidget {
   final Color? foregroundColor;
 
   /// Shadow depth in logical pixels; defaults to the theme's medium shadow.
+  ///
+  /// When set it wins over [VFabStyle.shadows].
   final double? elevation;
 
   /// Tag that makes the FAB a [Hero] across route transitions.
@@ -146,6 +148,7 @@ class VFab extends StatefulWidget {
 
 class _VFabState extends State<VFab> with SingleTickerProviderStateMixin {
   bool _isPressed = false;
+  bool _isHovered = false;
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   bool _isFocused = false;
@@ -231,6 +234,13 @@ class _VFabState extends State<VFab> with SingleTickerProviderStateMixin {
       backgroundColor = resolvedStyle.backgroundColor ?? backgroundColor;
       foregroundColor = resolvedStyle.foregroundColor ?? foregroundColor;
     }
+    final iconColor = resolvedStyle?.iconColor ?? foregroundColor;
+
+    // The style's overlay color is laid over the fill on hover and press.
+    final overlayColor = resolvedStyle?.overlayColor;
+    if (overlayColor != null && _isEnabled && (_isHovered || _isPressed)) {
+      backgroundColor = Color.alphaBlend(overlayColor, backgroundColor);
+    }
     // Icon size
     final iconSize = widget._size == 96
         ? 36.0
@@ -254,13 +264,9 @@ class _VFabState extends State<VFab> with SingleTickerProviderStateMixin {
       if (widget.icon != null) {
         items.add(
           IconTheme(
-            data: IconThemeData(color: foregroundColor, size: iconSize),
+            data: IconThemeData(color: iconColor, size: iconSize),
             child: DefaultTextStyle(
-              style: TextStyle(
-                color: foregroundColor,
-                fontSize: iconSize,
-                height: 1,
-              ),
+              style: TextStyle(color: iconColor, fontSize: iconSize, height: 1),
               child: widget.icon!,
             ),
           ),
@@ -277,13 +283,9 @@ class _VFabState extends State<VFab> with SingleTickerProviderStateMixin {
       content = Row(mainAxisSize: MainAxisSize.min, children: items);
     } else if (widget.icon != null) {
       content = IconTheme(
-        data: IconThemeData(color: foregroundColor, size: iconSize),
+        data: IconThemeData(color: iconColor, size: iconSize),
         child: DefaultTextStyle(
-          style: TextStyle(
-            color: foregroundColor,
-            fontSize: iconSize,
-            height: 1,
-          ),
+          style: TextStyle(color: iconColor, fontSize: iconSize, height: 1),
           child: widget.icon!,
         ),
       );
@@ -309,7 +311,8 @@ class _VFabState extends State<VFab> with SingleTickerProviderStateMixin {
               offset: Offset(0, elevation / 2),
             ),
           ]
-        : (_isPressed ? theme.shadows.lg : theme.shadows.md);
+        : resolvedStyle?.shadows ??
+              (_isPressed ? theme.shadows.lg : theme.shadows.md);
 
     Widget fab = AnimatedBuilder(
       animation: _controller,
@@ -346,6 +349,11 @@ class _VFabState extends State<VFab> with SingleTickerProviderStateMixin {
       onTapCancel: _handleTapCancel,
       onTap: _handleTap,
       behavior: HitTestBehavior.opaque,
+      child: fab,
+    );
+    fab = MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
       child: fab,
     );
 

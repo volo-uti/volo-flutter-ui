@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/v_component_style.dart';
@@ -12,7 +13,7 @@ class VFabStyle implements VComponentStyle {
     this.backgroundColor,
     this.foregroundColor,
     this.borderRadius,
-    this.elevation,
+    this.shadows,
     this.overlayColor,
     this.iconColor,
   });
@@ -26,13 +27,21 @@ class VFabStyle implements VComponentStyle {
   /// Border radius.
   final BorderRadius? borderRadius;
 
-  /// Elevation (shadow depth).
-  final double? elevation;
+  /// Shadows under the FAB; the theme's medium shadow, large while pressed, when null.
+  ///
+  /// The list replaces both, and an empty list draws none. [VFab.elevation]
+  /// wins over it, and an instance style wins over the theme override.
+  final List<BoxShadow>? shadows;
 
-  /// Press / hover overlay color.
+  /// Color laid over the fill while the FAB is hovered or pressed; none when null.
+  ///
+  /// An instance style wins over the theme override.
   final Color? overlayColor;
 
-  /// Icon tint color.
+  /// Color of the icon; the FAB's foreground color when null.
+  ///
+  /// The label keeps the foreground color. An instance style wins over the
+  /// theme override.
   final Color? iconColor;
 
   /// Creates a copy with only the specified properties changed.
@@ -40,14 +49,14 @@ class VFabStyle implements VComponentStyle {
     Color? backgroundColor,
     Color? foregroundColor,
     BorderRadius? borderRadius,
-    double? elevation,
+    List<BoxShadow>? shadows,
     Color? overlayColor,
     Color? iconColor,
   }) => VFabStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
     foregroundColor: foregroundColor ?? this.foregroundColor,
     borderRadius: borderRadius ?? this.borderRadius,
-    elevation: elevation ?? this.elevation,
+    shadows: shadows ?? this.shadows,
     overlayColor: overlayColor ?? this.overlayColor,
     iconColor: iconColor ?? this.iconColor,
   );
@@ -60,7 +69,7 @@ class VFabStyle implements VComponentStyle {
       backgroundColor: other.backgroundColor ?? backgroundColor,
       foregroundColor: other.foregroundColor ?? foregroundColor,
       borderRadius: other.borderRadius ?? borderRadius,
-      elevation: other.elevation ?? elevation,
+      shadows: other.shadows ?? shadows,
       overlayColor: other.overlayColor ?? overlayColor,
       iconColor: other.iconColor ?? iconColor,
     );
@@ -73,7 +82,7 @@ class VFabStyle implements VComponentStyle {
         other.backgroundColor == backgroundColor &&
         other.foregroundColor == foregroundColor &&
         other.borderRadius == borderRadius &&
-        other.elevation == elevation &&
+        listEquals(other.shadows, shadows) &&
         other.overlayColor == overlayColor &&
         other.iconColor == iconColor;
   }
@@ -83,7 +92,7 @@ class VFabStyle implements VComponentStyle {
     backgroundColor,
     foregroundColor,
     borderRadius,
-    elevation,
+    shadows == null ? null : Object.hashAll(shadows!),
     overlayColor,
     iconColor,
   );
