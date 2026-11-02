@@ -136,8 +136,8 @@ class VBadge extends StatefulWidget {
 
   /// Content shown inside the badge, usually a short [Text].
   ///
-  /// The foreground color, font size and weight come from the badge, so a
-  /// plain [Text] needs no style.
+  /// The foreground color, font size and weight come from the badge and its
+  /// [VBadgeStyle.textStyle], so a plain [Text] needs no style.
   final Widget label;
 
   /// Screen reader label that replaces the text of [label].
@@ -291,20 +291,18 @@ class _VBadgeState extends State<VBadge> with SingleTickerProviderStateMixin {
         break;
     }
 
-    if (resolvedStyle != null) {
-      bgColor = resolvedStyle.backgroundColor ?? bgColor;
-      fgColor = resolvedStyle.foregroundColor ?? fgColor;
-    }
+    bgColor = resolvedStyle?.backgroundColor ?? bgColor;
 
-    final baseTextStyle = (resolvedStyle?.textStyle ?? const TextStyle())
-        .copyWith(
-          fontSize: _fontSize,
-          fontWeight: FontWeight.w500,
-          color: fgColor,
-          height: 1.15,
-        );
+    // The size preset sets the base; the style's textStyle lays over it, and
+    // foregroundColor wins over the textStyle color.
+    final textStyle = TextStyle(
+      fontSize: _fontSize,
+      fontWeight: FontWeight.w500,
+      color: fgColor,
+      height: 1.15,
+    ).merge(resolvedStyle?.textStyle);
     final content = DefaultTextStyle.merge(
-      style: baseTextStyle,
+      style: textStyle.copyWith(color: resolvedStyle?.foregroundColor),
       child: widget.label,
     );
 

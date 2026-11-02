@@ -19,12 +19,18 @@ class VBadgeStyle implements VComponentStyle {
   final Color? backgroundColor;
 
   /// Text foreground color.
+  ///
+  /// Wins over the color of [textStyle].
   final Color? foregroundColor;
 
   /// Border radius.
   final BorderRadius? borderRadius;
 
-  /// Text style.
+  /// Text style merged over the badge default, so only the fields it sets change.
+  ///
+  /// The default is the size preset's font size, weight w500 and line height
+  /// 1.15 in the variant's foreground color. An instance style's text style
+  /// replaces the theme override's.
   final TextStyle? textStyle;
 
   /// Creates a copy with only the specified properties changed.

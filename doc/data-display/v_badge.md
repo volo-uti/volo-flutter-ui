@@ -37,7 +37,7 @@ Muted badge on a neutral background.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge, so a plain [Text] needs no style. |
+| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge and its [VBadgeStyle.textStyle], so a plain [Text] needs no style. |
 | `size` | `VBadgeSize` | `VBadgeSize.md` |  | Height preset of the badge. |
 | `invisible` | `bool` | `false` |  | Whether the badge is hidden and takes no space. |
 | `semanticLabel` | `String?` |  |  | Screen reader label that replaces the text of [label]. |
@@ -49,7 +49,7 @@ Badge in the primary color.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge, so a plain [Text] needs no style. |
+| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge and its [VBadgeStyle.textStyle], so a plain [Text] needs no style. |
 | `size` | `VBadgeSize` | `VBadgeSize.md` |  | Height preset of the badge. |
 | `invisible` | `bool` | `false` |  | Whether the badge is hidden and takes no space. |
 | `semanticLabel` | `String?` |  |  | Screen reader label that replaces the text of [label]. |
@@ -61,7 +61,7 @@ Badge in the secondary color.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge, so a plain [Text] needs no style. |
+| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge and its [VBadgeStyle.textStyle], so a plain [Text] needs no style. |
 | `size` | `VBadgeSize` | `VBadgeSize.md` |  | Height preset of the badge. |
 | `invisible` | `bool` | `false` |  | Whether the badge is hidden and takes no space. |
 | `semanticLabel` | `String?` |  |  | Screen reader label that replaces the text of [label]. |
@@ -73,7 +73,7 @@ Badge in the success color.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge, so a plain [Text] needs no style. |
+| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge and its [VBadgeStyle.textStyle], so a plain [Text] needs no style. |
 | `size` | `VBadgeSize` | `VBadgeSize.md` |  | Height preset of the badge. |
 | `invisible` | `bool` | `false` |  | Whether the badge is hidden and takes no space. |
 | `semanticLabel` | `String?` |  |  | Screen reader label that replaces the text of [label]. |
@@ -85,7 +85,7 @@ Badge in the warning color.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge, so a plain [Text] needs no style. |
+| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge and its [VBadgeStyle.textStyle], so a plain [Text] needs no style. |
 | `size` | `VBadgeSize` | `VBadgeSize.md` |  | Height preset of the badge. |
 | `invisible` | `bool` | `false` |  | Whether the badge is hidden and takes no space. |
 | `semanticLabel` | `String?` |  |  | Screen reader label that replaces the text of [label]. |
@@ -97,7 +97,7 @@ Badge in the destructive color.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge, so a plain [Text] needs no style. |
+| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge and its [VBadgeStyle.textStyle], so a plain [Text] needs no style. |
 | `size` | `VBadgeSize` | `VBadgeSize.md` |  | Height preset of the badge. |
 | `invisible` | `bool` | `false` |  | Whether the badge is hidden and takes no space. |
 | `semanticLabel` | `String?` |  |  | Screen reader label that replaces the text of [label]. |
@@ -109,7 +109,7 @@ Transparent badge with a border.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge, so a plain [Text] needs no style. |
+| `label` | `Widget` |  | yes | Content shown inside the badge, usually a short [Text].<br>The foreground color, font size and weight come from the badge and its [VBadgeStyle.textStyle], so a plain [Text] needs no style. |
 | `size` | `VBadgeSize` | `VBadgeSize.md` |  | Height preset of the badge. |
 | `invisible` | `bool` | `false` |  | Whether the badge is hidden and takes no space. |
 | `semanticLabel` | `String?` |  |  | Screen reader label that replaces the text of [label]. |
@@ -156,9 +156,9 @@ Supports cascade: theme override → instance override.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
-| `foregroundColor` | `Color?` |  |  | Text foreground color. |
+| `foregroundColor` | `Color?` |  |  | Text foreground color.<br>Wins over the color of [textStyle]. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
-| `textStyle` | `TextStyle?` |  |  | Text style. |
+| `textStyle` | `TextStyle?` |  |  | Text style merged over the badge default, so only the fields it sets change.<br>The default is the size preset's font size, weight w500 and line height 1.15 in the variant's foreground color. An instance style's text style replaces the theme override's. |
 
 ### Members
 
