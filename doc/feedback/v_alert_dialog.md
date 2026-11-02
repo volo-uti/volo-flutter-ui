@@ -92,7 +92,7 @@ Supports cascade: theme override → instance override.
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
 | `foregroundColor` | `Color?` |  |  | Text foreground color. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
-| `elevation` | `double?` |  |  | Elevation (shadow depth). |
+| `shadows` | `List<BoxShadow>?` |  |  | Shadows around the dialog panel; the theme's large shadow when null.<br>An empty list draws no shadow. An instance style wins over the theme override. |
 | `padding` | `EdgeInsets?` |  |  | Internal padding. |
 | `titleStyle` | `TextStyle?` |  |  | Title text style. |
 
@@ -100,4 +100,4 @@ Supports cascade: theme override → instance override.
 
 | Member | Description |
 |---|---|
-| `VAlertDialogStyle copyWith({Color? backgroundColor, Color? foregroundColor, BorderRadius? borderRadius, double? elevation, EdgeInsets? padding, TextStyle? titleStyle})` | Creates a copy with only the specified properties changed. |
+| `VAlertDialogStyle copyWith({Color? backgroundColor, Color? foregroundColor, BorderRadius? borderRadius, List<BoxShadow>? shadows, EdgeInsets? padding, TextStyle? titleStyle})` | Creates a copy with only the specified properties changed. |

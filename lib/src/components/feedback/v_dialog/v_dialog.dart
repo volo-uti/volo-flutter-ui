@@ -263,7 +263,7 @@ class VDialog extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: bgColor,
                     borderRadius: borderRadius,
-                    boxShadow: theme.shadows.lg,
+                    boxShadow: resolvedStyle?.shadows ?? theme.shadows.lg,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,

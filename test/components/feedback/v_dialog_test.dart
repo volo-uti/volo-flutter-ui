@@ -2137,4 +2137,67 @@ void main() {
       expect(find.text('Open'), findsOneWidget);
     });
   });
+
+  group('VDialogStyle.shadows', () {
+    const shadow = [BoxShadow(color: Color(0x33000000), blurRadius: 3)];
+    const themeShadow = [BoxShadow(color: Color(0x55000000), blurRadius: 9)];
+
+    Widget dialog({VDialogStyle? style, VThemeData? theme}) => VTheme(
+      data: theme ?? VThemeData.light(),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: VDialog.custom(content: const Text('Body'), style: style),
+      ),
+    );
+
+    // The decoration of the dialog panel around the body text.
+    BoxDecoration panel(WidgetTester tester) => tester
+        .widgetList<Container>(
+          find.ancestor(
+            of: find.text('Body'),
+            matching: find.byType(Container),
+          ),
+        )
+        .map((c) => c.decoration)
+        .whereType<BoxDecoration>()
+        .first;
+
+    testWidgets('the theme large shadow by default', (tester) async {
+      await tester.pumpWidget(dialog());
+      expect(panel(tester).boxShadow, VThemeData.light().shadows.lg);
+    });
+
+    testWidgets('the style shadows replace it; an empty list draws none', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        dialog(style: const VDialogStyle(shadows: shadow)),
+      );
+      expect(panel(tester).boxShadow, shadow);
+
+      await tester.pumpWidget(dialog(style: const VDialogStyle(shadows: [])));
+      expect(panel(tester).boxShadow, isEmpty);
+    });
+
+    testWidgets('the instance style wins over the theme override', (
+      tester,
+    ) async {
+      final theme = VThemeData.light().copyWith(
+        componentOverrides: const VComponentOverrides([
+          VDialogStyle(shadows: themeShadow),
+        ]),
+      );
+
+      await tester.pumpWidget(dialog(theme: theme));
+      expect(panel(tester).boxShadow, themeShadow);
+
+      await tester.pumpWidget(
+        dialog(
+          theme: theme,
+          style: const VDialogStyle(shadows: shadow),
+        ),
+      );
+      expect(panel(tester).boxShadow, shadow);
+    });
+  });
 }

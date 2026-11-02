@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/v_component_style.dart';
@@ -12,7 +13,7 @@ class VAlertDialogStyle implements VComponentStyle {
     this.backgroundColor,
     this.foregroundColor,
     this.borderRadius,
-    this.elevation,
+    this.shadows,
     this.padding,
     this.titleStyle,
   });
@@ -26,8 +27,11 @@ class VAlertDialogStyle implements VComponentStyle {
   /// Border radius.
   final BorderRadius? borderRadius;
 
-  /// Elevation (shadow depth).
-  final double? elevation;
+  /// Shadows around the dialog panel; the theme's large shadow when null.
+  ///
+  /// An empty list draws no shadow. An instance style wins over the theme
+  /// override.
+  final List<BoxShadow>? shadows;
 
   /// Internal padding.
   final EdgeInsets? padding;
@@ -40,14 +44,14 @@ class VAlertDialogStyle implements VComponentStyle {
     Color? backgroundColor,
     Color? foregroundColor,
     BorderRadius? borderRadius,
-    double? elevation,
+    List<BoxShadow>? shadows,
     EdgeInsets? padding,
     TextStyle? titleStyle,
   }) => VAlertDialogStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
     foregroundColor: foregroundColor ?? this.foregroundColor,
     borderRadius: borderRadius ?? this.borderRadius,
-    elevation: elevation ?? this.elevation,
+    shadows: shadows ?? this.shadows,
     padding: padding ?? this.padding,
     titleStyle: titleStyle ?? this.titleStyle,
   );
@@ -60,7 +64,7 @@ class VAlertDialogStyle implements VComponentStyle {
       backgroundColor: other.backgroundColor ?? backgroundColor,
       foregroundColor: other.foregroundColor ?? foregroundColor,
       borderRadius: other.borderRadius ?? borderRadius,
-      elevation: other.elevation ?? elevation,
+      shadows: other.shadows ?? shadows,
       padding: other.padding ?? padding,
       titleStyle: other.titleStyle ?? titleStyle,
     );
@@ -73,7 +77,7 @@ class VAlertDialogStyle implements VComponentStyle {
         other.backgroundColor == backgroundColor &&
         other.foregroundColor == foregroundColor &&
         other.borderRadius == borderRadius &&
-        other.elevation == elevation &&
+        listEquals(other.shadows, shadows) &&
         other.padding == padding &&
         other.titleStyle == titleStyle;
   }
@@ -83,7 +87,7 @@ class VAlertDialogStyle implements VComponentStyle {
     backgroundColor,
     foregroundColor,
     borderRadius,
-    elevation,
+    shadows == null ? null : Object.hashAll(shadows!),
     padding,
     titleStyle,
   );
