@@ -20,14 +20,15 @@ enum VAppThemeMode {
 // WHY: WidgetsApp instead of MaterialApp — Zero Material dependency is a
 // core architectural principle. WidgetsApp provides Navigator, routes,
 // and basic app shell without pulling in Material's ThemeData, ColorScheme,
-// or ink/ripple effects. Compatible with go_router/auto_route via
-// WidgetsApp.router (not used here yet, planned for v1.0+).
+// or ink/ripple effects. VApp.router builds WidgetsApp.router for router
+// packages such as go_router and auto_route.
 /// {@template v_app}
 /// App root with [VTheme] that follows system brightness.
 ///
 /// Use it instead of `MaterialApp` so descendants can read tokens through
 /// [VTheme.of]. [themeMode] picks between [theme] and [darkTheme]; Navigator,
-/// routes and locale are passed through to [WidgetsApp].
+/// routes and locale are passed through to [WidgetsApp]. An app whose pages
+/// come from a router config uses [VApp.router] instead.
 ///
 /// ## Basic Usage:
 ///
@@ -68,6 +69,14 @@ enum VAppThemeMode {
 /// )
 /// ```
 ///
+/// A router config, such as a go_router `GoRouter`:
+///
+/// ```dart
+/// VApp.router(
+///   routerConfig: router,
+/// )
+/// ```
+///
 /// See also:
 ///
 /// - [VTheme], theme provider InheritedWidget
@@ -93,7 +102,41 @@ class VApp extends StatelessWidget {
     this.navigatorObservers = const <NavigatorObserver>[],
     this.locale,
     this.color,
-  });
+  }) : routerConfig = null;
+
+  /// Creates an app whose pages come from a router config, such as a `GoRouter`.
+  ///
+  /// It builds [WidgetsApp.router] and picks the theme, follows the system
+  /// brightness and passes [locale] through the same way as [VApp]. The
+  /// router owns navigation, so the Navigator and route arguments of [VApp]
+  /// do not exist here.
+  ///
+  /// ```dart
+  /// final router = GoRouter(routes: [...]);
+  ///
+  /// VApp.router(
+  ///   routerConfig: router,
+  ///   themeMode: VAppThemeMode.system,
+  /// )
+  /// ```
+  const VApp.router({
+    required RouterConfig<Object> this.routerConfig,
+    super.key,
+    this.theme,
+    this.darkTheme,
+    this.themeMode = VAppThemeMode.system,
+    this.title = '',
+    this.debugShowCheckedModeBanner = false,
+    this.builder,
+    this.locale,
+    this.color,
+  }) : home = null,
+       navigatorKey = null,
+       onGenerateRoute = null,
+       onUnknownRoute = null,
+       initialRoute = null,
+       routes = const <String, WidgetBuilder>{},
+       navigatorObservers = const <NavigatorObserver>[];
 
   /// The widget for the default route of the app.
   final Widget? home;
@@ -148,6 +191,9 @@ class VApp extends StatelessWidget {
   /// Used by the OS to identify the app (e.g., task switcher).
   final Color? color;
 
+  /// Router that builds the pages; set only by [VApp.router].
+  final RouterConfig<Object>? routerConfig;
+
   @override
   Widget build(BuildContext context) {
     final brightness = MediaQuery.platformBrightnessOf(context);
@@ -160,13 +206,29 @@ class VApp extends StatelessWidget {
             : (theme ?? VThemeData.light()),
     };
 
+    final appColor = color ?? effectiveTheme.colors.primary;
+    final config = routerConfig;
+    if (config != null) {
+      return VTheme(
+        data: effectiveTheme,
+        child: WidgetsApp.router(
+          routerConfig: config,
+          title: title,
+          color: appColor,
+          debugShowCheckedModeBanner: debugShowCheckedModeBanner,
+          builder: builder,
+          locale: locale,
+        ),
+      );
+    }
+
     return VTheme(
       data: effectiveTheme,
       child: WidgetsApp(
         navigatorKey: navigatorKey,
         home: home,
         title: title,
-        color: color ?? effectiveTheme.colors.primary,
+        color: appColor,
         debugShowCheckedModeBanner: debugShowCheckedModeBanner,
         builder: builder,
         onGenerateRoute: onGenerateRoute,

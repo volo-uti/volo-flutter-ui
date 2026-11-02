@@ -143,8 +143,8 @@ void main() {
     test('maps scaffold, app, page, grid and scrollbar widgets to layout', () {
       const expected = {
         'Scaffold': 'VScaffold',
-        'MaterialApp': 'VApp',
-        'WidgetsApp': 'VApp',
+        'MaterialApp': 'VApp (VApp.router for a router config)',
+        'WidgetsApp': 'VApp (VApp.router for a router config)',
         'PageView': 'VCarousel',
         'GridView': 'VGrid',
         'Scrollbar': 'VScrollArea',

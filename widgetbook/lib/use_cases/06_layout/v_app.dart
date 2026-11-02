@@ -262,6 +262,23 @@ class _AppSample extends StatelessWidget {
                         '}',
                   ),
                   SizedBox(height: theme.spacing.lg),
+                  Text(
+                    'With a router config (go_router and the like)',
+                    style: typography.titleSmall,
+                  ),
+                  SizedBox(height: theme.spacing.sm),
+                  const WidgetbookCodeBlock(
+                    title: 'main.dart',
+                    code:
+                        'final router = GoRouter(routes: [...]);\n'
+                        '\n'
+                        'void main() {\n'
+                        '  runApp(\n'
+                        '    VApp.router(routerConfig: router),\n'
+                        '  );\n'
+                        '}',
+                  ),
+                  SizedBox(height: theme.spacing.lg),
                   Text('Step 2: Access tokens', style: typography.titleSmall),
                   SizedBox(height: theme.spacing.sm),
                   const WidgetbookCodeBlock(

@@ -83,13 +83,16 @@ Run the index step below before you plan or write any UI. It is what tells a cod
          ref: v0.1.1 # a release tag
    ```
 
-2. Wrap the app root in `VApp` (or `VTheme` + `WidgetsApp`). `VApp` wraps `VTheme` and follows the system brightness.
+2. Wrap the app root in `VApp` (or `VTheme` + `WidgetsApp`). `VApp` wraps `VTheme` and follows the system brightness. When a router (go_router and the like) builds the pages, use `VApp.router` with its router config.
 
    ```dart
    void main() => runApp(const VApp(home: MyHomePage()));
+
+   // With a router config
+   void main() => runApp(VApp.router(routerConfig: router));
    ```
 
-   If the app already has a `MaterialApp` (or `MaterialApp.router`) with its own `themeMode`, keep that as the one owner of light and dark: wrap the routes in `VTheme` from its `builder`, so V widgets follow the theme it resolved. A `VTheme` with fixed data above the app stays light when the app switches to dark.
+   If the app keeps its own `MaterialApp` (or `MaterialApp.router`) for reasons other than routing, with its own `themeMode`, keep that as the one owner of light and dark: wrap the routes in `VTheme` from its `builder`, so V widgets follow the theme it resolved. A `VTheme` with fixed data above the app stays light when the app switches to dark.
 
    ```dart
    MaterialApp.router(
