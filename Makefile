@@ -39,8 +39,9 @@ index:
 	$(DART) run tool/agent_index.dart
 	$(DART) run tool/component_docs.dart
 
-# Fails when a generated file is stale, a style field is never read, or
-# Material widgets slipped into the widgetbook or into volo_flutter_ui.
+# Fails when a generated file is stale, a style field is never read, a raw
+# Material widget or a look-alike of a library widget slipped into the
+# widgetbook, or Material slipped into volo_flutter_ui.
 check:
 	$(DART) format --output=none --set-exit-if-changed $(FORMAT_DIRS)
 	$(DART) run tool/gen_tokens.dart --check
@@ -48,6 +49,7 @@ check:
 	$(DART) run tool/component_docs.dart --check
 	$(DART) run tool/style_fields.dart --check
 	$(DART) run bin/raw_widgets.dart widgetbook/lib
+	$(DART) run bin/look_alikes.dart widgetbook/lib
 	@if grep -rnE "package:flutter/(material|cupertino)\.dart" lib; then \
 		echo "volo_flutter_ui must not import Material or Cupertino"; exit 1; \
 	fi

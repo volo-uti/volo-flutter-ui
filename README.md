@@ -121,11 +121,14 @@ Run the index step below before you plan or write any UI. It is what tells a cod
    dart run volo_flutter_ui:agent_index --check
    ```
 
-4. Add a check to the product so raw Material widgets (`ElevatedButton`, `TextButton`, `IconButton` ...) do not slip in. It fails and names the widget to use instead.
+4. Add checks to the product so raw Material widgets (`ElevatedButton`, `TextButton`, `IconButton` ...) and home-made copies of V widgets do not slip in. Each fails and names the widget to use instead. Give both the same folders.
 
    ```bash
    dart run volo_flutter_ui:raw_widgets lib/features
+   dart run volo_flutter_ui:look_alikes lib/features
    ```
+
+   `look_alikes` fails on a widget named for a library role (`AppChip`, `SettingsRow`, `AppBottomNav` ...) whose file never uses the V widget for that role (`VChip`, `VSettingTile`, `VBottomNav` ...). A `TODO(library: …)` marker does not make it pass: build on the V widget and hand-write only the missing detail.
 
    You can pass several folders in a row (`raw_widgets lib/features lib/shared`). Start with the feature folders where new code goes. Replace raw widgets in the existing app shell (`lib/app` and the like) with V widgets when you first adopt the package, and leave the shell out of the check until then.
 
@@ -252,7 +255,7 @@ Requirements: [FVM](https://fvm.app) (the Flutter version is in `.fvmrc`) and Da
 ```bash
 dart pub global activate fvm   # install FVM
 make setup                     # install Flutter, fetch dependencies, install the git hook
-make check                     # gate: format, tokens, index, docs, style fields, raw widgets, analyze, tests
+make check                     # gate: format, tokens, index, docs, style fields, raw widgets, look-alikes, analyze, tests
 make tokens                    # rewrite theme/*.generated.dart from the token JSON
 make index                     # rewrite the AGENTS.md index blocks and doc/
 cd widgetbook && fvm flutter run -d macos   # run the Widgetbook catalog

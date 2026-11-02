@@ -7,13 +7,13 @@ A Flutter design system: the `volo_flutter_ui` package (this repository's root) 
 | `lib/` | Widgets, theme, tokens, icons. Barrel `lib/volo_flutter_ui.dart` → category barrel → `lib/src/components/<category>/v_x/{v_x.dart,v_x_style.dart}` |
 | `widgetbook/` | The catalog for people to browse (`lib/use_cases`) |
 | `tool/` | Token, index and doc generators (`gen_tokens.dart`, `agent_index.dart`, `component_docs.dart`) |
-| `bin/` | Commands shipped to products (`agent_index.dart`, `raw_widgets.dart`) |
+| `bin/` | Commands shipped to products (`agent_index.dart`, `raw_widgets.dart`, `look_alikes.dart`) |
 | `doc/` | Generated index and per-widget docs (shipped with the package) |
 | `example/` | A minimal app that uses the package (outside the pub workspace) |
 
 ## Commands
 
-- `make check` — the gate. Checks formatting, tokens, index, docs, unread style fields, raw widgets, analysis and tests. The `pre-push` hook (lefthook, installed by `make setup`) runs it; there is no test CI, and GitHub Actions only publish and deploy.
+- `make check` — the gate. Checks formatting, tokens, index, docs, unread style fields, raw widgets, look-alikes, analysis and tests. The `pre-push` hook (lefthook, installed by `make setup`) runs it; there is no test CI, and GitHub Actions only publish and deploy.
 - `make index` — rewrites the index block below, `doc/index.txt` and `doc/**/*.md`.
 - `make tokens` — rewrites `lib/src/theme/*.generated.dart` from the token JSON.
 
@@ -34,6 +34,7 @@ A Flutter design system: the `volo_flutter_ui` package (this repository's root) 
 - `volo_flutter_ui` uses only the Flutter widgets layer (`package:flutter/widgets.dart`) and never imports `material.dart` or `cupertino.dart`. `make check` measures this in `lib`.
 - Wrap widget tests in `VTheme` (`VTheme(data: VThemeData.light(), child: Directionality(...))`).
 - When you add a widget that replaces a raw Material widget, add a line to `rawWidgets` in `lib/src/tooling/raw_widgets.dart`.
+- A widget in `widgetbook/lib` named for a library role (`...Chip`, `...Card`, `...SettingRow`) uses that library widget in its file; otherwise `make check` fails with `file:line Name rebuilds VX`. When you add a widget for a new role, add its name ending to `lookAlikeRoles` in `lib/src/tooling/look_alikes.dart`.
 - Names follow Material conventions.
   - Disabling is `enabled` (default true). A value callback is `onChanged: ValueChanged<T>`, anything else is `onXChanged`.
   - Pressing is `onPressed` for buttons and `onTap` for tiles and chips.

@@ -32,11 +32,11 @@ Every public declaration has a one-line summary taken from its doc comment, coll
 
 Enforced by: `dart run tool/agent_index.dart --check` and `dart run tool/component_docs.dart --check`, both part of `make check`. They fail on a missing or over-long first sentence and on a stale index. Regenerate with `make index`.
 
-## Raw widgets are blocked, with a pointer to the replacement
+## Raw widgets and look-alikes are blocked, with a pointer to the replacement
 
-When a component replaces a raw Flutter widget, using the raw widget in the catalog app is an error. A prose rule may go unread, but a failure message is always read, so the message names the component to use instead.
+When a component replaces a raw Flutter widget, using the raw widget in the catalog app is an error. So is a widget named for a component's role (`AppChip`, `SettingsRow`) that never uses the component: a hand-built copy drifts from the theme, even when it marks what it was missing. A prose rule may go unread, but a failure message is always read, so the message names the component to use instead. Products run the same two commands over their own folders.
 
-Enforced by: `bin/raw_widgets.dart` over `widgetbook/lib`, fed by the `rawWidgets` list in `lib/src/tooling/raw_widgets.dart`.
+Enforced by: `bin/raw_widgets.dart` and `bin/look_alikes.dart` over `widgetbook/lib`, fed by `rawWidgets` in `lib/src/tooling/raw_widgets.dart` and `lookAlikeRoles` in `lib/src/tooling/look_alikes.dart`.
 
 ## No Material or Cupertino in volo_flutter_ui
 
