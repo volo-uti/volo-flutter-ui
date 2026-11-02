@@ -60,7 +60,7 @@ See also:
 | `minSize` | `double` | `0.25` |  | Smallest height fraction; releasing a drag below it closes the sheet. |
 | `maxSize` | `double` | `0.9` |  | Largest height fraction reachable by dragging. |
 | `snapPoints` | `List<double>?` |  |  | Height fractions the sheet snaps to, nearest first, when a drag ends. |
-| `barrierDismissible` | `bool` | `true` |  | Whether tapping outside the sheet closes it. |
+| `barrierDismissible` | `bool` | `true` |  | Whether tapping outside the sheet closes it.<br>The barrier of the route that [show] or a [VSheet] show helper opens reads it and handles the tap; a sheet placed in a route of your own does not close on a tap outside. |
 | `style` | `VSheetStyle?` |  |  | Style override. |
 
 ### Members
@@ -110,7 +110,7 @@ See also:
 | `child` | `Widget` |  | yes | Content shown inside the sheet. |
 | `side` | `VSheetSide` | `VSheetSide.left` |  | Edge the sheet slides in from. Defaults to [VSheetSide.left]. |
 | `width` | `double` | `280` |  | Sheet width in logical pixels. Defaults to 280. |
-| `barrierDismissible` | `bool` | `true` |  | Whether tapping outside the sheet closes it. |
+| `barrierDismissible` | `bool` | `true` |  | Whether tapping outside the sheet closes it.<br>The barrier of the route that [show] or a [VSheet] show helper opens reads it and handles the tap; a sheet placed in a route of your own does not close on a tap outside. |
 | `style` | `VSheetStyle?` |  |  | Style override. |
 
 ### Members

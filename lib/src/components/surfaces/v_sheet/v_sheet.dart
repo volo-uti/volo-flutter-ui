@@ -99,6 +99,10 @@ class VBottomSheet extends VSheet {
   final List<double>? snapPoints;
 
   /// Whether tapping outside the sheet closes it.
+  ///
+  /// The barrier of the route that [show] or a [VSheet] show helper opens
+  /// reads it and handles the tap; a sheet placed in a route of your own
+  /// does not close on a tap outside.
   final bool barrierDismissible;
 
   /// Style override.
@@ -284,16 +288,11 @@ class _VBottomSheetState extends State<VBottomSheet>
             builder: (context, child) {
               final slideOffset =
                   _slideAnimation.value * screenHeight * _currentSize;
+              // WHY: No tap layer of its own — the barrier of the route that
+              // show() opens takes taps outside the sheet and carries the
+              // dismiss label for screen readers.
               return Stack(
                 children: [
-                  // Barrier (handled by showGeneralDialog)
-                  Positioned.fill(
-                    child: GestureDetector(
-                      onTap: widget.barrierDismissible ? _close : null,
-                      child: const SizedBox.expand(),
-                    ),
-                  ),
-                  // Sheet
                   Positioned(
                     left: 0,
                     right: 0,
@@ -391,6 +390,10 @@ class VSideSheet extends VSheet {
   final double width;
 
   /// Whether tapping outside the sheet closes it.
+  ///
+  /// The barrier of the route that [show] or a [VSheet] show helper opens
+  /// reads it and handles the tap; a sheet placed in a route of your own
+  /// does not close on a tap outside.
   final bool barrierDismissible;
 
   /// Style override.
@@ -479,16 +482,6 @@ class _VSideSheetState extends State<VSideSheet>
     super.dispose();
   }
 
-  void _close() {
-    unawaited(
-      _controller.reverse().then((_) {
-        if (mounted) {
-          Navigator.of(context).pop();
-        }
-      }),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = VTheme.of(context);
@@ -518,16 +511,9 @@ class _VSideSheetState extends State<VSideSheet>
             builder: (context, child) {
               final slideOffset =
                   _slideAnimation.value * widget.width * (_isLeft ? -1 : 1);
+              // The route's barrier takes taps outside, as for VBottomSheet.
               return Stack(
                 children: [
-                  // Barrier
-                  Positioned.fill(
-                    child: GestureDetector(
-                      onTap: widget.barrierDismissible ? _close : null,
-                      child: const SizedBox.expand(),
-                    ),
-                  ),
-                  // Sheet
                   Positioned(
                     left: _isLeft ? slideOffset : null,
                     right: _isLeft ? null : slideOffset,

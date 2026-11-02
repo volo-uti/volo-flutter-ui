@@ -1,3 +1,4 @@
+import 'package:flutter/semantics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
@@ -611,5 +612,124 @@ void main() {
 
       expect(sideContainer(tester), isNotNull);
     });
+  });
+
+  group('outside the sheet only the route barrier takes taps', () {
+    Future<void> open(
+      WidgetTester tester,
+      Future<void> Function(BuildContext context) show,
+    ) async {
+      await tester.pumpWidget(
+        VTheme(
+          data: VThemeData.light(),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: MediaQuery(
+              data: const MediaQueryData(size: Size(400, 800)),
+              child: Navigator(
+                onGenerateRoute: (settings) => PageRouteBuilder(
+                  pageBuilder: (context, _, _) => Builder(
+                    builder: (context) => GestureDetector(
+                      onTap: () => show(context),
+                      child: const Text('Open Button'),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Open Button'));
+      await tester.pumpAndSettle();
+    }
+
+    // The data of every node that a screen reader can tap.
+    List<SemanticsData> tapTargets() => find.semantics
+        .byAction(SemanticsAction.tap)
+        .evaluate()
+        .map((node) => node.getSemanticsData())
+        .toList();
+
+    final shows =
+        <
+          String,
+          Future<void> Function(BuildContext, {required bool dismissible})
+        >{
+          'VBottomSheet.show': (context, {required dismissible}) =>
+              VBottomSheet.show<void>(
+                context,
+                barrierDismissible: dismissible,
+                child: const Text('Sheet Content'),
+              ),
+          'VSideSheet.show': (context, {required dismissible}) =>
+              VSideSheet.show<void>(
+                context,
+                barrierDismissible: dismissible,
+                child: const Text('Sheet Content'),
+              ),
+          'VSheet.showBottom': (context, {required dismissible}) =>
+              VSheet.showBottom<void>(
+                context,
+                VSheet.bottom(
+                      barrierDismissible: dismissible,
+                      child: const Text('Sheet Content'),
+                    )
+                    as VBottomSheet,
+              ),
+          'VSheet.showSide': (context, {required dismissible}) =>
+              VSheet.showSide<void>(
+                context,
+                VSheet.side(
+                      barrierDismissible: dismissible,
+                      child: const Text('Sheet Content'),
+                    )
+                    as VSideSheet,
+              ),
+        };
+
+    for (final entry in shows.entries) {
+      testWidgets('${entry.key} leaves no unlabeled tap target', (
+        tester,
+      ) async {
+        final handle = tester.ensureSemantics();
+        await open(
+          tester,
+          (context) => entry.value(context, dismissible: true),
+        );
+        expect(find.text('Sheet Content'), findsOneWidget);
+
+        final targets = tapTargets();
+        expect(targets.where((d) => d.label.isEmpty), isEmpty);
+        expect(targets.map((d) => d.label), contains('Dismiss'));
+        handle.dispose();
+      });
+
+      testWidgets('${entry.key} closes on a tap outside', (tester) async {
+        await open(
+          tester,
+          (context) => entry.value(context, dismissible: true),
+        );
+        expect(find.text('Sheet Content'), findsOneWidget);
+
+        await tester.tapAt(const Offset(700, 50));
+        await tester.pumpAndSettle();
+        expect(find.text('Sheet Content'), findsNothing);
+      });
+
+      testWidgets('${entry.key} stays open with barrierDismissible false', (
+        tester,
+      ) async {
+        await open(
+          tester,
+          (context) => entry.value(context, dismissible: false),
+        );
+        expect(find.text('Sheet Content'), findsOneWidget);
+
+        await tester.tapAt(const Offset(700, 50));
+        await tester.pumpAndSettle();
+        expect(find.text('Sheet Content'), findsOneWidget);
+      });
+    }
   });
 }
