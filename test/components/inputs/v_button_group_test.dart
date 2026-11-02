@@ -290,5 +290,40 @@ void main() {
       // Outside a group the default is medium.
       expect(heightOf('outside'), theme.sizes.md.height);
     });
+
+    testWidgets('the spacing argument wins over the style spacing', (
+      tester,
+    ) async {
+      Future<double> gapWith({double? spacing, double? styleSpacing}) async {
+        await tester.pumpWidget(
+          buildTestWidget(
+            Center(
+              child: VButtonGroup(
+                spacing: spacing,
+                style: VButtonGroupStyle(spacing: styleSpacing),
+                children: [
+                  VButton(
+                    key: const Key('a'),
+                    onPressed: () {},
+                    child: const Text('A'),
+                  ),
+                  VButton(
+                    key: const Key('b'),
+                    onPressed: () {},
+                    child: const Text('B'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+        return tester.getTopLeft(find.byKey(const Key('b'))).dx -
+            tester.getTopRight(find.byKey(const Key('a'))).dx;
+      }
+
+      expect(await gapWith(spacing: 4, styleSpacing: 20), 4);
+      expect(await gapWith(styleSpacing: 20), 20);
+      expect(await gapWith(), 0);
+    });
   });
 }

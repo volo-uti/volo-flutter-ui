@@ -21,7 +21,7 @@ class VButtonGroupStyle implements VComponentStyle {
   /// Defaults to the size's radius token. It wins over a button's own corner.
   final BorderRadius? borderRadius;
 
-  /// Spacing between buttons.
+  /// Gap between buttons; the group's `spacing` argument wins over it.
   final double? spacing;
 
   /// Creates a copy with only the specified properties changed.

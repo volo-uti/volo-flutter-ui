@@ -75,7 +75,7 @@ class VButtonGroup extends StatelessWidget {
     super.key,
     this.orientation = VButtonGroupOrientation.horizontal,
     this.size,
-    this.spacing = 0,
+    this.spacing,
     this.style,
   });
 
@@ -89,7 +89,9 @@ class VButtonGroup extends StatelessWidget {
   final VButtonSize? size;
 
   /// Gap between buttons; zero keeps them connected.
-  final double spacing;
+  ///
+  /// Wins over [VButtonGroupStyle.spacing]; defaults to zero.
+  final double? spacing;
 
   /// Style override merged over the theme's [VButtonGroupStyle].
   final VButtonGroupStyle? style;
@@ -117,7 +119,8 @@ class VButtonGroup extends StatelessWidget {
         BorderRadius.circular(sizeToken.borderRadius);
 
     // Apply resolvedStyle overrides
-    final effectiveSpacing = resolvedStyle?.spacing ?? spacing;
+    // The argument, then the style, then connected buttons.
+    final effectiveSpacing = spacing ?? resolvedStyle?.spacing ?? 0;
 
     // Build children with per-position border-radius via VButtonGroupScope
     final items = <Widget>[];

@@ -50,7 +50,7 @@ Creates a button group.
 | `children` | `List<Widget>` |  | yes | Buttons in display order. |
 | `orientation` | `VButtonGroupOrientation` | `VButtonGroupOrientation.horizontal` |  | Direction of the layout. |
 | `size` | `VButtonSize?` |  |  | Size shared by all child buttons; a button's own size wins over it. |
-| `spacing` | `double` | `0` |  | Gap between buttons; zero keeps them connected. |
+| `spacing` | `double?` |  |  | Gap between buttons; zero keeps them connected.<br>Wins over [VButtonGroupStyle.spacing]; defaults to zero. |
 | `style` | `VButtonGroupStyle?` |  |  | Style override merged over the theme's [VButtonGroupStyle]. |
 
 ## VButtonGroupData
@@ -95,7 +95,7 @@ Supports cascade: theme override → instance override.
 |---|---|---|---|---|
 | `borderColor` | `Color?` |  |  | Border color every button in the group draws.<br>A button's own instance style wins over it; it wins over the theme's `VButtonStyle.borderColor` and the variant's border. |
 | `borderRadius` | `BorderRadius?` |  |  | Outer corner radius of the group; inner corners stay square.<br>Defaults to the size's radius token. It wins over a button's own corner. |
-| `spacing` | `double?` |  |  | Spacing between buttons. |
+| `spacing` | `double?` |  |  | Gap between buttons; the group's `spacing` argument wins over it. |
 
 ### Members
 
