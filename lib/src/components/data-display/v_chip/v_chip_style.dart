@@ -22,6 +22,8 @@ class VChipStyle implements VComponentStyle {
   final Color? backgroundColor;
 
   /// Text foreground color.
+  ///
+  /// Wins over the color of [textStyle].
   final Color? foregroundColor;
 
   /// Border color.
@@ -33,7 +35,11 @@ class VChipStyle implements VComponentStyle {
   /// Internal padding.
   final EdgeInsets? padding;
 
-  /// Text style.
+  /// Label text style merged over the chip default, so only the fields it sets change.
+  ///
+  /// The default is the size preset's font size and line height 1.15 in the
+  /// variant's foreground color. An instance style's text style replaces the
+  /// theme override's.
   final TextStyle? textStyle;
 
   /// Delete icon color.

@@ -278,14 +278,13 @@ class _VChipState extends State<VChip> with SingleTickerProviderStateMixin {
       }
     }
 
-    // One line with an ellipsis is the default; a Text with its own maxLines
-    // overrides it.
+    // The size preset sets the base; the style's textStyle lays over it, and
+    // foregroundColor wins over the textStyle color. One line with an
+    // ellipsis is the default; a Text with its own maxLines overrides it.
     final labelWidget = DefaultTextStyle.merge(
-      style: (resolvedStyle?.textStyle ?? const TextStyle()).copyWith(
-        fontSize: _fontSize,
-        color: fgColor,
-        height: 1.15,
-      ),
+      style: TextStyle(fontSize: _fontSize, color: fgColor, height: 1.15)
+          .merge(resolvedStyle?.textStyle)
+          .copyWith(color: resolvedStyle?.foregroundColor),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       child: widget.label,

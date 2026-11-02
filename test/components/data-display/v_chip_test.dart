@@ -506,4 +506,65 @@ void main() {
       handle.dispose();
     });
   });
+
+  group('VChipStyle.textStyle', () {
+    testWidgets('lays over the defaults from the theme or the instance', (
+      tester,
+    ) async {
+      TextStyle labelOf(String text) =>
+          tester.renderObject<RenderParagraph>(find.text(text)).text.style!;
+      const red = Color(0xFFFF0000);
+      const green = Color(0xFF00FF00);
+      final light = VThemeData.light();
+
+      await tester.pumpWidget(
+        VTheme(
+          data: light.copyWith(
+            componentOverrides: const VComponentOverrides([
+              VChipStyle(
+                textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              ),
+            ]),
+          ),
+          child: const Directionality(
+            textDirection: TextDirection.ltr,
+            child: Column(
+              children: [
+                VChip(label: Text('Theme')),
+                VChip(
+                  label: Text('Instance'),
+                  style: VChipStyle(textStyle: TextStyle(color: red)),
+                ),
+                VChip(
+                  label: Text('Foreground'),
+                  style: VChipStyle(
+                    foregroundColor: green,
+                    textStyle: TextStyle(color: red, letterSpacing: 1),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      // The theme's text style changes size and weight; the rest stays.
+      final theme = labelOf('Theme');
+      expect(theme.fontSize, 20);
+      expect(theme.fontWeight, FontWeight.w700);
+      expect(theme.height, 1.15);
+      expect(theme.color, light.colors.foreground);
+
+      // An instance text style replaces the theme's and keeps the defaults.
+      final instance = labelOf('Instance');
+      expect(instance.color, red);
+      expect(instance.fontSize, light.sizes.sm.fontSize);
+      expect(instance.fontWeight, isNull);
+
+      // foregroundColor wins over the text style color.
+      final foreground = labelOf('Foreground');
+      expect(foreground.color, green);
+      expect(foreground.letterSpacing, 1);
+    });
+  });
 }

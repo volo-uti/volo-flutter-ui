@@ -166,11 +166,11 @@ Supports cascade: theme override → instance override.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
-| `foregroundColor` | `Color?` |  |  | Text foreground color. |
+| `foregroundColor` | `Color?` |  |  | Text foreground color.<br>Wins over the color of [textStyle]. |
 | `borderColor` | `Color?` |  |  | Border color. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
 | `padding` | `EdgeInsets?` |  |  | Internal padding. |
-| `textStyle` | `TextStyle?` |  |  | Text style. |
+| `textStyle` | `TextStyle?` |  |  | Label text style merged over the chip default, so only the fields it sets change.<br>The default is the size preset's font size and line height 1.15 in the variant's foreground color. An instance style's text style replaces the theme override's. |
 | `deleteIconColor` | `Color?` |  |  | Delete icon color. |
 
 ### Members
