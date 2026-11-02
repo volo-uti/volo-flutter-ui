@@ -16,6 +16,7 @@ v_alert|VAlert: Inline box that shows an info, success, warning or error message
 v_alert_dialog|VAlertDialog: Modal dialog that asks the user to confirm or cancel before going on.
 v_backdrop|VBackdrop: Full-size scrim that dims the content behind a modal surface.
 v_dialog|VDialog: Modal dialog with a title, content and a row of actions.
+v_empty_state|VEmptyState: Centered message for an empty list or screen.
 v_loading_spinner|VLoadingSpinner: Rotating arc that shows an operation is in progress, without a known end.
 v_progress|VProgress: Bar or ring that shows how far an operation has come, or that it is still running.
 v_skeleton|VSkeleton: Animated gray placeholder that mimics the shape of content while it loads.

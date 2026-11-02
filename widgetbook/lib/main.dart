@@ -52,6 +52,7 @@ import 'use_cases/03_feedback/v_alert.dart';
 import 'use_cases/03_feedback/v_alert_dialog.dart';
 import 'use_cases/03_feedback/v_backdrop.dart';
 import 'use_cases/03_feedback/v_dialog.dart';
+import 'use_cases/03_feedback/v_empty_state.dart';
 import 'use_cases/03_feedback/v_loading_spinner.dart';
 import 'use_cases/03_feedback/v_progress.dart';
 import 'use_cases/03_feedback/v_skeleton.dart';
@@ -213,6 +214,7 @@ class WidgetbookApp extends StatelessWidget {
               vAlertDialogComponent(),
               vBackdropComponent(),
               vDialogComponent(),
+              vEmptyStateComponent(),
               vLoadingSpinnerComponent(),
               vProgressComponent(),
               vSkeletonComponent(),

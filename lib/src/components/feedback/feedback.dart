@@ -6,6 +6,8 @@ export 'v_backdrop/v_backdrop.dart';
 export 'v_backdrop/v_backdrop_style.dart';
 export 'v_dialog/v_dialog.dart';
 export 'v_dialog/v_dialog_style.dart';
+export 'v_empty_state/v_empty_state.dart';
+export 'v_empty_state/v_empty_state_style.dart';
 export 'v_loading_spinner/v_loading_spinner.dart';
 export 'v_loading_spinner/v_loading_spinner_style.dart';
 export 'v_progress/v_progress.dart';

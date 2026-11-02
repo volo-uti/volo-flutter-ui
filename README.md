@@ -141,7 +141,7 @@ If a widget almost fits, try its style parameters first. If one detail still can
 |----------|----------------|
 | **Inputs** | VButton, VTextField, VSelect, VCheckbox, VRadio, VSwitch, VSlider, VCalendar, VDatePicker, VAutocomplete, VForm, VFormField |
 | **Data Display** | VAvatar, VBadge, VChip, VTable, VTooltip, VListTile, VCheckListTile, VSwitchListTile, VDivider, VHoverCard |
-| **Feedback** | VDialog, VAlertDialog, VAlert, VToast, VSnackbar, VProgress, VSkeleton, VBackdrop |
+| **Feedback** | VDialog, VAlertDialog, VAlert, VToast, VSnackbar, VProgress, VSkeleton, VEmptyState, VBackdrop |
 | **Surfaces** | VCard, VSheet, VAccordion, VPopover |
 | **Navigation** | VAppBar, VBottomNav, VTabs, VBreadcrumb, VPagination, VPageIndicator, VStepper, VDrawer, VMenu, VCommand |
 | **Layout** | VScaffold, VGrid, VStack, VBox, VCarousel, VScrollArea, VSection, VResizable |
