@@ -610,4 +610,84 @@ void main() {
       expect(find.text('POPC'), findsOneWidget);
     });
   });
+
+  group('VPopover style fields', () {
+    final theme = VThemeData.light();
+
+    // Opens a popover styled through the theme or as the instance style.
+    Future<void> open(
+      WidgetTester tester,
+      VPopoverStyle? style, {
+      bool viaTheme = false,
+    }) async {
+      final controller = VPopoverController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        VTheme(
+          data: theme.copyWith(
+            componentOverrides: VComponentOverrides([
+              if (viaTheme && style != null) style,
+            ]),
+          ),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Overlay(
+              initialEntries: [
+                OverlayEntry(
+                  builder: (context) => Center(
+                    child: VPopover(
+                      controller: controller,
+                      style: viaTheme ? null : style,
+                      content: const Text('POPC'),
+                      child: const Text('Trigger'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      controller.show();
+      await tester.pumpAndSettle();
+    }
+
+    List<BoxShadow>? panelShadows(WidgetTester tester) =>
+        (tester
+                    .widget<Container>(
+                      find
+                          .ancestor(
+                            of: find.text('POPC'),
+                            matching: find.byType(Container),
+                          )
+                          .first,
+                    )
+                    .decoration!
+                as BoxDecoration)
+            .boxShadow;
+
+    testWidgets('defaults to the medium shadow', (tester) async {
+      await open(tester, null);
+      expect(panelShadows(tester), theme.shadows.md);
+    });
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('shadows replace the panel shadow ($via)', (tester) async {
+        const shadow = BoxShadow(blurRadius: 3);
+        await open(
+          tester,
+          const VPopoverStyle(shadows: [shadow]),
+          viaTheme: viaTheme,
+        );
+        expect(panelShadows(tester), [shadow]);
+      });
+    }
+
+    testWidgets('an empty shadow list draws no shadow', (tester) async {
+      await open(tester, const VPopoverStyle(shadows: []));
+      expect(panelShadows(tester), isEmpty);
+    });
+  });
 }

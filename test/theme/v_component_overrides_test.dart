@@ -68,7 +68,7 @@ void main() {
     test('merge preserves unrelated component overrides', () {
       const parent = VComponentOverrides([
         VButtonStyle(gap: 8),
-        VCardStyle(elevation: 4),
+        VCardStyle(borderColor: Color(0xFF000004)),
       ]);
       const child = VComponentOverrides([
         VTextFieldStyle(cursorColor: Color(0xFF000000)),
@@ -76,7 +76,7 @@ void main() {
 
       final merged = parent.merge(child);
       expect(merged.get<VButtonStyle>()?.gap, 8);
-      expect(merged.get<VCardStyle>()?.elevation, 4);
+      expect(merged.get<VCardStyle>()?.borderColor, const Color(0xFF000004));
       expect(
         merged.get<VTextFieldStyle>()?.cursorColor,
         const Color(0xFF000000),
@@ -116,12 +116,15 @@ void main() {
       final theme = VThemeData.light().copyWith(
         componentOverrides: const VComponentOverrides([
           VButtonStyle(gap: 8),
-          VCardStyle(elevation: 4),
+          VCardStyle(borderColor: Color(0xFF000004)),
         ]),
       );
       final copy = theme.copyWith();
       expect(copy.componentOverrides.get<VButtonStyle>()?.gap, 8);
-      expect(copy.componentOverrides.get<VCardStyle>()?.elevation, 4);
+      expect(
+        copy.componentOverrides.get<VCardStyle>()?.borderColor,
+        const Color(0xFF000004),
+      );
     });
 
     test('VThemeData.copyWith replaces componentOverrides', () {
@@ -130,11 +133,14 @@ void main() {
       );
       final replaced = theme.copyWith(
         componentOverrides: const VComponentOverrides([
-          VCardStyle(elevation: 12),
+          VCardStyle(borderColor: Color(0xFF00000C)),
         ]),
       );
       expect(replaced.componentOverrides.get<VButtonStyle>(), isNull);
-      expect(replaced.componentOverrides.get<VCardStyle>()?.elevation, 12);
+      expect(
+        replaced.componentOverrides.get<VCardStyle>()?.borderColor,
+        const Color(0xFF00000C),
+      );
     });
 
     test('VThemeData equality considers componentOverrides', () {

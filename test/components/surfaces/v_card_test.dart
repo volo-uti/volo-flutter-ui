@@ -1390,4 +1390,100 @@ void main() {
       expect(taps, 2);
     });
   });
+
+  group('VCard style fields', () {
+    final theme = VThemeData.light();
+    const shadow = BoxShadow(blurRadius: 3);
+
+    // Applies [style] through the theme or as the instance style.
+    Widget styled(
+      VCardStyle style, {
+      required bool viaTheme,
+      bool outlined = false,
+    }) => VTheme(
+      data: theme.copyWith(
+        componentOverrides: VComponentOverrides(viaTheme ? [style] : []),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(
+          child: outlined
+              ? VCard.outlined(
+                  onTap: () {},
+                  style: viaTheme ? null : style,
+                  child: const Text('Body'),
+                )
+              : VCard(
+                  onTap: () {},
+                  style: viaTheme ? null : style,
+                  child: const Text('Body'),
+                ),
+        ),
+      ),
+    );
+
+    List<BoxShadow>? shadowsOf(WidgetTester tester) =>
+        (tester
+                    .widget<AnimatedContainer>(
+                      find.descendant(
+                        of: find.byType(VCard),
+                        matching: find.byType(AnimatedContainer),
+                      ),
+                    )
+                    .decoration!
+                as BoxDecoration)
+            .boxShadow;
+
+    Future<void> hover(WidgetTester tester) async {
+      final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouse.addPointer(location: Offset.zero);
+      addTearDown(mouse.removePointer);
+      await mouse.moveTo(tester.getCenter(find.byType(VCard)));
+      await tester.pump();
+    }
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('shadows replace the resting and hover shadow ($via)', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          styled(const VCardStyle(shadows: [shadow]), viaTheme: viaTheme),
+        );
+        expect(shadowsOf(tester), [shadow]);
+
+        await hover(tester);
+        expect(shadowsOf(tester), [shadow]);
+      });
+
+      testWidgets('an outlined card ignores shadows ($via)', (tester) async {
+        await tester.pumpWidget(
+          styled(
+            const VCardStyle(shadows: [shadow]),
+            viaTheme: viaTheme,
+            outlined: true,
+          ),
+        );
+        expect(shadowsOf(tester), isNull);
+      });
+    }
+
+    testWidgets('an empty shadow list draws no shadow', (tester) async {
+      await tester.pumpWidget(
+        styled(const VCardStyle(shadows: []), viaTheme: false),
+      );
+      expect(shadowsOf(tester), isEmpty);
+    });
+
+    testWidgets('defaults to the medium shadow and the large one on hover', (
+      tester,
+    ) async {
+      await tester.pumpWidget(styled(const VCardStyle(), viaTheme: false));
+      expect(shadowsOf(tester), theme.shadows.md);
+
+      await hover(tester);
+      expect(shadowsOf(tester), theme.shadows.lg);
+    });
+  });
 }

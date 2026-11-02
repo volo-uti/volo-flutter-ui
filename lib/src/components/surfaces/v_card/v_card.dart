@@ -178,7 +178,9 @@ class _VCardState extends State<VCard> {
         break;
       case _VCardVariant.elevated:
         bgColor = _isPressed ? colors.muted : colors.card;
-        shadows = _isHovered ? theme.shadows.lg : theme.shadows.md;
+        shadows =
+            resolvedStyle?.shadows ??
+            (_isHovered ? theme.shadows.lg : theme.shadows.md);
         break;
     }
 

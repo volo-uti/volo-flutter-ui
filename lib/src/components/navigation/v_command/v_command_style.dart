@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/v_component_style.dart';
@@ -17,7 +18,7 @@ class VCommandStyle implements VComponentStyle {
     this.foregroundColor,
     this.borderColor,
     this.borderRadius,
-    this.elevation,
+    this.shadows,
     this.padding,
     this.inputTextStyle,
   });
@@ -34,8 +35,11 @@ class VCommandStyle implements VComponentStyle {
   /// Border radius.
   final BorderRadius? borderRadius;
 
-  /// Elevation (shadow depth).
-  final double? elevation;
+  /// Shadows under the palette panel; when null the dialog has the large shadow.
+  ///
+  /// The inline palette draws no shadow when null. An empty list draws none.
+  /// An instance style wins over the theme override.
+  final List<BoxShadow>? shadows;
 
   /// Internal padding.
   final EdgeInsets? padding;
@@ -49,7 +53,7 @@ class VCommandStyle implements VComponentStyle {
     Color? foregroundColor,
     Color? borderColor,
     BorderRadius? borderRadius,
-    double? elevation,
+    List<BoxShadow>? shadows,
     EdgeInsets? padding,
     TextStyle? inputTextStyle,
   }) => VCommandStyle(
@@ -57,7 +61,7 @@ class VCommandStyle implements VComponentStyle {
     foregroundColor: foregroundColor ?? this.foregroundColor,
     borderColor: borderColor ?? this.borderColor,
     borderRadius: borderRadius ?? this.borderRadius,
-    elevation: elevation ?? this.elevation,
+    shadows: shadows ?? this.shadows,
     padding: padding ?? this.padding,
     inputTextStyle: inputTextStyle ?? this.inputTextStyle,
   );
@@ -71,7 +75,7 @@ class VCommandStyle implements VComponentStyle {
       foregroundColor: other.foregroundColor ?? foregroundColor,
       borderColor: other.borderColor ?? borderColor,
       borderRadius: other.borderRadius ?? borderRadius,
-      elevation: other.elevation ?? elevation,
+      shadows: other.shadows ?? shadows,
       padding: other.padding ?? padding,
       inputTextStyle: other.inputTextStyle ?? inputTextStyle,
     );
@@ -85,7 +89,7 @@ class VCommandStyle implements VComponentStyle {
         other.foregroundColor == foregroundColor &&
         other.borderColor == borderColor &&
         other.borderRadius == borderRadius &&
-        other.elevation == elevation &&
+        listEquals(other.shadows, shadows) &&
         other.padding == padding &&
         other.inputTextStyle == inputTextStyle;
   }
@@ -96,7 +100,7 @@ class VCommandStyle implements VComponentStyle {
     foregroundColor,
     borderColor,
     borderRadius,
-    elevation,
+    shadows == null ? null : Object.hashAll(shadows!),
     padding,
     inputTextStyle,
   );

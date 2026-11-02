@@ -213,7 +213,7 @@ Supports cascade: theme override → instance override.
 | `foregroundColor` | `Color?` |  |  | Text foreground color. |
 | `borderColor` | `Color?` |  |  | Border color. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
-| `elevation` | `double?` |  |  | Elevation (shadow depth). |
+| `shadows` | `List<BoxShadow>?` |  |  | Shadows under the palette panel; when null the dialog has the large shadow.<br>The inline palette draws no shadow when null. An empty list draws none. An instance style wins over the theme override. |
 | `padding` | `EdgeInsets?` |  |  | Internal padding. |
 | `inputTextStyle` | `TextStyle?` |  |  | Search input text style. |
 
@@ -221,4 +221,4 @@ Supports cascade: theme override → instance override.
 
 | Member | Description |
 |---|---|
-| `VCommandStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? borderColor, BorderRadius? borderRadius, double? elevation, EdgeInsets? padding, TextStyle? inputTextStyle})` | Creates a copy with only the specified properties changed. |
+| `VCommandStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? borderColor, BorderRadius? borderRadius, List<BoxShadow>? shadows, EdgeInsets? padding, TextStyle? inputTextStyle})` | Creates a copy with only the specified properties changed. |

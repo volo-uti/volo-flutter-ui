@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/v_component_style.dart';
@@ -13,7 +14,7 @@ class VPopoverStyle implements VComponentStyle {
     this.foregroundColor,
     this.borderColor,
     this.borderRadius,
-    this.elevation,
+    this.shadows,
     this.padding,
   });
 
@@ -29,8 +30,11 @@ class VPopoverStyle implements VComponentStyle {
   /// Border radius.
   final BorderRadius? borderRadius;
 
-  /// Elevation (shadow depth).
-  final double? elevation;
+  /// Shadows under the popover panel; the theme's medium shadow when null.
+  ///
+  /// An empty list draws no shadow. An instance style wins over the theme
+  /// override.
+  final List<BoxShadow>? shadows;
 
   /// Internal padding.
   final EdgeInsets? padding;
@@ -41,14 +45,14 @@ class VPopoverStyle implements VComponentStyle {
     Color? foregroundColor,
     Color? borderColor,
     BorderRadius? borderRadius,
-    double? elevation,
+    List<BoxShadow>? shadows,
     EdgeInsets? padding,
   }) => VPopoverStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
     foregroundColor: foregroundColor ?? this.foregroundColor,
     borderColor: borderColor ?? this.borderColor,
     borderRadius: borderRadius ?? this.borderRadius,
-    elevation: elevation ?? this.elevation,
+    shadows: shadows ?? this.shadows,
     padding: padding ?? this.padding,
   );
 
@@ -61,7 +65,7 @@ class VPopoverStyle implements VComponentStyle {
       foregroundColor: other.foregroundColor ?? foregroundColor,
       borderColor: other.borderColor ?? borderColor,
       borderRadius: other.borderRadius ?? borderRadius,
-      elevation: other.elevation ?? elevation,
+      shadows: other.shadows ?? shadows,
       padding: other.padding ?? padding,
     );
   }
@@ -74,7 +78,7 @@ class VPopoverStyle implements VComponentStyle {
         other.foregroundColor == foregroundColor &&
         other.borderColor == borderColor &&
         other.borderRadius == borderRadius &&
-        other.elevation == elevation &&
+        listEquals(other.shadows, shadows) &&
         other.padding == padding;
   }
 
@@ -84,7 +88,7 @@ class VPopoverStyle implements VComponentStyle {
     foregroundColor,
     borderColor,
     borderRadius,
-    elevation,
+    shadows == null ? null : Object.hashAll(shadows!),
     padding,
   );
 }

@@ -358,6 +358,7 @@ class _VCommandState extends State<VCommand>
             color: bgColor,
             border: Border.all(color: borderClr),
             borderRadius: borderRad,
+            boxShadow: inlineResolvedStyle?.shadows,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -406,7 +407,8 @@ class _VCommandState extends State<VCommand>
                         color: dlgBgColor,
                         border: Border.all(color: dlgBorderColor),
                         borderRadius: dlgBorderRadius,
-                        boxShadow: theme.shadows.lg,
+                        boxShadow:
+                            dlgResolvedStyle?.shadows ?? theme.shadows.lg,
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,

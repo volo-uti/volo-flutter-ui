@@ -633,7 +633,8 @@ class _PopoverOverlay extends StatelessWidget {
                             border: resolvedStyle?.borderColor != null
                                 ? Border.all(color: resolvedStyle!.borderColor!)
                                 : null,
-                            boxShadow: theme.shadows.md,
+                            boxShadow:
+                                resolvedStyle?.shadows ?? theme.shadows.md,
                           ),
                           child: content,
                         ),

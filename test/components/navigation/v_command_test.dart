@@ -622,4 +622,89 @@ void main() {
       expect(find.text('Search...'), findsOneWidget);
     });
   });
+
+  group('VCommand style fields', () {
+    final theme = VThemeData.light();
+    const shadow = BoxShadow(blurRadius: 3);
+    const children = [
+      VCommandInput(autofocus: false),
+      VCommandList(
+        children: [VCommandItem(value: 'a', child: Text('Alpha'))],
+      ),
+    ];
+
+    // Builds an inline or dialog palette styled through the theme or as the
+    // instance style.
+    Widget styled(
+      VCommandStyle? style, {
+      required bool dialog,
+      bool viaTheme = false,
+    }) => VTheme(
+      data: theme.copyWith(
+        componentOverrides: VComponentOverrides([
+          if (viaTheme && style != null) style,
+        ]),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: const MediaQueryData(),
+          child: dialog
+              ? VCommand.dialog(
+                  open: true,
+                  style: viaTheme ? null : style,
+                  children: children,
+                )
+              : VCommand(style: viaTheme ? null : style, children: children),
+        ),
+      ),
+    );
+
+    // The panel is the nearest box around the input that draws a border on
+    // every side.
+    List<BoxShadow>? panelShadows(WidgetTester tester) => tester
+        .widgetList<Container>(
+          find.ancestor(
+            of: find.byType(EditableText),
+            matching: find.byType(Container),
+          ),
+        )
+        .map((c) => c.decoration)
+        .whereType<BoxDecoration>()
+        .firstWhere(
+          (d) => d.border is Border && (d.border! as Border).isUniform,
+        )
+        .boxShadow;
+
+    testWidgets('the dialog has the large shadow and inline none by default', (
+      tester,
+    ) async {
+      await tester.pumpWidget(styled(null, dialog: true));
+      await tester.pumpAndSettle();
+      expect(panelShadows(tester), theme.shadows.lg);
+
+      await tester.pumpWidget(styled(null, dialog: false));
+      expect(panelShadows(tester), isNull);
+    });
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      for (final dialog in [true, false]) {
+        final form = dialog ? 'dialog' : 'inline';
+
+        testWidgets('shadows sit under the $form panel ($via)', (tester) async {
+          await tester.pumpWidget(
+            styled(
+              const VCommandStyle(shadows: [shadow]),
+              dialog: dialog,
+              viaTheme: viaTheme,
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(panelShadows(tester), [shadow]);
+        });
+      }
+    }
+  });
 }

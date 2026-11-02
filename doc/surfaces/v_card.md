@@ -183,11 +183,11 @@ Supports cascade: theme override → instance override.
 | `foregroundColor` | `Color?` |  |  | Text foreground color. |
 | `borderColor` | `Color?` |  |  | Border color. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
-| `elevation` | `double?` |  |  | Elevation (shadow depth). |
+| `shadows` | `List<BoxShadow>?` |  |  | Shadows under an elevated card; the theme's medium shadow, large on hover, when null.<br>The list replaces both the resting and the hover shadow, and an empty list draws none. An outlined card draws no shadow. An instance style wins over the theme override. |
 | `padding` | `EdgeInsets?` |  |  | Internal padding. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VCardStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? borderColor, BorderRadius? borderRadius, double? elevation, EdgeInsets? padding})` | Creates a copy with only the specified properties changed. |
+| `VCardStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? borderColor, BorderRadius? borderRadius, List<BoxShadow>? shadows, EdgeInsets? padding})` | Creates a copy with only the specified properties changed. |
