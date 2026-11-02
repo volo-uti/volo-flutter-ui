@@ -262,16 +262,15 @@ class _VDatePickerState extends State<VDatePicker> {
         if (mounted) setState(() => _hasFocus = focused);
       },
       onKeyEvent: _handleKeyEvent,
-      child: VPopover(
-        controller: _popoverController,
-        position: VPopoverPosition.bottomStart,
-        content: content,
-        child: Opacity(
-          opacity: isDisabled ? 0.5 : 1.0,
-          child: IgnorePointer(
-            ignoring: isDisabled || widget.readOnly,
-            child: trigger,
-          ),
+      // WHY: Outside the popover, so a disabled or read-only picker also
+      // ignores the tap that the popover trigger would take to open.
+      child: IgnorePointer(
+        ignoring: isDisabled || widget.readOnly,
+        child: VPopover(
+          controller: _popoverController,
+          position: VPopoverPosition.bottomStart,
+          content: content,
+          child: Opacity(opacity: isDisabled ? 0.5 : 1.0, child: trigger),
         ),
       ),
     );

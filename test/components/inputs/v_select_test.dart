@@ -1699,4 +1699,56 @@ void main() {
       greaterThanOrEqualTo(lineHeight - 0.5),
     );
   });
+
+  group('VSelect closed when disabled or read-only', () {
+    // Hosts [child] in an overlay, where the popover opens.
+    Widget host(Widget child) => VTheme(
+      data: VThemeData.light(),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: const MediaQueryData(),
+          child: Overlay(
+            initialEntries: [
+              OverlayEntry(builder: (_) => Center(child: child)),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    Future<bool> opensOnTap(
+      WidgetTester tester, {
+      bool enabled = true,
+      bool readOnly = false,
+    }) async {
+      await tester.pumpWidget(
+        host(
+          VSelect<String>(
+            items: const [VSelectItem(value: 'a', label: 'Option A')],
+            placeholder: 'Pick',
+            enabled: enabled,
+            readOnly: readOnly,
+            onChanged: (_) {},
+          ),
+        ),
+      );
+      await tester.tap(find.byType(VSelect<String>), warnIfMissed: false);
+      await tester.pumpAndSettle();
+      // The option shows only while the dropdown is open.
+      return find.text('Option A').evaluate().isNotEmpty;
+    }
+
+    testWidgets('an enabled select opens on tap', (tester) async {
+      expect(await opensOnTap(tester), isTrue);
+    });
+
+    testWidgets('a disabled select stays closed on tap', (tester) async {
+      expect(await opensOnTap(tester, enabled: false), isFalse);
+    });
+
+    testWidgets('a read-only select stays closed on tap', (tester) async {
+      expect(await opensOnTap(tester, readOnly: true), isFalse);
+    });
+  });
 }

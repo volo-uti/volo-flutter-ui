@@ -700,22 +700,21 @@ class _VSelectState<T> extends State<VSelect<T>> {
         if (mounted) setState(() => _hasFocus = focused);
       },
       onKeyEvent: _handleKeyEvent,
-      child: VPopover(
-        controller: _popoverController,
-        position: widget.popoverPosition,
-        style: dropdownBackgroundColor == null && dropdownBorderRadius == null
-            ? null
-            : VPopoverStyle(
-                backgroundColor: dropdownBackgroundColor,
-                borderRadius: dropdownBorderRadius,
-              ),
-        content: dropdown,
-        child: Opacity(
-          opacity: isDisabled ? 0.5 : 1.0,
-          child: IgnorePointer(
-            ignoring: isDisabled || widget.readOnly,
-            child: trigger,
-          ),
+      // WHY: Outside the popover, so a disabled or read-only select also
+      // ignores the tap that the popover trigger would take to open.
+      child: IgnorePointer(
+        ignoring: isDisabled || widget.readOnly,
+        child: VPopover(
+          controller: _popoverController,
+          position: widget.popoverPosition,
+          style: dropdownBackgroundColor == null && dropdownBorderRadius == null
+              ? null
+              : VPopoverStyle(
+                  backgroundColor: dropdownBackgroundColor,
+                  borderRadius: dropdownBorderRadius,
+                ),
+          content: dropdown,
+          child: Opacity(opacity: isDisabled ? 0.5 : 1.0, child: trigger),
         ),
       ),
     );

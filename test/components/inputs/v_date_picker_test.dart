@@ -718,4 +718,54 @@ void main() {
       });
     }
   });
+
+  group('VDatePicker closed when disabled or read-only', () {
+    // Hosts [child] in an overlay, where the popover opens.
+    Widget host(Widget child) => VTheme(
+      data: VThemeData.light(),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: const MediaQueryData(),
+          child: Overlay(
+            initialEntries: [
+              OverlayEntry(builder: (_) => Center(child: child)),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    Future<bool> opensOnTap(
+      WidgetTester tester, {
+      bool enabled = true,
+      bool readOnly = false,
+    }) async {
+      await tester.pumpWidget(
+        host(
+          VDatePicker.date(
+            placeholder: 'Pick',
+            enabled: enabled,
+            readOnly: readOnly,
+          ),
+        ),
+      );
+      await tester.tap(find.byType(VDatePicker), warnIfMissed: false);
+      await tester.pumpAndSettle();
+      // The weekday header shows only while the calendar is open.
+      return find.text('Sun').evaluate().isNotEmpty;
+    }
+
+    testWidgets('an enabled picker opens on tap', (tester) async {
+      expect(await opensOnTap(tester), isTrue);
+    });
+
+    testWidgets('a disabled picker stays closed on tap', (tester) async {
+      expect(await opensOnTap(tester, enabled: false), isFalse);
+    });
+
+    testWidgets('a read-only picker stays closed on tap', (tester) async {
+      expect(await opensOnTap(tester, readOnly: true), isFalse);
+    });
+  });
 }
