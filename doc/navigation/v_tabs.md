@@ -144,7 +144,7 @@ Creates tabs whose selected tab is filled with the card color.
 | `borderRadius` | `BorderRadiusGeometry?` |  |  | Corner radius of the tab bar. |
 | `indicatorBorderRadius` | `BorderRadiusGeometry?` |  |  | Corner radius of the selected tab's fill. |
 | `indicatorBorder` | `BoxBorder?` |  |  | Border drawn around the selected tab. |
-| `style` | `VTabsStyle?` |  |  | Overrides for colors and padding. |
+| `style` | `VTabsStyle?` |  |  | Overrides for colors, padding, label text styles and the underline. |
 
 #### `VTabs.pills`
 
@@ -166,7 +166,7 @@ Creates tabs whose selected tab is a primary-colored pill.
 | `borderRadius` | `BorderRadiusGeometry?` |  |  | Corner radius of the tab bar. |
 | `indicatorBorderRadius` | `BorderRadiusGeometry?` |  |  | Corner radius of the selected tab's fill. |
 | `indicatorBorder` | `BoxBorder?` |  |  | Border drawn around the selected tab. |
-| `style` | `VTabsStyle?` |  |  | Overrides for colors and padding. |
+| `style` | `VTabsStyle?` |  |  | Overrides for colors, padding, label text styles and the underline. |
 
 #### `VTabs.underline`
 
@@ -188,7 +188,7 @@ Creates tabs whose selected tab has an underline.
 | `borderRadius` | `BorderRadiusGeometry?` |  |  | Corner radius of the tab bar. |
 | `indicatorBorderRadius` | `BorderRadiusGeometry?` |  |  | Corner radius of the selected tab's fill. |
 | `indicatorBorder` | `BoxBorder?` |  |  | Border drawn around the selected tab. |
-| `style` | `VTabsStyle?` |  |  | Overrides for colors and padding. |
+| `style` | `VTabsStyle?` |  |  | Overrides for colors, padding, label text styles and the underline. |
 
 ## VTab
 
@@ -234,15 +234,16 @@ Supports cascade: theme override → instance override.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
-| `foregroundColor` | `Color?` |  |  | Text foreground color. |
-| `activeColor` | `Color?` |  |  | Active tab color. |
-| `inactiveColor` | `Color?` |  |  | Inactive tab color. |
-| `indicatorColor` | `Color?` |  |  | Tab indicator color. |
-| `indicatorHeight` | `double?` |  |  | Tab indicator height. |
+| `activeColor` | `Color?` |  |  | Selected tab color: its text, or its fill on [VTabs.pills].<br>Wins over the color of [selectedTextStyle]. |
+| `inactiveColor` | `Color?` |  |  | Text color of the tabs that are not selected.<br>Wins over the color of [textStyle]. |
+| `indicatorColor` | `Color?` |  |  | Underline color of [VTabs.underline]. |
+| `indicatorHeight` | `double?` |  |  | Underline thickness of [VTabs.underline]; 2 when null. |
 | `padding` | `EdgeInsets?` |  |  | Internal padding. |
+| `textStyle` | `TextStyle?` |  |  | Label text style of every tab, merged over the default label style.<br>The default is the theme's label medium style in the tab color, semibold on the selected tab. Only the fields this sets change, so setting a weight here also changes the selected tab unless [selectedTextStyle] sets one. |
+| `selectedTextStyle` | `TextStyle?` |  |  | Label text style of the selected tab, merged over [textStyle]. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VTabsStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? activeColor, Color? inactiveColor, Color? indicatorColor, double? indicatorHeight, EdgeInsets? padding})` | Creates a copy with only the specified properties changed. |
+| `VTabsStyle copyWith({Color? backgroundColor, Color? activeColor, Color? inactiveColor, Color? indicatorColor, double? indicatorHeight, EdgeInsets? padding, TextStyle? textStyle, TextStyle? selectedTextStyle})` | Creates a copy with only the specified properties changed. |

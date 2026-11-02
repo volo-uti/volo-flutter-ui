@@ -1803,4 +1803,172 @@ void main() {
       expect(find.text('Content 2'), findsOneWidget);
     });
   });
+
+  group('VTabsStyle', () {
+    TextStyle labelOf(WidgetTester tester, String text) =>
+        tester.renderObject<RenderParagraph>(find.text(text)).text.style!;
+
+    Widget themed(Widget child, {VThemeData? theme}) => VTheme(
+      data: theme ?? VThemeData.light(),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: const MediaQueryData(),
+          child: SizedBox(width: 400, height: 300, child: child),
+        ),
+      ),
+    );
+
+    BorderSide underlineOf(WidgetTester tester, String text) {
+      final container = tester.widget<AnimatedContainer>(
+        find.ancestor(
+          of: find.text(text),
+          matching: find.byType(AnimatedContainer),
+        ),
+      );
+      final border = (container.decoration! as BoxDecoration).border! as Border;
+      return border.bottom;
+    }
+
+    testWidgets('indicatorHeight sets the underline thickness', (tester) async {
+      await tester.pumpWidget(buildTestWidget(VTabs.underline(tabs: testTabs)));
+      expect(underlineOf(tester, 'Tab 1').width, 2);
+
+      await tester.pumpWidget(
+        buildTestWidget(
+          VTabs.underline(
+            tabs: testTabs,
+            style: const VTabsStyle(indicatorHeight: 4),
+          ),
+        ),
+      );
+      expect(underlineOf(tester, 'Tab 1').width, 4);
+    });
+
+    testWidgets('textStyle lays over every tab label', (tester) async {
+      final theme = VThemeData.light();
+      await tester.pumpWidget(
+        buildTestWidget(
+          VTabs(
+            tabs: testTabs,
+            style: const VTabsStyle(
+              textStyle: TextStyle(fontSize: 18, letterSpacing: 1),
+            ),
+          ),
+        ),
+      );
+
+      final selected = labelOf(tester, 'Tab 1');
+      final other = labelOf(tester, 'Tab 2');
+      expect(selected.fontSize, 18);
+      expect(other.fontSize, 18);
+      expect(other.letterSpacing, 1);
+      // Fields it does not set keep the defaults.
+      expect(selected.fontWeight, FontWeight.w600);
+      expect(other.fontWeight, FontWeight.normal);
+      expect(other.color, theme.colors.mutedForeground);
+    });
+
+    testWidgets('selectedTextStyle lays over textStyle on the selected tab', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          VTabs(
+            tabs: testTabs,
+            style: const VTabsStyle(
+              textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              selectedTextStyle: TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ),
+      );
+
+      final selected = labelOf(tester, 'Tab 1');
+      expect(selected.fontSize, 18);
+      expect(selected.fontWeight, FontWeight.w700);
+      expect(labelOf(tester, 'Tab 2').fontWeight, FontWeight.w500);
+    });
+
+    testWidgets('text style colors apply, color fields win over them', (
+      tester,
+    ) async {
+      const red = Color(0xFFFF0000);
+      const green = Color(0xFF00FF00);
+      const blue = Color(0xFF0000FF);
+      await tester.pumpWidget(
+        buildTestWidget(
+          VTabs(
+            tabs: testTabs,
+            style: const VTabsStyle(
+              textStyle: TextStyle(color: red),
+              selectedTextStyle: TextStyle(color: green),
+            ),
+          ),
+        ),
+      );
+      expect(labelOf(tester, 'Tab 1').color, green);
+      expect(labelOf(tester, 'Tab 2').color, red);
+
+      await tester.pumpWidget(
+        buildTestWidget(
+          VTabs(
+            tabs: testTabs,
+            style: const VTabsStyle(
+              activeColor: blue,
+              inactiveColor: blue,
+              textStyle: TextStyle(color: red),
+              selectedTextStyle: TextStyle(color: green),
+            ),
+          ),
+        ),
+      );
+      expect(labelOf(tester, 'Tab 1').color, blue);
+      expect(labelOf(tester, 'Tab 2').color, blue);
+    });
+
+    testWidgets('a disabled tab dims its text style color', (tester) async {
+      const red = Color(0xFFFF0000);
+      await tester.pumpWidget(
+        buildTestWidget(
+          const VTabs(
+            tabs: [
+              VTab(label: Text('A'), content: Text('a')),
+              VTab(label: Text('B'), content: Text('b'), enabled: false),
+            ],
+            style: VTabsStyle(textStyle: TextStyle(color: red)),
+          ),
+        ),
+      );
+
+      expect(labelOf(tester, 'B').color, red.withValues(alpha: 0.5));
+    });
+
+    testWidgets('a theme override applies and an instance style wins', (
+      tester,
+    ) async {
+      final theme = VThemeData.light().copyWith(
+        componentOverrides: const VComponentOverrides([
+          VTabsStyle(textStyle: TextStyle(fontSize: 18), indicatorHeight: 3),
+        ]),
+      );
+      await tester.pumpWidget(
+        themed(VTabs.underline(tabs: testTabs), theme: theme),
+      );
+      expect(labelOf(tester, 'Tab 2').fontSize, 18);
+      expect(underlineOf(tester, 'Tab 1').width, 3);
+
+      await tester.pumpWidget(
+        themed(
+          VTabs.underline(
+            tabs: testTabs,
+            style: const VTabsStyle(textStyle: TextStyle(fontSize: 12)),
+          ),
+          theme: theme,
+        ),
+      );
+      expect(labelOf(tester, 'Tab 2').fontSize, 12);
+      expect(underlineOf(tester, 'Tab 1').width, 3);
+    });
+  });
 }

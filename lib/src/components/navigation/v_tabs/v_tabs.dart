@@ -269,7 +269,7 @@ class VTabs extends StatefulWidget {
   /// Border drawn around the selected tab.
   final BoxBorder? indicatorBorder;
 
-  /// Overrides for colors and padding.
+  /// Overrides for colors, padding, label text styles and the underline.
   final VTabsStyle? style;
 
   @override
@@ -441,6 +441,11 @@ class _VTabsState extends State<VTabs> {
     final effectiveIndicatorColor =
         resolvedStyle?.indicatorColor ?? widget.indicatorColor;
     final effectivePadding = resolvedStyle?.padding ?? widget.padding;
+    final labelStyles = (
+      text: resolvedStyle?.textStyle,
+      selected: resolvedStyle?.selectedTextStyle,
+      indicatorHeight: resolvedStyle?.indicatorHeight,
+    );
 
     final selectedIndex = _selectedIndex.clamp(0, widget.tabs.length - 1);
     final contentWidget = Expanded(
@@ -471,6 +476,7 @@ class _VTabsState extends State<VTabs> {
               selectedColor: effectiveSelectedColor,
               unselectedColor: effectiveUnselectedColor,
               indicatorColor: effectiveIndicatorColor,
+              labelStyles: labelStyles,
             ),
             // Tab content
             contentWidget,
@@ -493,6 +499,7 @@ class _VTabsState extends State<VTabs> {
             selectedColor: effectiveSelectedColor,
             unselectedColor: effectiveUnselectedColor,
             indicatorColor: effectiveIndicatorColor,
+            labelStyles: labelStyles,
           ),
           // Tab content
           contentWidget,
@@ -505,6 +512,7 @@ class _VTabsState extends State<VTabs> {
     BuildContext context,
     VColors colors,
     VTypography typography, {
+    required _TabLabelStyles labelStyles,
     Color? bgColor,
     EdgeInsetsGeometry? padding,
     Color? selectedColor,
@@ -525,6 +533,7 @@ class _VTabsState extends State<VTabs> {
         selectedColor: selectedColor,
         unselectedColor: unselectedColor,
         indicatorColor: indicatorColor,
+        labelStyles: labelStyles,
       );
     });
 
@@ -575,6 +584,7 @@ class _VTabsState extends State<VTabs> {
     int index,
     VColors colors,
     VTypography typography, {
+    required _TabLabelStyles labelStyles,
     Color? selectedColor,
     Color? unselectedColor,
     Color? indicatorColor,
@@ -597,6 +607,7 @@ class _VTabsState extends State<VTabs> {
       selectedColor: selectedColor,
       unselectedColor: unselectedColor,
       indicatorColor: indicatorColor,
+      labelStyles: labelStyles,
       indicatorBorderRadius: widget.indicatorBorderRadius,
       indicatorBorder: widget.indicatorBorder,
       tabPadding: widget.tabPadding ?? defaultTabPadding,
@@ -613,6 +624,13 @@ class _VTabsState extends State<VTabs> {
 
 enum _VTabsVariant { defaultTabs, pills, underline }
 
+/// Label text styles and underline thickness resolved from [VTabsStyle].
+typedef _TabLabelStyles = ({
+  TextStyle? text,
+  TextStyle? selected,
+  double? indicatorHeight,
+});
+
 class _TabItem extends StatefulWidget {
   const _TabItem({
     required this.tab,
@@ -622,6 +640,7 @@ class _TabItem extends StatefulWidget {
     required this.typography,
     required this.tabPadding,
     required this.onTap,
+    required this.labelStyles,
     this.focusNode,
     this.selectedColor,
     this.unselectedColor,
@@ -642,6 +661,7 @@ class _TabItem extends StatefulWidget {
   final BoxBorder? indicatorBorder;
   final EdgeInsetsGeometry tabPadding;
   final VoidCallback? onTap;
+  final _TabLabelStyles labelStyles;
   final FocusNode? focusNode;
 
   @override
@@ -669,28 +689,29 @@ class _TabItemState extends State<_TabItem> {
     final colors = widget.colors;
     final typography = widget.typography;
 
-    // Use custom colors or default colors
-    final defaultSelectedTextColor = widget.variant == _VTabsVariant.pills
-        ? colors.primaryForeground
-        : colors.foreground;
-    final selectedTextColor = widget.selectedColor != null
+    // A disabled tab takes the unselected color, dimmed.
+    final showsSelected = widget.isSelected && widget.tab.enabled;
+    final defaultTextColor = showsSelected
         ? (widget.variant == _VTabsVariant.pills
               ? colors.primaryForeground
-              : widget.selectedColor!)
-        : defaultSelectedTextColor;
-    final unselectedTextColor =
-        widget.unselectedColor ?? colors.mutedForeground;
+              : colors.foreground)
+        : colors.mutedForeground;
+    // A color field wins over a text style color; on pills selectedColor is
+    // the fill, so the selected text keeps its color.
+    final colorField = showsSelected
+        ? (widget.variant == _VTabsVariant.pills ? null : widget.selectedColor)
+        : widget.unselectedColor;
 
-    final textColor = !widget.tab.enabled
-        ? unselectedTextColor.withValues(alpha: 0.5)
-        : widget.isSelected
-        ? selectedTextColor
-        : unselectedTextColor;
-
-    final labelStyle = typography.labelMedium.copyWith(
-      color: textColor,
-      fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.normal,
-    );
+    var labelStyle = typography.labelMedium
+        .copyWith(
+          color: defaultTextColor,
+          fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.normal,
+        )
+        .merge(widget.labelStyles.text)
+        .merge(widget.isSelected ? widget.labelStyles.selected : null);
+    var textColor = colorField ?? labelStyle.color ?? defaultTextColor;
+    if (!widget.tab.enabled) textColor = textColor.withValues(alpha: 0.5);
+    labelStyle = labelStyle.copyWith(color: textColor);
 
     final Widget tabContent = Row(
       mainAxisSize: MainAxisSize.min,
@@ -740,7 +761,7 @@ class _TabItemState extends State<_TabItem> {
                         widget.indicatorColor ??
                         widget.selectedColor ??
                         colors.primary,
-                    width: 2,
+                    width: widget.labelStyles.indicatorHeight ?? 2,
                   ),
                 ),
           );
