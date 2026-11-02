@@ -1,4 +1,7 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart' show Icons;
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -305,6 +308,202 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.space);
 
       expect(taps, 2);
+    });
+  });
+
+  group('VChip large text', () {
+    testWidgets('a two-line label grows the chip at 2x text and 320 wide', (
+      tester,
+    ) async {
+      tester.view
+        ..physicalSize = const Size(320, 640)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        VTheme(
+          data: VThemeData.light(),
+          child: const Directionality(
+            textDirection: TextDirection.ltr,
+            child: MediaQuery(
+              data: MediaQueryData(
+                size: Size(320, 640),
+                textScaler: TextScaler.linear(2),
+              ),
+              child: Center(
+                child: VChip(label: Text('Long chip label', maxLines: 2)),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      final paragraph = tester.renderObject<RenderParagraph>(
+        find.text('Long chip label'),
+      );
+      expect(paragraph.didExceedMaxLines, isFalse);
+      // The label gets the height its two lines need, so nothing is clipped.
+      expect(
+        paragraph.size.height,
+        moreOrLessEquals(paragraph.getMaxIntrinsicHeight(paragraph.size.width)),
+      );
+      final chip = tester.getRect(find.byType(VChip));
+      final text = tester.getRect(find.text('Long chip label'));
+      // Two lines of text no longer fit in the 32px md preset.
+      expect(text.height, greaterThan(32));
+      expect(chip.top, lessThanOrEqualTo(text.top));
+      expect(chip.bottom, greaterThanOrEqualTo(text.bottom));
+    });
+
+    testWidgets('a label without maxLines stays on one line', (tester) async {
+      await tester.pumpWidget(
+        VTheme(
+          data: VThemeData.light(),
+          child: const Directionality(
+            textDirection: TextDirection.ltr,
+            child: Center(
+              child: SizedBox(
+                width: 120,
+                child: VChip(label: Text('A label far too long for the chip')),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final paragraph = tester.renderObject<RenderParagraph>(
+        find.text('A label far too long for the chip'),
+      );
+      expect(paragraph.didExceedMaxLines, isTrue);
+      expect(tester.getSize(find.byType(VChip)).height, 32);
+    });
+  });
+
+  group('VChip without callbacks', () {
+    Widget frame(Widget child) => VTheme(
+      data: VThemeData.light(),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(child: child),
+      ),
+    );
+
+    testWidgets('has no tap action or button flag and is not dimmed', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(frame(const VChip(label: Text('Tag'))));
+
+      final data = tester.getSemantics(find.text('Tag')).getSemanticsData();
+      expect(data.label, 'Tag');
+      expect(data.flagsCollection.isButton, isFalse);
+      expect(data.flagsCollection.isFocused, Tristate.none);
+      expect(data.hasAction(SemanticsAction.tap), isFalse);
+      expect(
+        find.descendant(of: find.byType(VChip), matching: find.byType(Focus)),
+        findsNothing,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(VChip),
+          matching: find.byType(GestureDetector),
+        ),
+        findsNothing,
+      );
+      final opacity = tester.widget<Opacity>(
+        find.descendant(of: find.byType(VChip), matching: find.byType(Opacity)),
+      );
+      expect(opacity.opacity, 1.0);
+      handle.dispose();
+    });
+
+    testWidgets('a filter chip shows its selection without a button', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        frame(const VChip.filter(label: Text('Dart'), selected: true)),
+      );
+
+      final data = tester.getSemantics(find.text('Dart')).getSemanticsData();
+      expect(data.flagsCollection.isButton, isFalse);
+      expect(data.flagsCollection.isToggled, Tristate.none);
+      expect(data.flagsCollection.isSelected, Tristate.isTrue);
+      expect(data.hasAction(SemanticsAction.tap), isFalse);
+      handle.dispose();
+    });
+
+    testWidgets('a group without onChanged holds inert chips', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        frame(
+          const VChipGroup<String>(
+            items: [VChipItem(value: 'a', label: Text('A'))],
+            values: ['a'],
+          ),
+        ),
+      );
+
+      final data = tester.getSemantics(find.text('A')).getSemanticsData();
+      expect(data.flagsCollection.isButton, isFalse);
+      expect(data.hasAction(SemanticsAction.tap), isFalse);
+      handle.dispose();
+    });
+
+    testWidgets('a chip with a callback stays a focusable button', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      var taps = 0;
+      await tester.pumpWidget(
+        frame(VChip(label: const Text('Tag'), onTap: () => taps++)),
+      );
+
+      final data = tester.getSemantics(find.text('Tag')).getSemanticsData();
+      expect(data.flagsCollection.isButton, isTrue);
+      expect(data.flagsCollection.isEnabled, Tristate.isTrue);
+      expect(data.hasAction(SemanticsAction.tap), isTrue);
+      expect(
+        find.descendant(of: find.byType(VChip), matching: find.byType(Focus)),
+        findsOneWidget,
+      );
+      await tester.tap(find.byType(VChip));
+      expect(taps, 1);
+      handle.dispose();
+    });
+
+    testWidgets('a filter chip with onSelected stays a toggle button', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        frame(
+          VChip.filter(
+            label: const Text('Dart'),
+            selected: true,
+            onSelected: (_) {},
+          ),
+        ),
+      );
+
+      final data = tester.getSemantics(find.text('Dart')).getSemanticsData();
+      expect(data.flagsCollection.isButton, isTrue);
+      expect(data.flagsCollection.isToggled, Tristate.isTrue);
+      expect(data.hasAction(SemanticsAction.tap), isTrue);
+      handle.dispose();
+    });
+
+    testWidgets('an input chip with onDeleted stays a button', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        frame(VChip.input(label: const Text('Value'), onDeleted: () {})),
+      );
+
+      final data = tester.getSemantics(find.text('Value')).getSemanticsData();
+      expect(data.flagsCollection.isButton, isTrue);
+      expect(find.bySemanticsLabel('Delete'), findsOneWidget);
+      handle.dispose();
     });
   });
 }

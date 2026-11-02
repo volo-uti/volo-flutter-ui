@@ -7,21 +7,24 @@ import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'v_chip_style.dart';
 
-/// Height presets for a [VChip].
+/// Minimum height presets for a [VChip].
+///
+/// A chip grows taller than its preset when its label needs more room, such
+/// as with large text or a label that wraps.
 enum VChipSize {
-  /// Extra small size (20px).
+  /// Extra small size (24px minimum height).
   xs,
 
-  /// Small size (24px).
+  /// Small size (24px minimum height).
   sm,
 
-  /// Medium size (32px).
+  /// Medium size (32px minimum height).
   md,
 
-  /// Large size (40px).
+  /// Large size (40px minimum height).
   lg,
 
-  /// Extra large size (48px).
+  /// Extra large size (48px minimum height).
   xl,
 }
 
@@ -29,6 +32,11 @@ enum VChipSize {
 ///
 /// The default and [VChip.outlined] chips fire [onTap], [VChip.filter] toggles
 /// through [onSelected], and [VChip.input] shows a delete icon for [onDeleted].
+/// A chip with none of these callbacks is a plain label: it takes no taps or
+/// focus, is not dimmed and is not announced as a button.
+///
+/// The chip is at least as tall as its [size] and grows with its label, so
+/// large text and wrapped labels fit; its ends stay round at any height.
 ///
 /// ```dart
 /// VChip.filter(
@@ -106,6 +114,8 @@ class VChip extends StatefulWidget {
   /// Content of the chip, usually a short [Text].
   ///
   /// Font size and color come from the chip, so a plain [Text] needs no style.
+  /// The label stays on one line and ends with an ellipsis, unless the [Text]
+  /// sets its own `maxLines`.
   final Widget label;
 
   /// Widget shown before the label, such as an icon.
@@ -128,7 +138,7 @@ class VChip extends StatefulWidget {
   /// Whether the chip reacts to taps and focus; false dims it.
   final bool enabled;
 
-  /// Height and padding preset of the chip.
+  /// Minimum height and padding preset of the chip.
   final VChipSize size;
 
   /// Per-instance style override merged over the theme style.
@@ -169,8 +179,8 @@ class _VChipState extends State<VChip> with SingleTickerProviderStateMixin {
   @override
   void didUpdateWidget(VChip oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!_isEnabled) {
-      // A disabled chip keeps no press or focus state for later.
+    if (!_isInteractive) {
+      // A disabled or inert chip keeps no press or focus state for later.
       _isPressed = false;
       _isFocused = false;
     }
@@ -213,6 +223,15 @@ class _VChipState extends State<VChip> with SingleTickerProviderStateMixin {
   double get _iconSize => _sizeToken.iconSize;
 
   bool get _isEnabled => widget.enabled;
+
+  /// Whether the chip has anything to call when tapped or deleted.
+  bool get _hasCallback =>
+      widget.onTap != null ||
+      widget.onSelected != null ||
+      widget.onDeleted != null;
+
+  /// Whether the chip takes taps, focus and keys.
+  bool get _isInteractive => _isEnabled && _hasCallback;
 
   void _handleTap() {
     if (!_isEnabled) return;
@@ -259,12 +278,15 @@ class _VChipState extends State<VChip> with SingleTickerProviderStateMixin {
       }
     }
 
+    // One line with an ellipsis is the default; a Text with its own maxLines
+    // overrides it.
     final labelWidget = DefaultTextStyle.merge(
       style: (resolvedStyle?.textStyle ?? const TextStyle()).copyWith(
         fontSize: _fontSize,
         color: fgColor,
         height: 1.15,
       ),
+      maxLines: 1,
       overflow: TextOverflow.ellipsis,
       child: widget.label,
     );
@@ -326,13 +348,13 @@ class _VChipState extends State<VChip> with SingleTickerProviderStateMixin {
       );
     }
 
-    // Focus ring (WCAG 2.4.7)
-    final chipRadius =
-        resolvedStyle?.borderRadius ?? BorderRadius.circular(_height / 2);
+    // Focus ring (WCAG 2.4.7). A full radius keeps the pill shape when the
+    // chip grows past its minimum height.
+    final chipRadius = resolvedStyle?.borderRadius ?? theme.radius.fullRadius;
     final chipPadding = resolvedStyle?.padding ?? _padding;
 
     Widget chip = DecoratedBox(
-      decoration: _isFocused && _isEnabled
+      decoration: _isFocused && _isInteractive
           ? BoxDecoration(
               borderRadius: chipRadius,
               border: Border.all(color: colors.ring, width: 2),
@@ -341,7 +363,7 @@ class _VChipState extends State<VChip> with SingleTickerProviderStateMixin {
       child: AnimatedContainer(
         duration: theme.animations.fast,
         curve: Curves.easeOut,
-        height: _height,
+        constraints: BoxConstraints(minHeight: _height),
         padding: chipPadding,
         transform: _isPressed
             ? (Matrix4.identity()..scaleByDouble(0.95, 0.95, 1, 1))
@@ -358,6 +380,13 @@ class _VChipState extends State<VChip> with SingleTickerProviderStateMixin {
         ),
       ),
     );
+
+    if (!_hasCallback) {
+      // A plain label: read as text, plus the selection a filter chip shows.
+      return widget._variant == _VChipVariant.filter
+          ? Semantics(selected: widget.selected, child: chip)
+          : chip;
+    }
 
     if (_isEnabled) {
       chip = Focus(
@@ -445,6 +474,8 @@ class VChipGroup<T> extends StatelessWidget {
   final List<T> values;
 
   /// Called with the new list of selected values after a chip is toggled.
+  ///
+  /// When null, the chips show the selection but take no taps or focus.
   final ValueChanged<List<T>>? onChanged;
 
   /// Whether several chips can be selected at once; false keeps one.
@@ -470,21 +501,21 @@ class VChipGroup<T> extends StatelessWidget {
         leading: item.leading,
         selected: isSelected,
         size: size,
-        onSelected: (selected) {
-          if (onChanged == null) return;
-
-          List<T> newValues;
-          if (selected) {
-            if (allowMultiple) {
-              newValues = [...values, item.value];
-            } else {
-              newValues = [item.value];
-            }
-          } else {
-            newValues = values.where((v) => v != item.value).toList();
-          }
-          onChanged!(newValues);
-        },
+        onSelected: onChanged == null
+            ? null
+            : (selected) {
+                List<T> newValues;
+                if (selected) {
+                  if (allowMultiple) {
+                    newValues = [...values, item.value];
+                  } else {
+                    newValues = [item.value];
+                  }
+                } else {
+                  newValues = values.where((v) => v != item.value).toList();
+                }
+                onChanged!(newValues);
+              },
       );
     }).toList(),
   );
