@@ -7,7 +7,7 @@ Import: `package:volo_flutter_ui/volo_flutter_ui.dart`
 Modal dialog that asks the user to confirm or cancel before going on.
 
 Unlike [VDialog], a tap on the barrier does not close it unless
-`barrierDismissible` is set. Both buttons close the dialog after calling
+`barrierDismissible` is set. Both buttons close the dialog, then call
 their callback.
 
 ```dart
@@ -22,6 +22,36 @@ VAlertDialog.show<void>(
 );
 ```
 
+The buttons take only their text. To give a button a key, or to build the
+buttons yourself, show a [VDialog.custom] with your buttons in `actions`.
+Two things differ there: its `barrierDismissible` defaults to true, so a
+barrier tap or Escape closes it unless you pass false, and the actions do
+not close the dialog, so each one calls [VDialog.close]. Call it with a
+context inside the dialog, such as a [Builder]'s: the dialog is on the
+root navigator, and a context under a nested navigator would pop that
+navigator instead.
+
+```dart
+VDialog.show<bool>(
+  context,
+  VDialog.custom(
+    title: const Text('Delete item'),
+    content: const Text('This cannot be undone.'),
+    barrierDismissible: false,
+    actions: [
+      Builder(
+        builder: (context) => VButton(
+          key: const Key('delete'),
+          color: VButtonColor.destructive,
+          onPressed: () => VDialog.close(context, true),
+          child: const Text('Delete'),
+        ),
+      ),
+    ],
+  ),
+);
+```
+
 ### Constructors
 
 #### `VAlertDialog`
@@ -32,8 +62,8 @@ Creates an alert dialog; use [show] to display it in a route.
 |---|---|---|---|---|
 | `description` | `Widget` |  | yes | Message body of the dialog. |
 | `title` | `Widget?` |  |  | Heading shown above [description], in the large title style. |
-| `cancelText` | `String?` |  |  | Label of the cancel button; no cancel button is shown when null. |
-| `confirmText` | `String?` |  |  | Label of the confirm button; defaults to "OK". |
+| `cancelText` | `String?` |  |  | Label of the cancel button; no cancel button is shown when null.<br>For a key on the button or a button of your own, see [VDialog.custom]. |
+| `confirmText` | `String?` |  |  | Label of the confirm button; defaults to "OK".<br>For a key on the button or a button of your own, see [VDialog.custom]. |
 | `onCancel` | `void Function()?` |  |  | Called when the cancel button is pressed, right after the dialog closes.<br>The dialog is popped first, so a callback may push another route or open another dialog without that route being popped in its place. |
 | `onConfirm` | `void Function()?` |  |  | Called when the confirm button is pressed, right after the dialog closes.<br>The dialog is popped first, so a callback may push another route or open another dialog without that route being popped in its place. |
 | `destructive` | `bool` | `false` |  | Whether the confirm button uses the destructive color. |

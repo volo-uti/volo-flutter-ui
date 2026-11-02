@@ -32,7 +32,8 @@ class VSnackbarAction {
 /// Temporary message bar anchored to the bottom of the screen.
 ///
 /// Shown with [show]; snackbars shown while another is visible wait in a queue
-/// and appear one after another. It hides itself after [duration].
+/// and appear one after another. Call [clear] before [show] to replace the
+/// visible one instead. It hides itself after [duration].
 ///
 /// ```dart
 /// VSnackbar.show(
@@ -220,6 +221,14 @@ class VSnackbar extends StatelessWidget {
   }
 
   /// Shows [snackbar], or queues it while another one is visible.
+  ///
+  /// To replace the visible snackbar instead of waiting for it, call [clear]
+  /// first; it hides the visible one and drops the queue.
+  ///
+  /// ```dart
+  /// VSnackbar.clear(context);
+  /// VSnackbar.show(context, VSnackbar(content: const Text('Saved')));
+  /// ```
   static void show(BuildContext context, VSnackbar snackbar) {
     _dropStaleState();
     if (_currentEntry != null) {

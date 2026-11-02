@@ -212,6 +212,10 @@ context.vAnimations.fast;
 | Gradients | `VGradients` | 2 gradient types (brand, surface) |
 | Animations | `VAnimations` | 8 durations (instant to extraSlow) + 5 curves |
 
+### Borders and padding
+
+Widgets that draw their border in the decoration, such as `VBox`, `VCard`, `VChip`, `VBadge` and the `VMenu` panel, add the border width to the padding, as a Flutter `Container` does. A 1px border with `EdgeInsets.all(16)` puts the content 17px from the outer edge, and a wider border set in a style grows the widget by the extra width on each side. To keep the outer size and the content position, take the border width off the padding.
+
 ## Platform Support
 
 | Platform | Minimum Version |

@@ -7,7 +7,7 @@ import 'v_alert_dialog_style.dart';
 /// Modal dialog that asks the user to confirm or cancel before going on.
 ///
 /// Unlike [VDialog], a tap on the barrier does not close it unless
-/// `barrierDismissible` is set. Both buttons close the dialog after calling
+/// `barrierDismissible` is set. Both buttons close the dialog, then call
 /// their callback.
 ///
 /// ```dart
@@ -19,6 +19,36 @@ import 'v_alert_dialog_style.dart';
 ///   cancelText: 'Cancel',
 ///   destructive: true,
 ///   onConfirm: deleteItem,
+/// );
+/// ```
+///
+/// The buttons take only their text. To give a button a key, or to build the
+/// buttons yourself, show a [VDialog.custom] with your buttons in `actions`.
+/// Two things differ there: its `barrierDismissible` defaults to true, so a
+/// barrier tap or Escape closes it unless you pass false, and the actions do
+/// not close the dialog, so each one calls [VDialog.close]. Call it with a
+/// context inside the dialog, such as a [Builder]'s: the dialog is on the
+/// root navigator, and a context under a nested navigator would pop that
+/// navigator instead.
+///
+/// ```dart
+/// VDialog.show<bool>(
+///   context,
+///   VDialog.custom(
+///     title: const Text('Delete item'),
+///     content: const Text('This cannot be undone.'),
+///     barrierDismissible: false,
+///     actions: [
+///       Builder(
+///         builder: (context) => VButton(
+///           key: const Key('delete'),
+///           color: VButtonColor.destructive,
+///           onPressed: () => VDialog.close(context, true),
+///           child: const Text('Delete'),
+///         ),
+///       ),
+///     ],
+///   ),
 /// );
 /// ```
 class VAlertDialog extends StatelessWidget {
@@ -45,9 +75,13 @@ class VAlertDialog extends StatelessWidget {
   final Widget description;
 
   /// Label of the cancel button; no cancel button is shown when null.
+  ///
+  /// For a key on the button or a button of your own, see [VDialog.custom].
   final String? cancelText;
 
   /// Label of the confirm button; defaults to "OK".
+  ///
+  /// For a key on the button or a button of your own, see [VDialog.custom].
   final String? confirmText;
 
   /// Called when the cancel button is pressed, right after the dialog closes.

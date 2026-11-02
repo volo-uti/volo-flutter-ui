@@ -7,7 +7,8 @@ Import: `package:volo_flutter_ui/volo_flutter_ui.dart`
 Temporary message bar anchored to the bottom of the screen.
 
 Shown with [show]; snackbars shown while another is visible wait in a queue
-and appear one after another. It hides itself after [duration].
+and appear one after another. Call [clear] before [show] to replace the
+visible one instead. It hides itself after [duration].
 
 ```dart
 VSnackbar.show(
@@ -135,7 +136,7 @@ Info snackbar.
 
 | Member | Description |
 |---|---|
-| `static void show(BuildContext context, VSnackbar snackbar)` | Shows [snackbar], or queues it while another one is visible. |
+| `static void show(BuildContext context, VSnackbar snackbar)` | Shows [snackbar], or queues it while another one is visible.<br>To replace the visible snackbar instead of waiting for it, call [clear] first; it hides the visible one and drops the queue. |
 | `static void showSuccess(BuildContext context, String message)` | Shows a success snackbar with the plain text [message]. |
 | `static void showError(BuildContext context, String message)` | Shows an error snackbar with the plain text [message]. |
 | `static void hide(BuildContext context)` | Hides the visible snackbar and shows the next queued one. |
