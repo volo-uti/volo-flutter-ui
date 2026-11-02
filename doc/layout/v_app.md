@@ -85,6 +85,7 @@ See also:
 | `navigatorObservers` | `List<NavigatorObserver>` | `const <NavigatorObserver>[]` |  | Observers for the [Navigator]. |
 | `locale` | `Locale?` |  |  | The initial locale for this app. |
 | `color` | `Color?` |  |  | The primary color for the application.<br>Used by the OS to identify the app (e.g., task switcher). |
+| `style` | `VAppStyle?` |  |  | Style override for the app background and the default text color.<br>The instance style wins over the theme's [VAppStyle] override; neither draws anything while its fields are null. |
 
 #### `VApp.router`
 
@@ -115,6 +116,7 @@ VApp.router(
 | `builder` | `Widget Function(BuildContext, Widget?)?` |  |  | A builder that wraps the entire widget tree. |
 | `locale` | `Locale?` |  |  | The initial locale for this app. |
 | `color` | `Color?` |  |  | The primary color for the application.<br>Used by the OS to identify the app (e.g., task switcher). |
+| `style` | `VAppStyle?` |  |  | Style override for the app background and the default text color.<br>The instance style wins over the theme's [VAppStyle] override; neither draws anything while its fields are null. |
 
 ## VAppThemeMode
 
@@ -143,8 +145,8 @@ Supports cascade: theme override → instance override.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `backgroundColor` | `Color?` |  |  | Background fill color for the app. |
-| `foregroundColor` | `Color?` |  |  | Default text/foreground color. |
+| `backgroundColor` | `Color?` |  |  | Fill behind every route of the app; no fill when null.<br>An instance style wins over the theme override. |
+| `foregroundColor` | `Color?` |  |  | Color of text that sets no color of its own, such as a bare [Text].<br>Passed to [WidgetsApp.textStyle]; Flutter's default text style when null. An instance style wins over the theme override. |
 
 ### Members
 

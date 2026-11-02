@@ -317,6 +317,97 @@ void main() {
     });
   });
 
+  group('VAppStyle', () {
+    const fill = Color(0xFF102030);
+    const ink = Color(0xFFA0B0C0);
+
+    Color? textColor(WidgetTester tester) =>
+        DefaultTextStyle.of(tester.element(find.text('Bare'))).style.color;
+
+    Color? appFill(WidgetTester tester) => tester
+        .widgetList<ColoredBox>(
+          find.ancestor(
+            of: find.byType(WidgetsApp),
+            matching: find.byType(ColoredBox),
+          ),
+        )
+        .firstOrNull
+        ?.color;
+
+    testWidgets('fills the app and colors text that sets no color', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const VApp(
+          style: VAppStyle(backgroundColor: fill, foregroundColor: ink),
+          home: Text('Bare', textDirection: TextDirection.ltr),
+        ),
+      );
+
+      expect(appFill(tester), fill);
+      expect(textColor(tester), ink);
+    });
+
+    testWidgets('draws nothing without a style', (tester) async {
+      await tester.pumpWidget(
+        const VApp(home: Text('Bare', textDirection: TextDirection.ltr)),
+      );
+
+      expect(appFill(tester), isNull);
+      expect(
+        tester.widget<WidgetsApp>(find.byType(WidgetsApp)).textStyle,
+        isNull,
+      );
+    });
+
+    testWidgets('the instance style wins over the theme override', (
+      tester,
+    ) async {
+      const instanceFill = Color(0xFF304050);
+      final theme = VThemeData.light().copyWith(
+        componentOverrides: const VComponentOverrides([
+          VAppStyle(backgroundColor: fill, foregroundColor: ink),
+        ]),
+      );
+
+      await tester.pumpWidget(
+        VApp(
+          theme: theme,
+          themeMode: VAppThemeMode.light,
+          home: const Text('Bare', textDirection: TextDirection.ltr),
+        ),
+      );
+      expect(appFill(tester), fill);
+      expect(textColor(tester), ink);
+
+      await tester.pumpWidget(
+        VApp(
+          theme: theme,
+          themeMode: VAppThemeMode.light,
+          style: const VAppStyle(backgroundColor: instanceFill),
+          home: const Text('Bare', textDirection: TextDirection.ltr),
+        ),
+      );
+      expect(appFill(tester), instanceFill);
+      // A field the instance style leaves null still comes from the theme.
+      expect(textColor(tester), ink);
+    });
+
+    testWidgets('VApp.router reads the style too', (tester) async {
+      await tester.pumpWidget(
+        VApp.router(
+          style: const VAppStyle(backgroundColor: fill, foregroundColor: ink),
+          routerConfig: _routerConfig(
+            (context) => const Text('Bare', textDirection: TextDirection.ltr),
+          ),
+        ),
+      );
+
+      expect(appFill(tester), fill);
+      expect(textColor(tester), ink);
+    });
+  });
+
   group('VAppThemeMode', () {
     test('has three modes', () {
       expect(VAppThemeMode.values.length, 3);

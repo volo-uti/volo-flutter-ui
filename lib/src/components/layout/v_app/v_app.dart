@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/v_theme.dart';
 import 'package:volo_flutter_ui/src/theme/v_theme_data.dart';
+import 'v_app_style.dart';
 
 /// Theme mode for [VApp].
 ///
@@ -102,6 +103,7 @@ class VApp extends StatelessWidget {
     this.navigatorObservers = const <NavigatorObserver>[],
     this.locale,
     this.color,
+    this.style,
   }) : routerConfig = null;
 
   /// Creates an app whose pages come from a router config, such as a `GoRouter`.
@@ -130,6 +132,7 @@ class VApp extends StatelessWidget {
     this.builder,
     this.locale,
     this.color,
+    this.style,
   }) : home = null,
        navigatorKey = null,
        onGenerateRoute = null,
@@ -194,6 +197,12 @@ class VApp extends StatelessWidget {
   /// Router that builds the pages; set only by [VApp.router].
   final RouterConfig<Object>? routerConfig;
 
+  /// Style override for the app background and the default text color.
+  ///
+  /// The instance style wins over the theme's [VAppStyle] override; neither
+  /// draws anything while its fields are null.
+  final VAppStyle? style;
+
   @override
   Widget build(BuildContext context) {
     final brightness = MediaQuery.platformBrightnessOf(context);
@@ -206,47 +215,59 @@ class VApp extends StatelessWidget {
             : (theme ?? VThemeData.light()),
     };
 
+    // Apply style overrides (Level 3 → Level 4 cascade)
+    final themeStyle = effectiveTheme.componentOverrides.get<VAppStyle>();
+    final resolvedStyle = themeStyle?.merge(style) ?? style;
+    final foreground = resolvedStyle?.foregroundColor;
+    final textStyle = foreground == null ? null : TextStyle(color: foreground);
+    final background = resolvedStyle?.backgroundColor;
+
     final appColor = color ?? effectiveTheme.colors.primary;
     final config = routerConfig;
-    if (config != null) {
-      return VTheme(
-        data: effectiveTheme,
-        child: WidgetsApp.router(
-          routerConfig: config,
-          title: title,
-          color: appColor,
-          debugShowCheckedModeBanner: debugShowCheckedModeBanner,
-          builder: builder,
-          locale: locale,
-        ),
-      );
-    }
+    final Widget app = config != null
+        ? WidgetsApp.router(
+            routerConfig: config,
+            title: title,
+            color: appColor,
+            textStyle: textStyle,
+            debugShowCheckedModeBanner: debugShowCheckedModeBanner,
+            builder: builder,
+            locale: locale,
+          )
+        : _widgetsApp(appColor, textStyle);
 
+    // The fill sits under WidgetsApp, so it shows wherever a route paints
+    // nothing of its own.
     return VTheme(
       data: effectiveTheme,
-      child: WidgetsApp(
-        navigatorKey: navigatorKey,
-        home: home,
-        title: title,
-        color: appColor,
-        debugShowCheckedModeBanner: debugShowCheckedModeBanner,
-        builder: builder,
-        onGenerateRoute: onGenerateRoute,
-        onUnknownRoute: onUnknownRoute,
-        initialRoute: initialRoute,
-        routes: routes,
-        navigatorObservers: navigatorObservers,
-        locale: locale,
-        // CONSTRAINT: WidgetsApp requires pageRouteBuilder — unlike MaterialApp
-        // which defaults to MaterialPageRoute, we must provide our own.
-        // PageRouteBuilder gives full control over transition animations.
-        pageRouteBuilder: <T>(RouteSettings settings, WidgetBuilder builder) =>
-            PageRouteBuilder<T>(
-              settings: settings,
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  builder(context),
-            ),
-      ),
+      child: background == null
+          ? app
+          : ColoredBox(color: background, child: app),
     );
   }
+
+  WidgetsApp _widgetsApp(Color appColor, TextStyle? textStyle) => WidgetsApp(
+    navigatorKey: navigatorKey,
+    home: home,
+    title: title,
+    color: appColor,
+    textStyle: textStyle,
+    debugShowCheckedModeBanner: debugShowCheckedModeBanner,
+    builder: builder,
+    onGenerateRoute: onGenerateRoute,
+    onUnknownRoute: onUnknownRoute,
+    initialRoute: initialRoute,
+    routes: routes,
+    navigatorObservers: navigatorObservers,
+    locale: locale,
+    // CONSTRAINT: WidgetsApp requires pageRouteBuilder — unlike MaterialApp
+    // which defaults to MaterialPageRoute, we must provide our own.
+    // PageRouteBuilder gives full control over transition animations.
+    pageRouteBuilder: <T>(RouteSettings settings, WidgetBuilder builder) =>
+        PageRouteBuilder<T>(
+          settings: settings,
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              builder(context),
+        ),
+  );
 }

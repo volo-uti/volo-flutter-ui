@@ -10,10 +10,15 @@ import 'package:volo_flutter_ui/src/theme/v_component_style.dart';
 class VAppStyle implements VComponentStyle {
   const VAppStyle({this.backgroundColor, this.foregroundColor});
 
-  /// Background fill color for the app.
+  /// Fill behind every route of the app; no fill when null.
+  ///
+  /// An instance style wins over the theme override.
   final Color? backgroundColor;
 
-  /// Default text/foreground color.
+  /// Color of text that sets no color of its own, such as a bare [Text].
+  ///
+  /// Passed to [WidgetsApp.textStyle]; Flutter's default text style when
+  /// null. An instance style wins over the theme override.
   final Color? foregroundColor;
 
   /// Creates a copy with only the specified properties changed.
