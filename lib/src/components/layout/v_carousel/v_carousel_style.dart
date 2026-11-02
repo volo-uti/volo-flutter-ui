@@ -15,10 +15,16 @@ class VCarouselStyle implements VComponentStyle {
     this.indicatorInactiveColor,
   });
 
-  /// Background fill color.
+  /// Fill behind each slide; none when null.
+  ///
+  /// It shows around a slide child that does not fill its page. An instance
+  /// style wins over the theme override.
   final Color? backgroundColor;
 
-  /// Border radius.
+  /// Corner radius each slide is clipped to; square when null.
+  ///
+  /// [VCarousel.pageSpacing] stays outside the clip. An instance style wins
+  /// over the theme override.
   final BorderRadius? borderRadius;
 
   /// Active indicator dot color.

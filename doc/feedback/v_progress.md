@@ -76,7 +76,7 @@ Supports cascade: theme override → instance override.
 |---|---|---|---|---|
 | `activeColor` | `Color?` |  |  | Active progress color. |
 | `inactiveColor` | `Color?` |  |  | Inactive track color. |
-| `borderRadius` | `BorderRadius?` |  |  | Border radius. |
+| `borderRadius` | `BorderRadius?` |  |  | Corner radius of the linear bar and its fill; fully round when null.<br>The circular ring ignores it. An instance style wins over the theme override. |
 | `trackHeight` | `double?` |  |  | Track height. |
 
 ### Members

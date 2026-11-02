@@ -184,6 +184,8 @@ class _VProgressState extends State<VProgress>
         sizeValue,
         clampedValue,
         l10n,
+        // A bar is fully round unless the style sets its corners.
+        resolvedStyle?.borderRadius ?? BorderRadius.circular(sizeValue / 2),
       );
     } else {
       return _buildCircular(
@@ -202,6 +204,7 @@ class _VProgressState extends State<VProgress>
     double height,
     double? value,
     VoloLocalizations l10n,
+    BorderRadius borderRadius,
   ) => Semantics(
     // WCAG 4.1.3: liveRegion for dynamic progress updates
     liveRegion: true,
@@ -210,7 +213,7 @@ class _VProgressState extends State<VProgress>
     child: SizedBox(
       height: height,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(height / 2),
+        borderRadius: borderRadius,
         child: Stack(
           children: [
             // Track
@@ -223,7 +226,7 @@ class _VProgressState extends State<VProgress>
                 child: Container(
                   decoration: BoxDecoration(
                     color: progressColor,
-                    borderRadius: BorderRadius.circular(height / 2),
+                    borderRadius: borderRadius,
                   ),
                 ),
               )

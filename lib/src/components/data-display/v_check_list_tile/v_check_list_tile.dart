@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_checkbox/v_checkbox.dart';
+import 'package:volo_flutter_ui/src/components/inputs/v_checkbox/v_checkbox_style.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 
 import 'v_check_list_tile_style.dart';
@@ -175,10 +176,14 @@ class _VCheckListTileState extends State<VCheckListTile> {
 
     // WHY: The row is the one checked node (it carries the title and the tap
     // action), so the inner checkbox is not a second one.
+    final activeColor = resolvedStyle?.activeColor;
     final checkbox = ExcludeSemantics(
       child: VCheckbox(
         value: widget.value,
         onChanged: widget.enabled ? widget.onChanged : null,
+        style: activeColor == null
+            ? null
+            : VCheckboxStyle(activeColor: activeColor),
       ),
     );
 

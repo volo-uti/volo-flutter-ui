@@ -21,7 +21,10 @@ class VProgressStyle implements VComponentStyle {
   /// Inactive track color.
   final Color? inactiveColor;
 
-  /// Border radius.
+  /// Corner radius of the linear bar and its fill; fully round when null.
+  ///
+  /// The circular ring ignores it. An instance style wins over the theme
+  /// override.
   final BorderRadius? borderRadius;
 
   /// Track height.

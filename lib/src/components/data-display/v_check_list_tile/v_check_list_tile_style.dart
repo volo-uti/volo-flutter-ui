@@ -28,7 +28,11 @@ class VCheckListTileStyle implements VComponentStyle {
   /// Internal padding.
   final EdgeInsets? padding;
 
-  /// Checkbox active color.
+  /// Fill and border of the checkbox while it is checked or indeterminate.
+  ///
+  /// Defaults to the checkbox's own style. It wins over the theme's
+  /// `VCheckboxStyle.activeColor`, and an instance style wins over the theme
+  /// override.
   final Color? activeColor;
 
   /// Creates a copy with only the specified properties changed.

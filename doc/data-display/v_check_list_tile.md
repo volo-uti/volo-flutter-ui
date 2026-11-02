@@ -91,7 +91,7 @@ Supports cascade: theme override → instance override.
 | `foregroundColor` | `Color?` |  |  | Text foreground color. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
 | `padding` | `EdgeInsets?` |  |  | Internal padding. |
-| `activeColor` | `Color?` |  |  | Checkbox active color. |
+| `activeColor` | `Color?` |  |  | Fill and border of the checkbox while it is checked or indeterminate.<br>Defaults to the checkbox's own style. It wins over the theme's `VCheckboxStyle.activeColor`, and an instance style wins over the theme override. |
 
 ### Members
 

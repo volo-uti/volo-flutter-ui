@@ -292,4 +292,67 @@ void main() {
       expect(tester.getSize(find.byType(VCheckListTile)).height, lessThan(120));
     });
   });
+
+  group('VCheckListTile style fields', () {
+    final theme = VThemeData.light();
+
+    // Applies [style] through the theme or as the instance style, on top of
+    // an optional theme checkbox style.
+    Widget styled(
+      VCheckListTileStyle? style, {
+      bool viaTheme = false,
+      VCheckboxStyle? checkboxTheme,
+    }) => VTheme(
+      data: theme.copyWith(
+        componentOverrides: VComponentOverrides([
+          if (viaTheme && style != null) style,
+          ?checkboxTheme,
+        ]),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(
+          child: VCheckListTile(
+            title: const Text('Alerts'),
+            value: true,
+            onChanged: (_) {},
+            style: viaTheme ? null : style,
+          ),
+        ),
+      ),
+    );
+
+    Color? boxColorOf(WidgetTester tester) =>
+        (tester
+                    .widget<AnimatedContainer>(
+                      find.descendant(
+                        of: find.byType(VCheckbox),
+                        matching: find.byType(AnimatedContainer),
+                      ),
+                    )
+                    .decoration!
+                as BoxDecoration)
+            .color;
+
+    testWidgets('the checkbox keeps its own color by default', (tester) async {
+      await tester.pumpWidget(styled(null));
+      expect(boxColorOf(tester), theme.colors.primary);
+    });
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('activeColor fills the checked box ($via)', (tester) async {
+        const color = Color(0xFF123456);
+        await tester.pumpWidget(
+          styled(
+            const VCheckListTileStyle(activeColor: color),
+            viaTheme: viaTheme,
+            checkboxTheme: const VCheckboxStyle(activeColor: Color(0xFFFF0000)),
+          ),
+        );
+        expect(boxColorOf(tester), color);
+      });
+    }
+  });
 }

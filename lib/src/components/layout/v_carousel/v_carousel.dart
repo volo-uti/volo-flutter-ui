@@ -506,7 +506,7 @@ class _VCarouselState extends State<VCarousel> {
           onTap: () => _animateToPage(index),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: widget.pageSpacing / 2),
-            child: widget.children[index],
+            child: _buildSlide(widget.children[index], resolvedStyle),
           ),
         ),
       ),
@@ -573,6 +573,20 @@ class _VCarouselState extends State<VCarousel> {
       case VCarouselIndicatorPosition.none:
         return carousel;
     }
+  }
+
+  /// Wraps one slide in the style's fill and corner clip, when set.
+  Widget _buildSlide(Widget child, VCarouselStyle? resolvedStyle) {
+    var slide = child;
+    final backgroundColor = resolvedStyle?.backgroundColor;
+    if (backgroundColor != null) {
+      slide = ColoredBox(color: backgroundColor, child: slide);
+    }
+    final borderRadius = resolvedStyle?.borderRadius;
+    if (borderRadius != null) {
+      slide = ClipRRect(borderRadius: borderRadius, child: slide);
+    }
+    return slide;
   }
 
   Widget _buildIndicator(VThemeData theme, VCarouselStyle? resolvedStyle) {

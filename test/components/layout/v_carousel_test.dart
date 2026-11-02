@@ -1076,4 +1076,70 @@ void main() {
       expect(pages, [1]);
     });
   });
+
+  group('VCarousel style fields', () {
+    // Applies [style] through the theme or as the instance style.
+    Widget styled(VCarouselStyle? style, {bool viaTheme = false}) => VTheme(
+      data: VThemeData.light().copyWith(
+        componentOverrides: VComponentOverrides([
+          if (viaTheme && style != null) style,
+        ]),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: const MediaQueryData(size: Size(400, 800)),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: VCarousel(
+              height: 200,
+              showIndicator: false,
+              style: viaTheme ? null : style,
+              children: const [Text('One'), Text('Two')],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // The fill and clip wrap the slide child itself.
+    Finder fill() =>
+        find.ancestor(of: find.text('One'), matching: find.byType(ColoredBox));
+    Finder clip() =>
+        find.ancestor(of: find.text('One'), matching: find.byType(ClipRRect));
+
+    testWidgets('slides have no fill or clip by default', (tester) async {
+      await tester.pumpWidget(styled(null));
+      expect(fill(), findsNothing);
+      expect(clip(), findsNothing);
+    });
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('backgroundColor fills each slide ($via)', (tester) async {
+        const color = Color(0xFF123456);
+        await tester.pumpWidget(
+          styled(
+            const VCarouselStyle(backgroundColor: color),
+            viaTheme: viaTheme,
+          ),
+        );
+        expect(tester.widget<ColoredBox>(fill()).color, color);
+        // The fill covers the whole page, not just the text.
+        expect(tester.getSize(fill()).height, 200);
+      });
+
+      testWidgets('borderRadius clips each slide ($via)', (tester) async {
+        const radius = BorderRadius.all(Radius.circular(12));
+        await tester.pumpWidget(
+          styled(
+            const VCarouselStyle(borderRadius: radius),
+            viaTheme: viaTheme,
+          ),
+        );
+        expect(tester.widget<ClipRRect>(clip()).borderRadius, radius);
+      });
+    }
+  });
 }

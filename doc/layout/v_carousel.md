@@ -235,8 +235,8 @@ Supports cascade: theme override → instance override.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `backgroundColor` | `Color?` |  |  | Background fill color. |
-| `borderRadius` | `BorderRadius?` |  |  | Border radius. |
+| `backgroundColor` | `Color?` |  |  | Fill behind each slide; none when null.<br>It shows around a slide child that does not fill its page. An instance style wins over the theme override. |
+| `borderRadius` | `BorderRadius?` |  |  | Corner radius each slide is clipped to; square when null.<br>[VCarousel.pageSpacing] stays outside the clip. An instance style wins over the theme override. |
 | `indicatorActiveColor` | `Color?` |  |  | Active indicator dot color. |
 | `indicatorInactiveColor` | `Color?` |  |  | Inactive indicator dot color. |
 

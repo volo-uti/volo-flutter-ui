@@ -144,4 +144,74 @@ void main() {
       expect(furthest, greaterThan(300));
     });
   });
+
+  group('VProgress style fields', () {
+    // Applies [style] through the theme or as the instance style.
+    Widget styled(VProgressStyle style, {required bool viaTheme}) => VTheme(
+      data: VThemeData.light().copyWith(
+        componentOverrides: VComponentOverrides(viaTheme ? [style] : []),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(
+          child: SizedBox(
+            width: 200,
+            child: VProgress.linear(value: 0.5, style: viaTheme ? null : style),
+          ),
+        ),
+      ),
+    );
+
+    BorderRadiusGeometry? clipOf(WidgetTester tester) => tester
+        .widget<ClipRRect>(
+          find.descendant(
+            of: find.byType(VProgress),
+            matching: find.byType(ClipRRect),
+          ),
+        )
+        .borderRadius;
+
+    BorderRadiusGeometry? fillOf(WidgetTester tester) =>
+        (tester
+                    .widget<Container>(
+                      find.descendant(
+                        of: find.byType(FractionallySizedBox),
+                        matching: find.byType(Container),
+                      ),
+                    )
+                    .decoration!
+                as BoxDecoration)
+            .borderRadius;
+
+    testWidgets('a bar is fully round by default', (tester) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          const Center(
+            child: SizedBox(width: 200, child: VProgress.linear(value: 0.5)),
+          ),
+        ),
+      );
+      final height = tester.getSize(find.byType(VProgress)).height;
+      expect(clipOf(tester), BorderRadius.circular(height / 2));
+      expect(fillOf(tester), BorderRadius.circular(height / 2));
+    });
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('borderRadius sets the bar and fill corners ($via)', (
+        tester,
+      ) async {
+        const radius = BorderRadius.all(Radius.circular(1));
+        await tester.pumpWidget(
+          styled(
+            const VProgressStyle(borderRadius: radius),
+            viaTheme: viaTheme,
+          ),
+        );
+        expect(clipOf(tester), radius);
+        expect(fillOf(tester), radius);
+      });
+    }
+  });
 }

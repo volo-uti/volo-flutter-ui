@@ -332,6 +332,11 @@ class _VImageState extends State<VImage> with SingleTickerProviderStateMixin {
       },
     );
 
+    final backgroundColor = resolvedStyle?.backgroundColor;
+    if (backgroundColor != null) {
+      imageWidget = ColoredBox(color: backgroundColor, child: imageWidget);
+    }
+
     final effectiveBorderRadius =
         resolvedStyle?.borderRadius ?? widget.borderRadius;
     if (effectiveBorderRadius != null) {

@@ -126,5 +126,61 @@ void main() {
 
       expect(find.byType(VImage), findsOneWidget);
     });
+
+    group('style fields', () {
+      // Applies [style] through the theme or as the instance style.
+      Widget styled(VImageStyle style, {required bool viaTheme}) => VTheme(
+        data: VThemeData.light().copyWith(
+          componentOverrides: VComponentOverrides(viaTheme ? [style] : []),
+        ),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Center(
+            child: VImage.network(
+              'https://example.com/image.jpg',
+              width: 100,
+              height: 100,
+              style: viaTheme ? null : style,
+            ),
+          ),
+        ),
+      );
+
+      Finder fill() => find.descendant(
+        of: find.byType(VImage),
+        matching: find.byType(ColoredBox),
+      );
+
+      testWidgets('draws no fill by default', (tester) async {
+        await tester.pumpWidget(buildTestWidget(const VImage.network('x')));
+        expect(fill(), findsNothing);
+      });
+
+      for (final viaTheme in [true, false]) {
+        final via = viaTheme ? 'theme' : 'instance';
+
+        testWidgets('backgroundColor fills the image box ($via)', (
+          tester,
+        ) async {
+          const color = Color(0xFF123456);
+          await tester.pumpWidget(
+            styled(
+              const VImageStyle(
+                backgroundColor: color,
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+              ),
+              viaTheme: viaTheme,
+            ),
+          );
+
+          expect(tester.widget<ColoredBox>(fill()).color, color);
+          // The fill sits inside the corner clip.
+          expect(
+            find.ancestor(of: fill(), matching: find.byType(ClipRRect)),
+            findsOneWidget,
+          );
+        });
+      }
+    });
   });
 }

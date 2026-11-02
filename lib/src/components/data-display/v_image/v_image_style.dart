@@ -13,7 +13,11 @@ class VImageStyle implements VComponentStyle {
   /// Border radius.
   final BorderRadius? borderRadius;
 
-  /// Placeholder background color.
+  /// Fill behind the image box; none when null.
+  ///
+  /// It shows while the image loads, after an error and through transparent
+  /// pixels, clipped to the corner radius. An instance style wins over the
+  /// theme override.
   final Color? backgroundColor;
 
   /// Creates a copy with only the specified properties changed.

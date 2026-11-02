@@ -107,7 +107,7 @@ Supports cascade: theme override → instance override.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
-| `backgroundColor` | `Color?` |  |  | Placeholder background color. |
+| `backgroundColor` | `Color?` |  |  | Fill behind the image box; none when null.<br>It shows while the image loads, after an error and through transparent pixels, clipped to the corner radius. An instance style wins over the theme override. |
 
 ### Members
 
