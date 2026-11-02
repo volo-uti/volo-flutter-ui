@@ -36,6 +36,9 @@ class VBottomNavItem {
   final Widget icon;
 
   /// Text under the icon, also the accessibility label.
+  ///
+  /// It stays on one line; a label wider than its tab is drawn smaller to fit,
+  /// and a screen reader still reads it in full.
   final String label;
 
   /// Icon shown instead of [icon] while selected.
@@ -304,18 +307,24 @@ class VBottomNav extends StatelessWidget {
                                             // WHY: The item's Semantics already
                                             // carries the label; a second copy
                                             // makes a screen reader say it twice.
+                                            // scaleDown keeps a long label on
+                                            // one line, whole, in narrow tabs.
                                             child: ExcludeSemantics(
-                                              child: Text(
-                                                item.label,
-                                                style: typography.labelSmall
-                                                    .copyWith(
-                                                      color: color,
-                                                      fontWeight: isSelected
-                                                          ? FontWeight.w600
-                                                          : FontWeight.normal,
-                                                    ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
+                                              child: FittedBox(
+                                                fit: BoxFit.scaleDown,
+                                                child: Text(
+                                                  item.label,
+                                                  style: typography.labelSmall
+                                                      .copyWith(
+                                                        color: color,
+                                                        fontWeight: isSelected
+                                                            ? FontWeight.w600
+                                                            : FontWeight.normal,
+                                                      ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
                                               ),
                                             ),
                                           ),

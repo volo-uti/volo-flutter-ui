@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' show Icons;
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -174,6 +175,80 @@ void main() {
         tester.getSize(find.byType(VBottomNav)).height,
         greaterThanOrEqualTo(80 + 34),
       );
+    });
+  });
+
+  group('VBottomNav long labels', () {
+    testWidgets('shrink to fit four tabs at 320 wide and 2x text', (
+      tester,
+    ) async {
+      tester.view
+        ..physicalSize = const Size(320, 640)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final handle = tester.ensureSemantics();
+      const labels = [
+        'Notifications',
+        'Subscriptions',
+        'Downloads',
+        'Settings',
+      ];
+
+      await tester.pumpWidget(
+        VTheme(
+          data: VThemeData.light(),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: MediaQuery(
+              data: const MediaQueryData(
+                size: Size(320, 640),
+                textScaler: TextScaler.linear(2),
+              ),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: VBottomNav.labeled(
+                  items: [
+                    for (final label in labels)
+                      VBottomNavItem(
+                        key: label,
+                        icon: const Icon(Icons.home),
+                        label: label,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      final tabWidth = 320 / labels.length;
+      for (final label in labels) {
+        final paragraph = tester.renderObject<RenderParagraph>(
+          find.text(label),
+        );
+        expect(paragraph.didExceedMaxLines, isFalse, reason: label);
+        // The whole label is drawn, scaled into its tab.
+        final drawn = tester.getRect(find.text(label));
+        expect(drawn.width, lessThanOrEqualTo(tabWidth + 0.01), reason: label);
+        expect(find.bySemanticsLabel(label), findsOneWidget, reason: label);
+      }
+      handle.dispose();
+    });
+
+    testWidgets('a label that fits keeps its size', (tester) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: VBottomNav.labeled(items: testItems),
+          ),
+        ),
+      );
+
+      final paragraph = tester.renderObject<RenderParagraph>(find.text('Home'));
+      expect(tester.getSize(find.text('Home')), paragraph.size);
     });
   });
 

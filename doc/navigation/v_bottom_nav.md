@@ -129,7 +129,7 @@ Creates a destination.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `icon` | `Widget` |  | yes | Icon shown while the destination is not selected. |
-| `label` | `String` |  | yes | Text under the icon, also the accessibility label. |
+| `label` | `String` |  | yes | Text under the icon, also the accessibility label.<br>It stays on one line; a label wider than its tab is drawn smaller to fit, and a screen reader still reads it in full. |
 | `activeIcon` | `Widget?` |  |  | Icon shown instead of [icon] while selected. |
 | `badge` | `Widget?` |  |  | Widget pinned to the icon's top right corner, such as a [VBadge]. |
 
