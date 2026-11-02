@@ -263,6 +263,11 @@ class _VToggleButtonState extends State<VToggleButton>
       color: foregroundColor,
     );
 
+    // The focus ring follows the same corners as the button.
+    final borderRadius =
+        resolvedStyle?.borderRadius ??
+        BorderRadius.circular(sizeToken.borderRadius);
+
     Widget toggle = AnimatedBuilder(
       animation: _controller,
       builder: (context, child) => Transform.scale(
@@ -275,9 +280,7 @@ class _VToggleButtonState extends State<VToggleButton>
               EdgeInsets.symmetric(horizontal: padding),
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius:
-                resolvedStyle?.borderRadius ??
-                BorderRadius.circular(sizeToken.borderRadius),
+            borderRadius: borderRadius,
             border: border,
           ),
           child: Center(
@@ -335,7 +338,7 @@ class _VToggleButtonState extends State<VToggleButton>
       },
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(sizeToken.borderRadius),
+          borderRadius: borderRadius,
           border: _isFocused
               ? Border.all(color: theme.colors.ring, width: 2)
               : null,
@@ -363,6 +366,7 @@ class VToggleButtonItem<T> {
     required this.label,
     this.icon,
     this.enabled = true,
+    this.semanticLabel,
   });
 
   /// Value reported when this option is selected.
@@ -376,9 +380,19 @@ class VToggleButtonItem<T> {
 
   /// Whether this option reacts to input.
   final bool enabled;
+
+  /// Name screen readers announce for this option.
+  ///
+  /// Defaults to the text of a `Text` [label] when [icon] replaces it, and to
+  /// the label's own semantics otherwise.
+  final String? semanticLabel;
 }
 
 /// Segmented row of [VToggleButtonItem]s selecting one value or several.
+///
+/// Each option is a focus stop that Enter or Space toggles. Screen readers hear
+/// a button that is selected in a single-choice group or toggled with
+/// [allowMultiple].
 ///
 /// ```dart
 /// VToggleButtonGroup<String>(
@@ -443,7 +457,7 @@ class VToggleButtonGroup<T> extends StatelessWidget {
   /// Look of the unselected options.
   final VToggleButtonType type;
 
-  /// Option height; defaults to medium.
+  /// Option height, text size and icon size; defaults to medium.
   final VToggleButtonSize? size;
 
   /// Whether the group fills the available width.
@@ -476,8 +490,6 @@ class VToggleButtonGroup<T> extends StatelessWidget {
       VToggleButtonSize.xl => theme.sizes.xl,
       _ => theme.sizes.md,
     };
-    final height = sizeToken.height;
-
     return FocusTraversalGroup(
       child: Container(
         decoration: BoxDecoration(
@@ -515,7 +527,8 @@ class VToggleButtonGroup<T> extends StatelessWidget {
                 item: item,
                 isSelected: isSelected,
                 borderRadius: borderRadius,
-                height: height,
+                sizeToken: sizeToken,
+                exclusive: !allowMultiple,
                 fullWidth: fullWidth,
                 style: resolvedStyle,
                 onTap: !item.enabled
@@ -578,7 +591,8 @@ class _ToggleButtonGroupItem<T> extends StatefulWidget {
     required this.item,
     required this.isSelected,
     required this.borderRadius,
-    required this.height,
+    required this.sizeToken,
+    required this.exclusive,
     required this.onTap,
     this.fullWidth = false,
     this.style,
@@ -587,7 +601,10 @@ class _ToggleButtonGroupItem<T> extends StatefulWidget {
   final VToggleButtonItem<T> item;
   final bool isSelected;
   final BorderRadius? borderRadius;
-  final double height;
+  final VComponentSize sizeToken;
+
+  /// Whether only one option of the group can be selected.
+  final bool exclusive;
   final VoidCallback? onTap;
   final bool fullWidth;
   final VToggleButtonStyle? style;
@@ -599,6 +616,7 @@ class _ToggleButtonGroupItem<T> extends StatefulWidget {
 
 class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
   bool _isHovered = false;
+  bool _isFocused = false;
 
   bool get _isEnabled => widget.item.enabled && widget.onTap != null;
 
@@ -632,8 +650,9 @@ class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
       foregroundColor = style?.foregroundColor ?? theme.colors.foreground;
     }
 
+    final sizeToken = widget.sizeToken;
     final textStyle = TextStyle(
-      fontSize: theme.sizes.md.fontSize,
+      fontSize: sizeToken.fontSize,
       fontWeight: FontWeight.w500,
       color: foregroundColor,
     );
@@ -641,10 +660,7 @@ class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
     Widget content;
     if (widget.item.icon != null) {
       content = IconTheme(
-        data: IconThemeData(
-          color: foregroundColor,
-          size: theme.sizes.lg.iconSize,
-        ),
+        data: IconThemeData(color: foregroundColor, size: sizeToken.iconSize),
         child: widget.item.icon!,
       );
     } else {
@@ -654,9 +670,18 @@ class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
       );
     }
 
+    // A given or derived name replaces what the content would announce.
+    final label = widget.item.label;
+    final name =
+        widget.item.semanticLabel ??
+        (widget.item.icon != null && label is Text
+            ? label.data ?? label.textSpan?.toPlainText()
+            : null);
+    if (name != null) content = ExcludeSemantics(child: content);
+
     Widget toggle = AnimatedContainer(
       duration: theme.animations.fast,
-      height: widget.height,
+      height: sizeToken.height,
       padding:
           style?.padding ?? EdgeInsets.symmetric(horizontal: theme.spacing.md),
       decoration: BoxDecoration(
@@ -668,6 +693,18 @@ class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
 
     // Opacity when disabled
     toggle = Opacity(opacity: widget.item.enabled ? 1.0 : 0.5, child: toggle);
+
+    // Focus ring drawn over the option (WCAG 2.4.7)
+    toggle = DecoratedBox(
+      position: DecorationPosition.foreground,
+      decoration: BoxDecoration(
+        borderRadius: widget.borderRadius,
+        border: _isFocused
+            ? Border.all(color: theme.colors.ring, width: 2)
+            : null,
+      ),
+      child: toggle,
+    );
 
     // MouseRegion + gesture wrapping
     toggle = MouseRegion(
@@ -683,6 +720,32 @@ class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
           : toggle,
     );
 
-    return toggle;
+    // Each option is a focus stop; Enter and Space press it.
+    toggle = FocusableActionDetector(
+      enabled: _isEnabled,
+      shortcuts: _activateShortcuts,
+      actions: <Type, Action<Intent>>{
+        ActivateIntent: CallbackAction<ActivateIntent>(
+          onInvoke: (_) {
+            widget.onTap?.call();
+            return null;
+          },
+        ),
+      },
+      onFocusChange: (focused) => setState(() => _isFocused = focused),
+      child: toggle,
+    );
+
+    // A button that is selected in a single-choice group, toggled otherwise.
+    return Semantics(
+      container: true,
+      button: true,
+      enabled: _isEnabled,
+      selected: widget.exclusive ? widget.isSelected : null,
+      inMutuallyExclusiveGroup: widget.exclusive ? true : null,
+      toggled: widget.exclusive ? null : widget.isSelected,
+      label: name,
+      child: toggle,
+    );
   }
 }

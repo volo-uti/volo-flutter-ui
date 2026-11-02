@@ -38,6 +38,10 @@ Creates a toggle button showing [child].
 
 Segmented row of [VToggleButtonItem]s selecting one value or several.
 
+Each option is a focus stop that Enter or Space toggles. Screen readers hear
+a button that is selected in a single-choice group or toggled with
+[allowMultiple].
+
 ```dart
 VToggleButtonGroup<String>(
   value: viewMode,
@@ -74,7 +78,7 @@ Creates a toggle group; set [allowMultiple] to select several values.
 | `allowMultiple` | `bool` | `false` |  | Whether several options can be selected at once. |
 | `allowEmpty` | `bool` | `true` |  | Whether the last selected option can be deselected. |
 | `type` | `VToggleButtonType` | `VToggleButtonType.ghost` |  | Look of the unselected options. |
-| `size` | `VToggleButtonSize?` |  |  | Option height; defaults to medium. |
+| `size` | `VToggleButtonSize?` |  |  | Option height, text size and icon size; defaults to medium. |
 | `fullWidth` | `bool` | `false` |  | Whether the group fills the available width. |
 | `style` | `VToggleButtonStyle?` |  |  | Style override merged over the theme's [VToggleButtonStyle].<br>The same style a single [VToggleButton] reads: its colors and padding apply to each option, its borderRadius and borderColor to the group. |
 
@@ -120,6 +124,7 @@ Creates a toggle button option.
 | `label` | `Widget` |  | yes | Content of the option; replaced by [icon] when one is given. |
 | `icon` | `Widget?` |  |  | Icon shown instead of [label]. |
 | `enabled` | `bool` | `true` |  | Whether this option reacts to input. |
+| `semanticLabel` | `String?` |  |  | Name screen readers announce for this option.<br>Defaults to the text of a `Text` [label] when [icon] replaces it, and to the label's own semantics otherwise. |
 
 ## VToggleButtonStyle
 

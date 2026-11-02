@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
@@ -662,6 +663,40 @@ void main() {
         expect(cursors, contains(SystemMouseCursors.basic));
       });
     });
+
+    group('focus ring', () {
+      testWidgets('follows style.borderRadius', (tester) async {
+        const radius = BorderRadius.all(Radius.circular(3));
+        await tester.pumpWidget(
+          buildTestWidget(
+            VToggleButton(
+              isSelected: false,
+              onChanged: (_) {},
+              style: const VToggleButtonStyle(borderRadius: radius),
+              child: const Text('B'),
+            ),
+          ),
+        );
+        Focus.of(tester.element(find.text('B'))).requestFocus();
+        await tester.pumpAndSettle();
+
+        final ring = tester
+            .widgetList<DecoratedBox>(
+              find.descendant(
+                of: find.byType(VToggleButton),
+                matching: find.byType(DecoratedBox),
+              ),
+            )
+            .map((box) => box.decoration as BoxDecoration)
+            .singleWhere(
+              (d) =>
+                  d.border is Border &&
+                  (d.border! as Border).top.color ==
+                      VThemeData.light().colors.ring,
+            );
+        expect(ring.borderRadius, radius);
+      });
+    });
   });
 
   // ════════════════════════════════════════════════════════════════════
@@ -1274,6 +1309,235 @@ void main() {
         final group = groupDecoration(tester);
         expect(group.borderRadius, BorderRadius.circular(theme.radius.md));
         expect((group.border! as Border).top.color, theme.colors.border);
+      });
+    });
+
+    // ── Keyboard, semantics and size ─────────────────────────────────
+
+    group('keyboard and semantics', () {
+      final theme = VThemeData.light();
+
+      Widget withKeyboard(Widget child) => buildTestWidget(
+        Shortcuts(
+          shortcuts: WidgetsApp.defaultShortcuts,
+          child: Actions(actions: WidgetsApp.defaultActions, child: child),
+        ),
+      );
+
+      bool focusedOn(WidgetTester tester, String text) =>
+          Focus.of(tester.element(find.text(text))).hasPrimaryFocus;
+
+      testWidgets('Tab stops on each enabled option and draws a focus ring', (
+        tester,
+      ) async {
+        final before = FocusNode();
+        addTearDown(before.dispose);
+        await tester.pumpWidget(
+          withKeyboard(
+            Column(
+              children: [
+                Focus(focusNode: before, child: const SizedBox(height: 10)),
+                VToggleButtonGroup<String>(
+                  items: const [
+                    VToggleButtonItem(value: 'grid', label: Text('Grid')),
+                    VToggleButtonItem(
+                      value: 'list',
+                      label: Text('List'),
+                      enabled: false,
+                    ),
+                    VToggleButtonItem(value: 'table', label: Text('Table')),
+                  ],
+                  onChanged: (_) {},
+                ),
+              ],
+            ),
+          ),
+        );
+        before.requestFocus();
+        await tester.pump();
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        expect(focusedOn(tester, 'Grid'), isTrue);
+        final rings = tester
+            .widgetList<DecoratedBox>(
+              find.descendant(
+                of: find.byType(VToggleButtonGroup<String>),
+                matching: find.byType(DecoratedBox),
+              ),
+            )
+            .where(
+              (box) =>
+                  box.position == DecorationPosition.foreground &&
+                  (box.decoration as BoxDecoration).border != null,
+            );
+        expect(rings, hasLength(1));
+        expect(
+          ((rings.single.decoration as BoxDecoration).border! as Border)
+              .top
+              .color,
+          theme.colors.ring,
+        );
+
+        // The disabled option is skipped.
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        expect(focusedOn(tester, 'Table'), isTrue);
+      });
+
+      testWidgets('Enter and Space press the focused option', (tester) async {
+        String? single;
+        List<String>? multiple;
+        await tester.pumpWidget(
+          withKeyboard(
+            Column(
+              children: [
+                VToggleButtonGroup<String>(
+                  items: testItems,
+                  onChanged: (v) => single = v,
+                ),
+                VToggleButtonGroup<String>(
+                  items: const [
+                    VToggleButtonItem(value: 'b', label: Text('Bold')),
+                    VToggleButtonItem(value: 'i', label: Text('Italic')),
+                  ],
+                  allowMultiple: true,
+                  onValuesChanged: (v) => multiple = v,
+                ),
+              ],
+            ),
+          ),
+        );
+
+        Focus.of(tester.element(find.text('List'))).requestFocus();
+        await tester.pump();
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pump();
+        expect(single, 'list');
+
+        Focus.of(tester.element(find.text('Italic'))).requestFocus();
+        await tester.pump();
+        await tester.sendKeyEvent(LogicalKeyboardKey.space);
+        await tester.pump();
+        expect(multiple, ['i']);
+      });
+
+      testWidgets('a single-choice option is a selected button', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          buildTestWidget(
+            VToggleButtonGroup<String>(
+              items: testItems,
+              value: 'grid',
+              onChanged: (_) {},
+            ),
+          ),
+        );
+
+        final grid = tester.getSemantics(find.text('Grid'));
+        final flags = grid.getSemanticsData().flagsCollection;
+        expect(flags.isButton, isTrue);
+        expect(flags.isSelected, Tristate.isTrue);
+        expect(flags.isInMutuallyExclusiveGroup, isTrue);
+        expect(grid.label, 'Grid');
+        expect(
+          tester
+              .getSemantics(find.text('List'))
+              .getSemanticsData()
+              .flagsCollection
+              .isSelected,
+          Tristate.isFalse,
+        );
+      });
+
+      testWidgets('a multiple-choice option is a toggled button', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          buildTestWidget(
+            VToggleButtonGroup<String>(
+              items: testItems,
+              values: const ['list'],
+              allowMultiple: true,
+              onValuesChanged: (_) {},
+            ),
+          ),
+        );
+
+        final flags = tester
+            .getSemantics(find.text('List'))
+            .getSemanticsData()
+            .flagsCollection;
+        expect(flags.isButton, isTrue);
+        expect(flags.isToggled, Tristate.isTrue);
+        expect(flags.isInMutuallyExclusiveGroup, isFalse);
+      });
+
+      testWidgets(
+        'an icon option is named by its Text label or semanticLabel',
+        (tester) async {
+          await tester.pumpWidget(
+            buildTestWidget(
+              VToggleButtonGroup<String>(
+                items: const [
+                  VToggleButtonItem(
+                    value: 'grid',
+                    label: Text('Grid'),
+                    icon: Text('G'),
+                  ),
+                  VToggleButtonItem(
+                    value: 'list',
+                    label: Text('List'),
+                    icon: Text('L'),
+                    semanticLabel: 'List view',
+                  ),
+                ],
+                onChanged: (_) {},
+              ),
+            ),
+          );
+
+          expect(tester.getSemantics(find.text('G')).label, 'Grid');
+          expect(tester.getSemantics(find.text('L')).label, 'List view');
+        },
+      );
+
+      testWidgets('size sets the text and icon size', (tester) async {
+        double? iconSize;
+        await tester.pumpWidget(
+          buildTestWidget(
+            VToggleButtonGroup<String>(
+              size: VToggleButtonSize.sm,
+              items: [
+                const VToggleButtonItem(value: 'grid', label: Text('Grid')),
+                VToggleButtonItem(
+                  value: 'list',
+                  label: const Text('List'),
+                  icon: Builder(
+                    builder: (context) {
+                      iconSize = IconTheme.of(context).size;
+                      return const SizedBox(width: 10, height: 10);
+                    },
+                  ),
+                ),
+              ],
+              onChanged: (_) {},
+            ),
+          ),
+        );
+
+        final grid = tester
+            .widget<RichText>(
+              find.descendant(
+                of: find.text('Grid'),
+                matching: find.byType(RichText),
+              ),
+            )
+            .text
+            .style!;
+        expect(grid.fontSize, theme.sizes.sm.fontSize);
+        expect(iconSize, theme.sizes.sm.iconSize);
       });
     });
   });
