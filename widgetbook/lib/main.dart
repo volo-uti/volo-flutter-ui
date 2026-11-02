@@ -8,6 +8,7 @@ import 'src/foundation/animation_use_case.dart';
 import 'src/foundation/border_use_case.dart';
 import 'src/foundation/color_use_case.dart';
 import 'src/foundation/gradient_use_case.dart';
+import 'src/foundation/icon_use_case.dart';
 import 'src/foundation/radius_use_case.dart';
 import 'src/foundation/shadow_use_case.dart';
 import 'src/foundation/size_use_case.dart';
@@ -142,6 +143,7 @@ class WidgetbookApp extends StatelessWidget {
           shadowComponent(),
           gradientComponent(),
           animationComponent(),
+          iconComponent(),
         ],
       ),
       // components - UI components

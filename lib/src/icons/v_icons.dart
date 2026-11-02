@@ -1,14 +1,23 @@
-import 'dart:math' show pi;
+import 'dart:math' show cos, pi, sin;
 
 import 'package:flutter/widgets.dart';
+
+import 'package:volo_flutter_ui/src/theme/v_theme.dart';
 
 /// Vector icons drawn in code, no asset files.
 ///
 /// Provides CustomPaint-based icons that do not depend on MaterialIcons font.
-/// All icons scale to the specified [size] and render in the specified [color].
+/// All icons scale to the given `size` and are drawn on a 24-unit grid with a
+/// stroke of `size / 12`, round caps and round joins.
+///
+/// The `color` comes first from the argument, then from the nearest
+/// [IconTheme] (so an icon inside a `VButton` or a `VBottomNav` item follows
+/// that widget's foreground and selected colors), then from the theme's
+/// foreground color.
 ///
 /// ```dart
 /// VIcons.close(size: 16, color: theme.colors.foreground)
+/// VIcons.settings() // IconTheme color, else the theme foreground
 /// ```
 class VIcons {
   VIcons._();
@@ -16,126 +25,177 @@ class VIcons {
   // ===== Navigation =====
 
   /// Left chevron (<).
-  static Widget chevronLeft({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawChevronLeft);
+  static Widget chevronLeft({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawChevronLeft);
 
   /// Right chevron (>).
-  static Widget chevronRight({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawChevronRight);
+  static Widget chevronRight({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawChevronRight);
 
   /// Up chevron (^).
-  static Widget chevronUp({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawChevronUp);
+  static Widget chevronUp({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawChevronUp);
 
   /// Down chevron (v).
-  static Widget chevronDown({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawChevronDown);
+  static Widget chevronDown({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawChevronDown);
 
   /// Back arrow with stem.
-  static Widget arrowBack({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawArrowBack);
+  static Widget arrowBack({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawArrowBack);
 
   /// Upward arrow with stem.
-  static Widget arrowUp({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawArrowUp);
+  static Widget arrowUp({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawArrowUp);
 
   /// Downward arrow with stem.
-  static Widget arrowDown({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawArrowDown);
+  static Widget arrowDown({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawArrowDown);
 
   /// First page (|<).
-  static Widget firstPage({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawFirstPage);
+  static Widget firstPage({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawFirstPage);
 
   /// Last page (>|).
-  static Widget lastPage({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawLastPage);
+  static Widget lastPage({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawLastPage);
+
+  /// Solid triangle pointing down, for a dropdown trigger.
+  static Widget arrowDropDown({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawArrowDropDown);
+
+  /// Square with an arrow leaving its corner, for a link that opens elsewhere.
+  static Widget openInNew({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawOpenInNew);
 
   // ===== Action =====
 
   /// Close / dismiss (X).
-  static Widget close({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawClose);
+  static Widget close({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawClose);
 
   /// Checkmark.
-  static Widget check({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawCheck);
+  static Widget check({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawCheck);
 
   /// Search / magnifying glass.
-  static Widget search({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawSearch);
+  static Widget search({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawSearch);
 
   /// Refresh / reload.
-  static Widget refresh({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawRefresh);
+  static Widget refresh({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawRefresh);
 
   /// Edit / pencil.
-  static Widget edit({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawEdit);
+  static Widget edit({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawEdit);
+
+  /// Gear, for settings.
+  static Widget settings({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawSettings);
+
+  /// Crosshair around a dot, for "my location".
+  static Widget location({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawLocation);
+
+  /// Play triangle in an outlined circle.
+  static Widget playCircle({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawPlayCircle);
 
   // ===== Status =====
 
   /// Info circle (outlined).
-  static Widget info({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawInfo);
+  static Widget info({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawInfo);
 
   /// Success check in filled circle.
-  static Widget checkCircle({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawCheckCircle);
+  static Widget checkCircle({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawCheckCircle);
 
   /// Error X in filled circle.
-  static Widget error({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawError);
+  static Widget error({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawError);
 
   /// Warning triangle with exclamation.
-  static Widget warning({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawWarning);
+  static Widget warning({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawWarning);
 
   /// Priority high (exclamation mark).
-  static Widget priorityHigh({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawPriorityHigh);
+  static Widget priorityHigh({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawPriorityHigh);
 
   // ===== Object =====
 
   /// Person silhouette.
-  static Widget person({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawPerson);
+  static Widget person({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawPerson);
 
   /// Calendar.
-  static Widget calendar({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawCalendar);
+  static Widget calendar({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawCalendar);
 
   /// Eye open (visibility).
-  static Widget visibility({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawVisibility);
+  static Widget visibility({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawVisibility);
 
   /// Eye closed (visibility off).
-  static Widget visibilityOff({required Color color, double size = 24}) =>
-      _icon(size: size, color: color, draw: _drawVisibilityOff);
+  static Widget visibilityOff({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawVisibilityOff);
 
-  // ===== Internal =====
+  /// Camera body with a lens.
+  static Widget camera({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawCamera);
 
-  static Widget _icon({
-    required double size,
-    required Color color,
-    required void Function(Canvas, Size, Paint) draw,
-  }) => SizedBox.square(
-    dimension: size,
-    child: CustomPaint(
-      painter: _VIconPainter(color: color, draw: draw),
-    ),
-  );
+  /// Bulleted list.
+  static Widget list({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawList);
+
+  /// Cloud outline.
+  static Widget cloud({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawCloud);
+
+  /// Clock face with hands.
+  static Widget clock({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawClock);
 }
 
 // ---------------------------------------------------------------------------
-// Painter
+// Widget and painter
 // ---------------------------------------------------------------------------
+
+typedef _Draw = void Function(Canvas c, Size s, Paint p);
+
+// WHY: A widget instead of a bare SizedBox — the color fallback reads the
+// IconTheme and the VTheme, which needs a BuildContext.
+class _VIcon extends StatelessWidget {
+  const _VIcon({required this.size, required this.color, required this.draw});
+
+  final double size;
+  final Color? color;
+  final _Draw draw;
+
+  @override
+  Widget build(BuildContext context) {
+    // IconTheme.of falls back to black when no IconTheme is above, so the
+    // inherited widget is read directly to tell "none" from "black".
+    final resolved =
+        color ??
+        context.dependOnInheritedWidgetOfExactType<IconTheme>()?.data.color ??
+        VTheme.of(context).colors.foreground;
+    return SizedBox.square(
+      dimension: size,
+      child: CustomPaint(
+        painter: _VIconPainter(color: resolved, draw: draw),
+      ),
+    );
+  }
+}
 
 class _VIconPainter extends CustomPainter {
   const _VIconPainter({required this.color, required this.draw});
 
   final Color color;
-  final void Function(Canvas, Size, Paint) draw;
+  final _Draw draw;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -523,4 +583,192 @@ void _drawVisibilityOff(Canvas c, Size s, Paint p) {
       Offset(s.width * 0.82, s.height * 0.18),
       p,
     );
+}
+
+// ---------------------------------------------------------------------------
+// Draw functions — added icons
+// ---------------------------------------------------------------------------
+
+Paint _fill(Paint p) => Paint()
+  ..color = p.color
+  ..style = PaintingStyle.fill;
+
+void _drawArrowDropDown(Canvas c, Size s, Paint p) {
+  final triangle = Path()
+    ..moveTo(s.width * 0.32, s.height * 0.42)
+    ..lineTo(s.width * 0.68, s.height * 0.42)
+    ..lineTo(s.width * 0.5, s.height * 0.6)
+    ..close();
+  // The stroke rounds the corners of the filled triangle.
+  c
+    ..drawPath(triangle, _fill(p))
+    ..drawPath(triangle, p);
+}
+
+void _drawOpenInNew(Canvas c, Size s, Paint p) {
+  final box = Path()
+    ..moveTo(s.width * 0.46, s.height * 0.2)
+    ..lineTo(s.width * 0.2, s.height * 0.2)
+    ..lineTo(s.width * 0.2, s.height * 0.8)
+    ..lineTo(s.width * 0.8, s.height * 0.8)
+    ..lineTo(s.width * 0.8, s.height * 0.54);
+  final head = Path()
+    ..moveTo(s.width * 0.6, s.height * 0.2)
+    ..lineTo(s.width * 0.8, s.height * 0.2)
+    ..lineTo(s.width * 0.8, s.height * 0.4);
+  c
+    ..drawPath(box, p)
+    ..drawPath(head, p)
+    ..drawLine(
+      Offset(s.width * 0.48, s.height * 0.52),
+      Offset(s.width * 0.8, s.height * 0.2),
+      p,
+    );
+}
+
+void _drawSettings(Canvas c, Size s, Paint p) {
+  // Eight teeth: a flat top at the outer radius, straight flanks down to the
+  // root circle.
+  const teeth = 8;
+  final center = Offset(s.width * 0.5, s.height * 0.5);
+  final outer = s.width * 0.4;
+  final inner = s.width * 0.29;
+  const step = 2 * pi / teeth;
+  const topHalf = step * 0.17;
+  const rootHalf = step * 0.29;
+  Offset at(double r, double a) => center + Offset(cos(a) * r, sin(a) * r);
+  final gear = Path();
+  for (var i = 0; i < teeth; i++) {
+    final a = i * step - pi / 2;
+    final from = at(inner, a - rootHalf);
+    if (i == 0) {
+      gear.moveTo(from.dx, from.dy);
+    } else {
+      gear.lineTo(from.dx, from.dy);
+    }
+    final t1 = at(outer, a - topHalf);
+    final t2 = at(outer, a + topHalf);
+    final r2 = at(inner, a + rootHalf);
+    gear
+      ..lineTo(t1.dx, t1.dy)
+      ..lineTo(t2.dx, t2.dy)
+      ..lineTo(r2.dx, r2.dy);
+  }
+  gear.close();
+  c
+    ..drawPath(gear, p)
+    ..drawCircle(center, s.width * 0.11, p);
+}
+
+void _drawLocation(Canvas c, Size s, Paint p) {
+  final center = Offset(s.width * 0.5, s.height * 0.5);
+  c
+    ..drawCircle(center, s.width * 0.28, p)
+    ..drawCircle(center, s.width * 0.09, _fill(p))
+    ..drawLine(
+      Offset(s.width * 0.5, s.height * 0.1),
+      Offset(s.width * 0.5, s.height * 0.22),
+      p,
+    )
+    ..drawLine(
+      Offset(s.width * 0.5, s.height * 0.78),
+      Offset(s.width * 0.5, s.height * 0.9),
+      p,
+    )
+    ..drawLine(
+      Offset(s.width * 0.1, s.height * 0.5),
+      Offset(s.width * 0.22, s.height * 0.5),
+      p,
+    )
+    ..drawLine(
+      Offset(s.width * 0.78, s.height * 0.5),
+      Offset(s.width * 0.9, s.height * 0.5),
+      p,
+    );
+}
+
+void _drawPlayCircle(Canvas c, Size s, Paint p) {
+  final triangle = Path()
+    ..moveTo(s.width * 0.43, s.height * 0.36)
+    ..lineTo(s.width * 0.64, s.height * 0.5)
+    ..lineTo(s.width * 0.43, s.height * 0.64)
+    ..close();
+  c
+    ..drawCircle(Offset(s.width * 0.5, s.height * 0.5), s.width * 0.36, p)
+    ..drawPath(triangle, _fill(p))
+    ..drawPath(triangle, p);
+}
+
+void _drawCamera(Canvas c, Size s, Paint p) {
+  final body = RRect.fromRectAndRadius(
+    Rect.fromLTRB(
+      s.width * 0.14,
+      s.height * 0.3,
+      s.width * 0.86,
+      s.height * 0.8,
+    ),
+    Radius.circular(s.width * 0.07),
+  );
+  final hump = Path()
+    ..moveTo(s.width * 0.34, s.height * 0.3)
+    ..lineTo(s.width * 0.4, s.height * 0.2)
+    ..lineTo(s.width * 0.6, s.height * 0.2)
+    ..lineTo(s.width * 0.66, s.height * 0.3);
+  c
+    ..drawRRect(body, p)
+    ..drawPath(hump, p)
+    ..drawCircle(Offset(s.width * 0.5, s.height * 0.55), s.width * 0.13, p);
+}
+
+void _drawList(Canvas c, Size s, Paint p) {
+  final dot = _fill(p);
+  for (final y in const [0.28, 0.5, 0.72]) {
+    c
+      ..drawCircle(Offset(s.width * 0.2, s.height * y), s.width * 0.05, dot)
+      ..drawLine(
+        Offset(s.width * 0.36, s.height * y),
+        Offset(s.width * 0.82, s.height * y),
+        p,
+      );
+  }
+}
+
+void _drawCloud(Canvas c, Size s, Paint p) {
+  // The outline of three bumps on a flat base, joined with a path union.
+  Rect circle(double x, double y, double r) => Rect.fromCircle(
+    center: Offset(s.width * x, s.height * y),
+    radius: s.width * r,
+  );
+  final left = Path()..addOval(circle(0.28, 0.61, 0.15));
+  final top = Path()..addOval(circle(0.46, 0.45, 0.21));
+  final right = Path()..addOval(circle(0.7, 0.59, 0.17));
+  final base = Path()
+    ..addRect(
+      Rect.fromLTRB(
+        s.width * 0.28,
+        s.height * 0.59,
+        s.width * 0.7,
+        s.height * 0.76,
+      ),
+    );
+  final cloud = Path.combine(
+    PathOperation.union,
+    Path.combine(
+      PathOperation.union,
+      Path.combine(PathOperation.union, left, top),
+      right,
+    ),
+    base,
+  );
+  c.drawPath(cloud, p);
+}
+
+void _drawClock(Canvas c, Size s, Paint p) {
+  final hands = Path()
+    ..moveTo(s.width * 0.5, s.height * 0.28)
+    ..lineTo(s.width * 0.5, s.height * 0.5)
+    ..lineTo(s.width * 0.65, s.height * 0.6);
+  c
+    ..drawCircle(Offset(s.width * 0.5, s.height * 0.5), s.width * 0.36, p)
+    ..drawPath(hands, p);
 }

@@ -231,6 +231,8 @@ VIcons.chevronRight(size: 20, color: context.vColors.mutedForeground)
 VIcons.check(size: 24, color: context.vColors.primary)
 ```
 
+Without `color`, an icon takes the color of the nearest `IconTheme`, then the theme's foreground color. Widgets that set an `IconTheme` for their icons, such as `VButton` and `VBottomNav`, color a `VIcons` icon the same way, so `VBottomNavItem(icon: VIcons.camera(), ...)` follows the selected and unselected colors.
+
 ## Documentation
 
 - [Component docs](doc/) -- One page per widget, generated from the dartdoc comments
