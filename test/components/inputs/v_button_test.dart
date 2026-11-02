@@ -837,5 +837,295 @@ void main() {
         expect(find.text('Merged'), findsOneWidget);
       });
     });
+
+    group('style fields', () {
+      final theme = VThemeData.light();
+
+      // Applies [style] through the theme or as the instance style.
+      Widget styled(
+        VButtonStyle style, {
+        required bool viaTheme,
+        required Widget Function(VButtonStyle? instanceStyle) build,
+      }) => VTheme(
+        data: theme.copyWith(
+          componentOverrides: VComponentOverrides(viaTheme ? [style] : []),
+        ),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Center(child: build(viaTheme ? null : style)),
+        ),
+      );
+
+      BoxDecoration decorationOf(WidgetTester tester, Finder button) =>
+          tester
+                  .widget<AnimatedContainer>(
+                    find.descendant(
+                      of: button,
+                      matching: find.byType(AnimatedContainer),
+                    ),
+                  )
+                  .decoration!
+              as BoxDecoration;
+
+      TextStyle labelStyleOf(WidgetTester tester, String text) => tester
+          .widget<RichText>(
+            find.descendant(
+              of: find.text(text),
+              matching: find.byType(RichText),
+            ),
+          )
+          .text
+          .style!;
+
+      for (final viaTheme in [true, false]) {
+        final via = viaTheme ? 'theme' : 'instance';
+
+        testWidgets('borderRadius rounds a rounded button ($via)', (
+          tester,
+        ) async {
+          final radius = BorderRadius.circular(3);
+          await tester.pumpWidget(
+            styled(
+              VButtonStyle(borderRadius: radius),
+              viaTheme: viaTheme,
+              build: (s) =>
+                  VButton(style: s, onPressed: () {}, child: const Text('A')),
+            ),
+          );
+
+          expect(
+            decorationOf(tester, find.byType(VButton)).borderRadius,
+            radius,
+          );
+        });
+
+        testWidgets('a pill corner and a group win over borderRadius ($via)', (
+          tester,
+        ) async {
+          final style = VButtonStyle(borderRadius: BorderRadius.circular(3));
+          await tester.pumpWidget(
+            styled(
+              style,
+              viaTheme: viaTheme,
+              build: (s) => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  VButton(
+                    key: const Key('pill'),
+                    style: s,
+                    corner: VButtonCorner.pill,
+                    onPressed: () {},
+                    child: const Text('Pill'),
+                  ),
+                  VButtonGroup(
+                    children: [
+                      VButton(
+                        key: const Key('first'),
+                        style: s,
+                        onPressed: () {},
+                        child: const Text('A'),
+                      ),
+                      VButton(
+                        style: s,
+                        onPressed: () {},
+                        child: const Text('B'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+
+          expect(
+            decorationOf(tester, find.byKey(const Key('pill'))).borderRadius,
+            BorderRadius.circular(theme.sizes.md.height / 2),
+          );
+          final r = Radius.circular(theme.sizes.md.borderRadius);
+          expect(
+            decorationOf(tester, find.byKey(const Key('first'))).borderRadius,
+            BorderRadius.only(topLeft: r, bottomLeft: r),
+          );
+        });
+
+        testWidgets('padding moves the label ($via)', (tester) async {
+          await tester.pumpWidget(
+            styled(
+              const VButtonStyle(padding: EdgeInsets.symmetric(horizontal: 30)),
+              viaTheme: viaTheme,
+              build: (s) =>
+                  VButton(style: s, onPressed: () {}, child: const Text('A')),
+            ),
+          );
+
+          expect(
+            tester.getTopLeft(find.text('A')).dx -
+                tester.getTopLeft(find.byType(VButton)).dx,
+            30,
+          );
+        });
+
+        testWidgets('gap separates icon and label; leadingGap wins ($via)', (
+          tester,
+        ) async {
+          Widget button(VButtonStyle? s, {double? leadingGap}) => VButton(
+            style: s,
+            onPressed: () {},
+            leadingGap: leadingGap,
+            leading: VIcons.check(
+              color: theme.colors.primaryForeground,
+              size: theme.sizes.md.iconSize,
+            ),
+            trailing: VIcons.search(
+              color: theme.colors.primaryForeground,
+              size: theme.sizes.md.iconSize,
+            ),
+            child: const Text('A'),
+          );
+          double leadingGapOf(WidgetTester tester) =>
+              tester.getTopLeft(find.text('A')).dx -
+              tester
+                  .getTopRight(
+                    find
+                        .descendant(
+                          of: find.byType(VButton),
+                          matching: find.byType(CustomPaint),
+                        )
+                        .first,
+                  )
+                  .dx;
+          double trailingGapOf(WidgetTester tester) =>
+              tester
+                  .getTopLeft(
+                    find
+                        .descendant(
+                          of: find.byType(VButton),
+                          matching: find.byType(CustomPaint),
+                        )
+                        .last,
+                  )
+                  .dx -
+              tester.getTopRight(find.text('A')).dx;
+
+          await tester.pumpWidget(
+            styled(
+              const VButtonStyle(gap: 20),
+              viaTheme: viaTheme,
+              build: button,
+            ),
+          );
+          expect(leadingGapOf(tester), 20);
+          expect(trailingGapOf(tester), 20);
+
+          await tester.pumpWidget(
+            styled(
+              const VButtonStyle(gap: 20),
+              viaTheme: viaTheme,
+              build: (s) => button(s, leadingGap: 4),
+            ),
+          );
+          expect(leadingGapOf(tester), 4);
+        });
+
+        testWidgets('iconColor tints leading and trailing icons ($via)', (
+          tester,
+        ) async {
+          const iconColor = Color(0xFF00AA00);
+          final seen = <String, Color?>{};
+          Widget probe(String slot) => Builder(
+            builder: (context) {
+              seen[slot] = IconTheme.of(context).color;
+              return const SizedBox(width: 10, height: 10);
+            },
+          );
+          await tester.pumpWidget(
+            styled(
+              const VButtonStyle(iconColor: iconColor),
+              viaTheme: viaTheme,
+              build: (s) => VButton(
+                style: s,
+                onPressed: () {},
+                leading: probe('leading'),
+                trailing: probe('trailing'),
+                child: const Text('A'),
+              ),
+            ),
+          );
+
+          expect(seen, {'leading': iconColor, 'trailing': iconColor});
+          // The label keeps the foreground color.
+          expect(
+            labelStyleOf(tester, 'A').color,
+            theme.colors.primaryForeground,
+          );
+        });
+
+        testWidgets('textStyle wins over the size font and weight ($via)', (
+          tester,
+        ) async {
+          const labelColor = Color(0xFF123456);
+          await tester.pumpWidget(
+            styled(
+              const VButtonStyle(
+                textStyle: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: labelColor,
+                ),
+              ),
+              viaTheme: viaTheme,
+              build: (s) =>
+                  VButton(style: s, onPressed: () {}, child: const Text('A')),
+            ),
+          );
+
+          final style = labelStyleOf(tester, 'A');
+          expect(style.fontSize, 20);
+          expect(style.fontWeight, FontWeight.w700);
+          expect(style.color, labelColor);
+        });
+      }
+
+      testWidgets('foregroundColor wins over the color of textStyle', (
+        tester,
+      ) async {
+        const foreground = Color(0xFF0000FF);
+        await tester.pumpWidget(
+          styled(
+            const VButtonStyle(
+              foregroundColor: foreground,
+              textStyle: TextStyle(color: Color(0xFF123456)),
+            ),
+            viaTheme: false,
+            build: (s) =>
+                VButton(style: s, onPressed: () {}, child: const Text('A')),
+          ),
+        );
+
+        expect(labelStyleOf(tester, 'A').color, foreground);
+      });
+
+      testWidgets('without iconColor, icons follow the foreground color', (
+        tester,
+      ) async {
+        late Color? leadingColor;
+        await tester.pumpWidget(
+          buildTestWidget(
+            VButton(
+              onPressed: () {},
+              leading: Builder(
+                builder: (context) {
+                  leadingColor = IconTheme.of(context).color;
+                  return const SizedBox(width: 10, height: 10);
+                },
+              ),
+              child: const Text('A'),
+            ),
+          ),
+        );
+
+        expect(leadingColor, theme.colors.primaryForeground);
+      });
+    });
   });
 }

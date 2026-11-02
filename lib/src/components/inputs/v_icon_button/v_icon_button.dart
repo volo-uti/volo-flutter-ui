@@ -167,6 +167,7 @@ class _VIconButtonState extends State<VIconButton>
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
   bool _isHovered = false;
+  bool _isPressed = false;
   bool _isFocused = false;
   late final FocusNode _focusNode;
 
@@ -212,16 +213,19 @@ class _VIconButtonState extends State<VIconButton>
 
   void _handleTapDown(TapDownDetails details) {
     if (!_isEnabled) return;
+    setState(() => _isPressed = true);
     unawaited(_controller.forward());
   }
 
   void _handleTapUp(TapUpDetails details) {
     if (!_isEnabled) return;
+    setState(() => _isPressed = false);
     unawaited(_controller.reverse());
   }
 
   void _handleTapCancel() {
     if (!_isEnabled) return;
+    setState(() => _isPressed = false);
     unawaited(_controller.reverse());
   }
 
@@ -355,15 +359,25 @@ class _VIconButtonState extends State<VIconButton>
     // Apply opacity when disabled
     final effectiveOpacity = _isEnabled ? 1.0 : 0.5;
 
-    // Background color on hover
+    // Background color on hover and press: the style's overlayColor laid
+    // over the background, else a muted tint on a transparent button's hover.
+    final overlayColor = resolvedStyle?.overlayColor;
     Color effectiveBackgroundColor;
-    if (_isHovered && _isEnabled) {
+    if (overlayColor != null && (_isHovered || _isPressed) && _isEnabled) {
+      effectiveBackgroundColor = Color.alphaBlend(
+        overlayColor,
+        backgroundColor,
+      );
+    } else if (_isHovered && _isEnabled) {
       effectiveBackgroundColor = backgroundColor == VColors.transparent
           ? theme.colors.muted.withValues(alpha: 0.3)
           : backgroundColor;
     } else {
       effectiveBackgroundColor = backgroundColor;
     }
+
+    final borderRadius =
+        resolvedStyle?.borderRadius ?? BorderRadius.circular(btnSize / 2);
 
     // Scale on hover
     final hoverScale = _isHovered && _isEnabled ? 1.05 : 1.0;
@@ -379,11 +393,10 @@ class _VIconButtonState extends State<VIconButton>
             curve: theme.animations.curveEaseOut,
             width: btnSize,
             height: btnSize,
+            padding: resolvedStyle?.padding,
             decoration: BoxDecoration(
               color: effectiveBackgroundColor,
-              borderRadius:
-                  resolvedStyle?.borderRadius ??
-                  BorderRadius.circular(btnSize / 2),
+              borderRadius: borderRadius,
               border: border,
             ),
             child: Center(
@@ -434,7 +447,7 @@ class _VIconButtonState extends State<VIconButton>
       },
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(btnSize / 2),
+          borderRadius: borderRadius,
           border: _isFocused
               ? Border.all(color: theme.colors.ring, width: 2)
               : null,

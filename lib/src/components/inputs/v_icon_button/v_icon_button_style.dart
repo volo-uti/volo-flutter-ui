@@ -28,13 +28,17 @@ class VIconButtonStyle implements VComponentStyle {
   /// Border color.
   final Color? borderColor;
 
-  /// Border radius.
+  /// Corner radius of the button and its focus ring; defaults to a circle.
   final BorderRadius? borderRadius;
 
-  /// Internal padding.
+  /// Padding around the icon inside the button.
+  ///
+  /// The button's diameter stays the size's height.
   final EdgeInsets? padding;
 
-  /// Press / hover overlay color.
+  /// Color laid over the background while the button is hovered or pressed.
+  ///
+  /// Defaults to a muted tint on hover over a transparent background.
   final Color? overlayColor;
 
   /// Icon tint color.

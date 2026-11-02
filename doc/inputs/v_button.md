@@ -61,10 +61,10 @@ Creates a filled button.
 | `trailing` | `Widget?` |  |  | Widget shown after [child], typically an icon. |
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
 | `size` | `VButtonSize` | `VButtonSize.md` |  | Minimum height and text size preset.<br>The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
-| `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style. |
+| `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
 | `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
-| `leadingGap` | `double?` |  |  | Gap between [leading] and [child]; defaults to the size's spacing token. |
-| `trailingGap` | `double?` |  |  | Gap between [child] and [trailing]; defaults to the size's spacing token. |
+| `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
+| `trailingGap` | `double?` |  |  | Gap between [child] and [trailing].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `fullWidth` | `bool` | `false` |  | Whether the button stretches to the full available width. |
 | `enabled` | `bool` | `true` |  | Whether the button reacts to input; `false` dims it and blocks presses. |
 | `loading` | `bool` | `false` |  | Whether a loading indicator is shown and presses are blocked. |
@@ -87,10 +87,10 @@ Creates an outlined button.
 | `trailing` | `Widget?` |  |  | Widget shown after [child], typically an icon. |
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
 | `size` | `VButtonSize` | `VButtonSize.md` |  | Minimum height and text size preset.<br>The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
-| `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style. |
+| `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
 | `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
-| `leadingGap` | `double?` |  |  | Gap between [leading] and [child]; defaults to the size's spacing token. |
-| `trailingGap` | `double?` |  |  | Gap between [child] and [trailing]; defaults to the size's spacing token. |
+| `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
+| `trailingGap` | `double?` |  |  | Gap between [child] and [trailing].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `fullWidth` | `bool` | `false` |  | Whether the button stretches to the full available width. |
 | `enabled` | `bool` | `true` |  | Whether the button reacts to input; `false` dims it and blocks presses. |
 | `loading` | `bool` | `false` |  | Whether a loading indicator is shown and presses are blocked. |
@@ -113,10 +113,10 @@ Creates a text button without background.
 | `trailing` | `Widget?` |  |  | Widget shown after [child], typically an icon. |
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
 | `size` | `VButtonSize` | `VButtonSize.md` |  | Minimum height and text size preset.<br>The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
-| `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style. |
+| `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
 | `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
-| `leadingGap` | `double?` |  |  | Gap between [leading] and [child]; defaults to the size's spacing token. |
-| `trailingGap` | `double?` |  |  | Gap between [child] and [trailing]; defaults to the size's spacing token. |
+| `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
+| `trailingGap` | `double?` |  |  | Gap between [child] and [trailing].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `fullWidth` | `bool` | `false` |  | Whether the button stretches to the full available width. |
 | `enabled` | `bool` | `true` |  | Whether the button reacts to input; `false` dims it and blocks presses. |
 | `loading` | `bool` | `false` |  | Whether a loading indicator is shown and presses are blocked. |
@@ -139,10 +139,10 @@ Creates a square button sized for an icon child.
 | `trailing` | `Widget?` |  |  | Widget shown after [child], typically an icon. |
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
 | `size` | `VButtonSize` | `VButtonSize.md` |  | Minimum height and text size preset.<br>The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
-| `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style. |
+| `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
 | `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
-| `leadingGap` | `double?` |  |  | Gap between [leading] and [child]; defaults to the size's spacing token. |
-| `trailingGap` | `double?` |  |  | Gap between [child] and [trailing]; defaults to the size's spacing token. |
+| `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
+| `trailingGap` | `double?` |  |  | Gap between [child] and [trailing].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `fullWidth` | `bool` | `false` |  | Whether the button stretches to the full available width. |
 | `enabled` | `bool` | `true` |  | Whether the button reacts to input; `false` dims it and blocks presses. |
 | `loading` | `bool` | `false` |  | Whether a loading indicator is shown and presses are blocked. |
@@ -165,10 +165,10 @@ Creates a transparent button that shows the accent color on hover.
 | `trailing` | `Widget?` |  |  | Widget shown after [child], typically an icon. |
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
 | `size` | `VButtonSize` | `VButtonSize.md` |  | Minimum height and text size preset.<br>The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
-| `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style. |
+| `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
 | `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
-| `leadingGap` | `double?` |  |  | Gap between [leading] and [child]; defaults to the size's spacing token. |
-| `trailingGap` | `double?` |  |  | Gap between [child] and [trailing]; defaults to the size's spacing token. |
+| `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
+| `trailingGap` | `double?` |  |  | Gap between [child] and [trailing].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `fullWidth` | `bool` | `false` |  | Whether the button stretches to the full available width. |
 | `enabled` | `bool` | `true` |  | Whether the button reacts to input; `false` dims it and blocks presses. |
 | `loading` | `bool` | `false` |  | Whether a loading indicator is shown and presses are blocked. |
@@ -191,10 +191,10 @@ Creates an underlined link-style button.
 | `trailing` | `Widget?` |  |  | Widget shown after [child], typically an icon. |
 | `color` | `VButtonColor` | `VButtonColor.primary` |  | Color role of the button. |
 | `size` | `VButtonSize` | `VButtonSize.md` |  | Minimum height and text size preset.<br>The height is a minimum: the button grows with the text scale and when a long label wraps onto more lines. |
-| `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style. |
+| `corner` | `VButtonCorner` | `VButtonCorner.rounded` |  | Corner radius style.<br>[VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set. |
 | `align` | `VButtonAlign` | `VButtonAlign.center` |  | Horizontal alignment of the content inside the button. |
-| `leadingGap` | `double?` |  |  | Gap between [leading] and [child]; defaults to the size's spacing token. |
-| `trailingGap` | `double?` |  |  | Gap between [child] and [trailing]; defaults to the size's spacing token. |
+| `leadingGap` | `double?` |  |  | Gap between [leading] and [child].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
+| `trailingGap` | `double?` |  |  | Gap between [child] and [trailing].<br>Wins over [VButtonStyle.gap]; defaults to the size's spacing token. |
 | `fullWidth` | `bool` | `false` |  | Whether the button stretches to the full available width. |
 | `enabled` | `bool` | `true` |  | Whether the button reacts to input; `false` dims it and blocks presses. |
 | `loading` | `bool` | `false` |  | Whether a loading indicator is shown and presses are blocked. |
@@ -282,13 +282,13 @@ Supports cascade: theme override → instance override.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
-| `foregroundColor` | `Color?` |  |  | Text / icon foreground color. |
+| `foregroundColor` | `Color?` |  |  | Text / icon foreground color.<br>Wins over the color of [textStyle]; defaults to the variant's color. |
 | `borderColor` | `Color?` |  |  | Border color. |
-| `borderRadius` | `BorderRadius?` |  |  | Border radius. |
-| `padding` | `EdgeInsets?` |  |  | Internal padding. |
-| `textStyle` | `TextStyle?` |  |  | Text style. |
-| `iconColor` | `Color?` |  |  | Icon tint color. |
-| `gap` | `double?` |  |  | Gap between icon and label. |
+| `borderRadius` | `BorderRadius?` |  |  | Corner radius of a [VButtonCorner.rounded] button.<br>A [VButtonGroup] position and a square, pill or circle `corner` win over it; defaults to the size's radius token. |
+| `padding` | `EdgeInsets?` |  |  | Padding around the content.<br>Defaults to the size's horizontal padding. `VButton.icon` ignores it, since it is a fixed square. |
+| `textStyle` | `TextStyle?` |  |  | Label text style, merged over the size's font size and medium weight. |
+| `iconColor` | `Color?` |  |  | Color of the leading, trailing and child icons.<br>Defaults to [foregroundColor]. |
+| `gap` | `double?` |  |  | Gap between an icon and the label.<br>`leadingGap` and `trailingGap` win over it; defaults to the size's spacing token. |
 
 ### Members
 

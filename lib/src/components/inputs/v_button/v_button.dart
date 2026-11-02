@@ -309,15 +309,21 @@ class VButton extends StatefulWidget {
   final VButtonSize size;
 
   /// Corner radius style.
+  ///
+  /// [VButtonCorner.rounded] takes [VButtonStyle.borderRadius] when one is set.
   final VButtonCorner corner;
 
   /// Horizontal alignment of the content inside the button.
   final VButtonAlign align;
 
-  /// Gap between [leading] and [child]; defaults to the size's spacing token.
+  /// Gap between [leading] and [child].
+  ///
+  /// Wins over [VButtonStyle.gap]; defaults to the size's spacing token.
   final double? leadingGap;
 
-  /// Gap between [child] and [trailing]; defaults to the size's spacing token.
+  /// Gap between [child] and [trailing].
+  ///
+  /// Wins over [VButtonStyle.gap]; defaults to the size's spacing token.
   final double? trailingGap;
 
   /// Whether the button stretches to the full available width.

@@ -242,12 +242,15 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
 
   /// Returns the border radius.
   ///
-  /// Prioritizes [VButtonGroupScope]'s borderRadius when inside a group.
+  /// Prioritizes [VButtonGroupScope]'s borderRadius when inside a group, then
+  /// a square, pill or circle [VButton.corner], then [styleRadius] for a
+  /// rounded corner, then the size's radius token.
   BorderRadius _getBorderRadius(
     BuildContext context,
     double sizeRadius,
     double height,
     double width,
+    BorderRadius? styleRadius,
   ) {
     final groupData = VButtonGroupScope.maybeOf(context);
     if (groupData?.borderRadius != null) {
@@ -258,7 +261,7 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
       case VButtonCorner.square:
         return BorderRadius.zero;
       case VButtonCorner.rounded:
-        return BorderRadius.circular(sizeRadius);
+        return styleRadius ?? BorderRadius.circular(sizeRadius);
       case VButtonCorner.pill:
         return BorderRadius.circular(height / 2);
       case VButtonCorner.circle:
@@ -316,6 +319,11 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
     final sizeProps = _getSizeProperties();
     final colorProps = _getColorProperties(theme);
     final isIconVariant = widget._variant == _VButtonVariant.icon;
+
+    // Style overrides (Level 3 → Level 4 cascade)
+    final themeStyle = theme.componentOverrides.get<VButtonStyle>();
+    final resolvedStyle = themeStyle?.merge(widget.style) ?? widget.style;
+
     // Icon variant is square (height x height), regular buttons auto-size to content
     final buttonWidth = isIconVariant ? sizeProps.height : null;
     final borderRadius = _getBorderRadius(
@@ -323,6 +331,7 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
       sizeProps.borderRadius,
       sizeProps.height,
       buttonWidth ?? sizeProps.height,
+      resolvedStyle?.borderRadius,
     );
 
     // Variant-specific styles
@@ -370,9 +379,7 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
         break;
     }
 
-    // Apply style overrides (Level 3 → Level 4 cascade)
-    final themeStyle = theme.componentOverrides.get<VButtonStyle>();
-    final resolvedStyle = themeStyle?.merge(widget.style) ?? widget.style;
+    // Apply style color overrides
     if (resolvedStyle != null) {
       backgroundColor = resolvedStyle.backgroundColor ?? backgroundColor;
       foregroundColor = resolvedStyle.foregroundColor ?? foregroundColor;
@@ -381,15 +388,20 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
       }
     }
 
-    // Text style
-    final textStyle = (resolvedStyle?.textStyle ?? const TextStyle()).copyWith(
+    // Text style: the size's font size and medium weight, then the style's
+    // textStyle on top. An explicit foregroundColor wins over its color.
+    final labelColor =
+        resolvedStyle?.foregroundColor ??
+        resolvedStyle?.textStyle?.color ??
+        foregroundColor;
+    final textStyle = TextStyle(
       fontSize: sizeProps.fontSize,
       fontWeight: FontWeight.w500,
-      color: foregroundColor,
       decoration: textDecoration,
-      decorationColor: foregroundColor,
+      decorationColor: labelColor,
       decorationThickness: textDecoration != null ? 2.0 : null,
-    );
+    ).merge(resolvedStyle?.textStyle).copyWith(color: labelColor);
+    final iconColor = resolvedStyle?.iconColor ?? foregroundColor;
 
     // Content composition
     Widget content;
@@ -398,8 +410,10 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
       foregroundColor,
       sizeProps.iconSize,
     );
-    final effectiveLeadingGap = widget.leadingGap ?? sizeProps.spacing;
-    final effectiveTrailingGap = widget.trailingGap ?? sizeProps.spacing;
+    final effectiveLeadingGap =
+        widget.leadingGap ?? resolvedStyle?.gap ?? sizeProps.spacing;
+    final effectiveTrailingGap =
+        widget.trailingGap ?? resolvedStyle?.gap ?? sizeProps.spacing;
 
     if (isLoading && widget.loadingPosition == VButtonLoadingPosition.center) {
       // Center loading: hide child and show loading only
@@ -407,7 +421,7 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
     } else {
       // Normal content
       final childWidget = IconTheme.merge(
-        data: IconThemeData(color: foregroundColor, size: sizeProps.iconSize),
+        data: IconThemeData(color: iconColor, size: sizeProps.iconSize),
         child: widget.child,
       );
       final items = <Widget>[];
@@ -421,10 +435,7 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
         items
           ..add(
             IconTheme(
-              data: IconThemeData(
-                color: foregroundColor,
-                size: sizeProps.iconSize,
-              ),
+              data: IconThemeData(color: iconColor, size: sizeProps.iconSize),
               child: widget.leading!,
             ),
           )
@@ -444,10 +455,7 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
           ..add(SizedBox(width: effectiveTrailingGap))
           ..add(
             IconTheme(
-              data: IconThemeData(
-                color: foregroundColor,
-                size: sizeProps.iconSize,
-              ),
+              data: IconThemeData(color: iconColor, size: sizeProps.iconSize),
               child: widget.trailing!,
             ),
           );
@@ -472,9 +480,11 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
     final actualButtonWidth = isIconVariant
         ? sizeProps.height
         : (widget.fullWidth ? double.infinity : null);
+    // The icon variant is a fixed square, so it takes no padding.
     final buttonPadding = isIconVariant
         ? EdgeInsets.zero
-        : EdgeInsets.symmetric(horizontal: sizeProps.padding);
+        : resolvedStyle?.padding ??
+              EdgeInsets.symmetric(horizontal: sizeProps.padding);
 
     // Hover background color (for text, outlined, icon, link variants)
     Color hoverBackgroundColor;

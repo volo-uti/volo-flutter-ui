@@ -135,9 +135,9 @@ Supports cascade: theme override → instance override.
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
 | `foregroundColor` | `Color?` |  |  | Text / icon foreground color. |
 | `borderColor` | `Color?` |  |  | Border color. |
-| `borderRadius` | `BorderRadius?` |  |  | Border radius. |
-| `padding` | `EdgeInsets?` |  |  | Internal padding. |
-| `overlayColor` | `Color?` |  |  | Press / hover overlay color. |
+| `borderRadius` | `BorderRadius?` |  |  | Corner radius of the button and its focus ring; defaults to a circle. |
+| `padding` | `EdgeInsets?` |  |  | Padding around the icon inside the button.<br>The button's diameter stays the size's height. |
+| `overlayColor` | `Color?` |  |  | Color laid over the background while the button is hovered or pressed.<br>Defaults to a muted tint on hover over a transparent background. |
 | `iconColor` | `Color?` |  |  | Icon tint color. |
 | `iconSize` | `double?` |  |  | Icon size. |
 

@@ -23,24 +23,37 @@ class VButtonStyle implements VComponentStyle {
   final Color? backgroundColor;
 
   /// Text / icon foreground color.
+  ///
+  /// Wins over the color of [textStyle]; defaults to the variant's color.
   final Color? foregroundColor;
 
   /// Border color.
   final Color? borderColor;
 
-  /// Border radius.
+  /// Corner radius of a [VButtonCorner.rounded] button.
+  ///
+  /// A [VButtonGroup] position and a square, pill or circle `corner` win over
+  /// it; defaults to the size's radius token.
   final BorderRadius? borderRadius;
 
-  /// Internal padding.
+  /// Padding around the content.
+  ///
+  /// Defaults to the size's horizontal padding. `VButton.icon` ignores it, since
+  /// it is a fixed square.
   final EdgeInsets? padding;
 
-  /// Text style.
+  /// Label text style, merged over the size's font size and medium weight.
   final TextStyle? textStyle;
 
-  /// Icon tint color.
+  /// Color of the leading, trailing and child icons.
+  ///
+  /// Defaults to [foregroundColor].
   final Color? iconColor;
 
-  /// Gap between icon and label.
+  /// Gap between an icon and the label.
+  ///
+  /// `leadingGap` and `trailingGap` win over it; defaults to the size's spacing
+  /// token.
   final double? gap;
 
   /// Creates a copy with only the specified properties changed.
