@@ -549,7 +549,10 @@ void main() {
             matching: find.byType(Container),
           ),
         )
-        .where((c) => c.color == red)
+        .where(
+          (c) =>
+              c.color == red || (c.decoration as BoxDecoration?)?.color == red,
+        )
         .firstOrNull;
 
     testWidgets('VBottomSheet.show applies style', (tester) async {
@@ -611,6 +614,175 @@ void main() {
       );
 
       expect(sideContainer(tester), isNotNull);
+    });
+  });
+
+  group('VSheetStyle border and padding', () {
+    const line = Color(0xFF00AA00);
+    const themeLine = Color(0xFFAA0000);
+    const pad = EdgeInsets.all(20);
+
+    Future<void> open(
+      WidgetTester tester,
+      Future<void> Function(BuildContext context) show, {
+      VThemeData? theme,
+    }) async {
+      await tester.pumpWidget(
+        VTheme(
+          data: theme ?? VThemeData.light(),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: MediaQuery(
+              data: const MediaQueryData(size: Size(400, 800)),
+              // A new Navigator each time, so its first route calls this show.
+              child: Navigator(
+                key: UniqueKey(),
+                onGenerateRoute: (settings) => PageRouteBuilder(
+                  pageBuilder: (context, _, _) => Builder(
+                    builder: (context) => GestureDetector(
+                      onTap: () => show(context),
+                      child: const Text('Open Button'),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Open Button'));
+      await tester.pumpAndSettle();
+    }
+
+    // The sheet panel: the nearest Container with a decoration.
+    Container panelContainer(WidgetTester tester) => tester
+        .widgetList<Container>(
+          find.ancestor(
+            of: find.text('Sheet Content'),
+            matching: find.byType(Container),
+          ),
+        )
+        .firstWhere((c) => c.decoration is BoxDecoration);
+
+    BoxDecoration panel(WidgetTester tester) =>
+        panelContainer(tester).decoration! as BoxDecoration;
+
+    // The bottom sheet pads its child inside the panel; the side sheet's
+    // panel takes the padding itself.
+    bool padded(WidgetTester tester) =>
+        panelContainer(tester).padding == pad ||
+        tester
+            .widgetList<Padding>(
+              find.ancestor(
+                of: find.text('Sheet Content'),
+                matching: find.byType(Padding),
+              ),
+            )
+            .any((p) => p.padding == pad);
+
+    final width = VThemeData.light().borders.defaultBorder.width;
+
+    testWidgets('VBottomSheet outlines the sheet and pads the child', (
+      tester,
+    ) async {
+      await open(
+        tester,
+        (context) => VBottomSheet.show<void>(
+          context,
+          style: const VSheetStyle(borderColor: line, padding: pad),
+          child: const Text('Sheet Content'),
+        ),
+      );
+
+      expect(panel(tester).border, Border.all(color: line, width: width));
+      expect(padded(tester), isTrue);
+    });
+
+    testWidgets('VSideSheet draws the line on the edge facing the content', (
+      tester,
+    ) async {
+      final side = BorderSide(color: line, width: width);
+      for (final (sheetSide, border) in [
+        (VSheetSide.left, Border(right: side)),
+        (VSheetSide.right, Border(left: side)),
+      ]) {
+        await open(
+          tester,
+          (context) => VSideSheet.show<void>(
+            context,
+            side: sheetSide,
+            style: const VSheetStyle(borderColor: line, padding: pad),
+            child: const Text('Sheet Content'),
+          ),
+        );
+
+        expect(panel(tester).border, border);
+        expect(padded(tester), isTrue);
+        await tester.tapAt(
+          sheetSide == VSheetSide.left
+              ? const Offset(700, 50)
+              : const Offset(50, 50),
+        );
+        await tester.pumpAndSettle();
+      }
+    });
+
+    testWidgets('no line and no padding without a style', (tester) async {
+      await open(
+        tester,
+        (context) => VBottomSheet.show<void>(
+          context,
+          child: const Text('Sheet Content'),
+        ),
+      );
+      expect(panel(tester).border, isNull);
+      expect(padded(tester), isFalse);
+
+      await tester.tapAt(const Offset(200, 50));
+      await tester.pumpAndSettle();
+      await open(
+        tester,
+        (context) =>
+            VSideSheet.show<void>(context, child: const Text('Sheet Content')),
+      );
+      expect(panel(tester).border, isNull);
+      expect(padded(tester), isFalse);
+    });
+
+    testWidgets('the instance style wins over the theme override', (
+      tester,
+    ) async {
+      final theme = VThemeData.light().copyWith(
+        componentOverrides: const VComponentOverrides([
+          VSheetStyle(borderColor: themeLine, padding: pad),
+        ]),
+      );
+
+      await open(
+        tester,
+        theme: theme,
+        (context) => VBottomSheet.show<void>(
+          context,
+          child: const Text('Sheet Content'),
+        ),
+      );
+      expect(panel(tester).border, Border.all(color: themeLine, width: width));
+      expect(padded(tester), isTrue);
+
+      await tester.tapAt(const Offset(200, 50));
+      await tester.pumpAndSettle();
+      await open(
+        tester,
+        theme: theme,
+        (context) => VBottomSheet.show<void>(
+          context,
+          style: const VSheetStyle(borderColor: line),
+          child: const Text('Sheet Content'),
+        ),
+      );
+      expect(panel(tester).border, Border.all(color: line, width: width));
+      // A field the instance style leaves null still comes from the theme.
+      expect(padded(tester), isTrue);
     });
   });
 

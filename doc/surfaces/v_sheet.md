@@ -276,13 +276,12 @@ Supports cascade: theme override → instance override.
 |---|---|---|---|---|
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
 | `foregroundColor` | `Color?` |  |  | Text foreground color. |
-| `borderColor` | `Color?` |  |  | Border color. |
+| `borderColor` | `Color?` |  |  | Color of the outline of a [VBottomSheet] and of the inner edge of a [VSideSheet]; no line when null.<br>The line is as wide as the default border token. An instance style wins over the theme override. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
-| `elevation` | `double?` |  |  | Elevation (shadow depth). |
-| `padding` | `EdgeInsets?` |  |  | Internal padding. |
+| `padding` | `EdgeInsets?` |  |  | Space around the sheet's child; none when null.<br>An instance style wins over the theme override. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VSheetStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? borderColor, BorderRadius? borderRadius, double? elevation, EdgeInsets? padding})` | Creates a copy with only the specified properties changed. |
+| `VSheetStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? borderColor, BorderRadius? borderRadius, EdgeInsets? padding})` | Creates a copy with only the specified properties changed. |

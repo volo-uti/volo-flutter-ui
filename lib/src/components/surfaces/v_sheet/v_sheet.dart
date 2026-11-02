@@ -253,6 +253,8 @@ class _VBottomSheetState extends State<VBottomSheet>
     final sheetBorderRadius =
         resolvedStyle?.borderRadius ??
         BorderRadius.vertical(top: Radius.circular(theme.radius.lg));
+    final borderColor = resolvedStyle?.borderColor;
+    final padding = resolvedStyle?.padding;
 
     final defaultTextStyle = theme.typography.bodyMedium.copyWith(
       color: fgColor,
@@ -305,6 +307,12 @@ class _VBottomSheetState extends State<VBottomSheet>
                         decoration: BoxDecoration(
                           color: bgColor,
                           borderRadius: sheetBorderRadius,
+                          border: borderColor == null
+                              ? null
+                              : Border.all(
+                                  color: borderColor,
+                                  width: theme.borders.defaultBorder.width,
+                                ),
                         ),
                         child: Column(
                           children: [
@@ -323,7 +331,14 @@ class _VBottomSheetState extends State<VBottomSheet>
                                 ),
                               ),
                             ?titleWidget,
-                            Expanded(child: widget.child),
+                            Expanded(
+                              child: padding == null
+                                  ? widget.child
+                                  : Padding(
+                                      padding: padding,
+                                      child: widget.child,
+                                    ),
+                            ),
                           ],
                         ),
                       ),
@@ -492,6 +507,14 @@ class _VSideSheetState extends State<VSideSheet>
 
     final bgColor = resolvedStyle?.backgroundColor ?? colors.card;
     final fgColor = resolvedStyle?.foregroundColor ?? colors.foreground;
+    final borderColor = resolvedStyle?.borderColor;
+    // The line runs along the edge that faces the content.
+    final innerEdge = borderColor == null
+        ? null
+        : BorderSide(
+            color: borderColor,
+            width: theme.borders.defaultBorder.width,
+          );
 
     final defaultTextStyle = theme.typography.bodyMedium.copyWith(
       color: fgColor,
@@ -520,7 +543,18 @@ class _VSideSheetState extends State<VSideSheet>
                     top: 0,
                     bottom: 0,
                     width: widget.width,
-                    child: Container(color: bgColor, child: widget.child),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: bgColor,
+                        border: innerEdge == null
+                            ? null
+                            : _isLeft
+                            ? Border(right: innerEdge)
+                            : Border(left: innerEdge),
+                      ),
+                      padding: resolvedStyle?.padding,
+                      child: widget.child,
+                    ),
                   ),
                 ],
               );

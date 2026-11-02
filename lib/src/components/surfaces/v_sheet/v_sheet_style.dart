@@ -13,7 +13,6 @@ class VSheetStyle implements VComponentStyle {
     this.foregroundColor,
     this.borderColor,
     this.borderRadius,
-    this.elevation,
     this.padding,
   });
 
@@ -23,16 +22,19 @@ class VSheetStyle implements VComponentStyle {
   /// Text foreground color.
   final Color? foregroundColor;
 
-  /// Border color.
+  /// Color of the outline of a [VBottomSheet] and of the inner edge of a
+  /// [VSideSheet]; no line when null.
+  ///
+  /// The line is as wide as the default border token. An instance style wins
+  /// over the theme override.
   final Color? borderColor;
 
   /// Border radius.
   final BorderRadius? borderRadius;
 
-  /// Elevation (shadow depth).
-  final double? elevation;
-
-  /// Internal padding.
+  /// Space around the sheet's child; none when null.
+  ///
+  /// An instance style wins over the theme override.
   final EdgeInsets? padding;
 
   /// Creates a copy with only the specified properties changed.
@@ -41,14 +43,12 @@ class VSheetStyle implements VComponentStyle {
     Color? foregroundColor,
     Color? borderColor,
     BorderRadius? borderRadius,
-    double? elevation,
     EdgeInsets? padding,
   }) => VSheetStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
     foregroundColor: foregroundColor ?? this.foregroundColor,
     borderColor: borderColor ?? this.borderColor,
     borderRadius: borderRadius ?? this.borderRadius,
-    elevation: elevation ?? this.elevation,
     padding: padding ?? this.padding,
   );
 
@@ -61,7 +61,6 @@ class VSheetStyle implements VComponentStyle {
       foregroundColor: other.foregroundColor ?? foregroundColor,
       borderColor: other.borderColor ?? borderColor,
       borderRadius: other.borderRadius ?? borderRadius,
-      elevation: other.elevation ?? elevation,
       padding: other.padding ?? padding,
     );
   }
@@ -74,7 +73,6 @@ class VSheetStyle implements VComponentStyle {
         other.foregroundColor == foregroundColor &&
         other.borderColor == borderColor &&
         other.borderRadius == borderRadius &&
-        other.elevation == elevation &&
         other.padding == padding;
   }
 
@@ -84,7 +82,6 @@ class VSheetStyle implements VComponentStyle {
     foregroundColor,
     borderColor,
     borderRadius,
-    elevation,
     padding,
   );
 }
