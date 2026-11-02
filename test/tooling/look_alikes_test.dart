@@ -56,18 +56,166 @@ class _TopLine extends StatelessWidget {
 }
 ''';
 
+// A button that is a VIconButton: the Button role takes every button widget.
+const _findMeButton = '''
+class _FindMeButton extends ConsumerWidget {
+  const _FindMeButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      VIconButton(icon: VIcons.close(), onPressed: () {});
+}
+''';
+
+// An app frame that only shares the Tabs name, with the reason between doc
+// lines.
+const _mainTabs = '''
+/// Frame of the signed-in screens.
+// look-alike: app frame with a header, a body and a bottom bar, not a tab bar
+///
+/// Holds the router outlet.
+class _MainTabs extends StatelessWidget {
+  const _MainTabs({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Column(children: [child]);
+}
+''';
+
+// A switch row built from a Row and a bare VSwitch instead of a switch tile.
+const _alertSwitchRow = '''
+class AlertSwitchRow extends StatefulWidget {
+  const AlertSwitchRow({required this.label, super.key});
+
+  final String label;
+
+  @override
+  State<AlertSwitchRow> createState() => _AlertSwitchRowState();
+}
+
+class _AlertSwitchRowState extends State<AlertSwitchRow> {
+  var _on = false;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      Text(widget.label),
+      VSwitch(value: _on, onChanged: (v) => setState(() => _on = v)),
+    ],
+  );
+}
+''';
+
+// A sheet the library does not have yet: it stays open while the page moves.
+String _sheet(String marker) =>
+    '''
+import 'package:flutter/widgets.dart';
+
+/// Panel that stays over the map.
+$marker
+@immutable
+class MapPanelSheet extends StatelessWidget {
+  const MapPanelSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+}
+''';
+
+final _panelSheet = _sheet(
+  '// look-alike: VBottomSheet is modal; this panel stays open while the map moves',
+);
+
+List<String> _failures(String source) =>
+    scanLookAlikes('a.dart', source).failures;
+
 void main() {
+  group('look-alike marker', () {
+    test('passes a button built on VIconButton', () {
+      final report = scanLookAlikes('a.dart', _findMeButton);
+      expect(report.failures, isEmpty);
+      expect(report.accepted, isEmpty);
+    });
+
+    test('accepts and lists a widget that only shares a role name', () {
+      final report = scanLookAlikes('a.dart', _mainTabs);
+      expect(report.failures, isEmpty);
+      expect(
+        report.accepted.single,
+        'a.dart:5 _MainTabs — app frame with a header, a body and a bottom '
+        'bar, not a tab bar',
+      );
+    });
+
+    test('fails a switch row built from a Row and a bare switch', () {
+      expect(
+        _failures(_alertSwitchRow).single,
+        startsWith(
+          'a.dart:1 AlertSwitchRow rebuilds VSwitchListTile — use '
+          'VSwitchListTile or VSettingTile ',
+        ),
+      );
+    });
+
+    test('accepts and lists a sheet the library lacks, with its reason', () {
+      final report = scanLookAlikes('a.dart', _panelSheet);
+      expect(report.failures, isEmpty);
+      expect(
+        report.accepted.single,
+        'a.dart:6 MapPanelSheet — VBottomSheet is modal; this panel stays '
+        'open while the map moves',
+      );
+    });
+
+    test('fails a marker with an empty or short reason', () {
+      expect(
+        _failures(_sheet('// look-alike:')).single,
+        'a.dart:6 MapPanelSheet: the look-alike reason is too short '
+        '(0 chars, at least 15) — say why VBottomSheet, VSideSheet or VSheet '
+        'cannot be used',
+      );
+      expect(
+        _failures(_sheet('// look-alike: not modal')).single,
+        contains('too short (9 chars, at least 15)'),
+      );
+      expect(
+        scanLookAlikes('a.dart', _sheet('// look-alike:')).accepted,
+        isEmpty,
+      );
+    });
+
+    test('reads only a // line in the block right above the class', () {
+      const reason = 'VBottomSheet is modal; this panel stays open';
+      expect(
+        _failures(_sheet('/// look-alike: $reason')).single,
+        contains('MapPanelSheet rebuilds VBottomSheet'),
+      );
+      expect(
+        _failures(_sheet('// look-alike: $reason\n')).single,
+        contains('MapPanelSheet rebuilds VBottomSheet'),
+      );
+      expect(
+        _failures(
+          _sheet('// TODO(library: VBottomSheet cannot stay open)'),
+        ).single,
+        contains('MapPanelSheet rebuilds VBottomSheet'),
+      );
+    });
+  });
+
   group('scanLookAlikes', () {
     test('fails a widget that rebuilds the library widget of its role', () {
       expect(
-        scanLookAlikes('a.dart', _appChip).single,
+        _failures(_appChip).single,
         'a.dart:5 AppChip rebuilds VChip — use VChip and hand-write only '
         'the missing detail, marked TODO(library: …)',
       );
     });
 
     test('passes a widget that builds the library widget', () {
-      expect(scanLookAlikes('a.dart', _appBottomNav), isEmpty);
+      expect(_failures(_appBottomNav), isEmpty);
     });
 
     test('does not count a TODO(library:) marker or a string as a use', () {
@@ -76,7 +224,7 @@ void main() {
         "child: Text('VChip')",
       );
       expect(source, contains('TODO(library: VChip'));
-      expect(scanLookAlikes('a.dart', source), hasLength(1));
+      expect(_failures(source), hasLength(1));
     });
 
     test('does not count the style or another widget with the name inside', () {
@@ -84,7 +232,7 @@ void main() {
         'final theme = VTheme.of(context);',
         'final theme = VTheme.of(context);\n    const s = VChipStyle();',
       );
-      expect(scanLookAlikes('a.dart', source), hasLength(1));
+      expect(_failures(source), hasLength(1));
     });
 
     test('skips State classes, data classes and other names', () {
@@ -95,7 +243,7 @@ class ChipData {}
 class CloudCell extends StatelessWidget {}
 class Chips extends StatelessWidget {}
 ''';
-      expect(scanLookAlikes('a.dart', source), isEmpty);
+      expect(_failures(source), isEmpty);
     });
 
     test('checks private, generic and Riverpod-style widgets', () {
@@ -104,7 +252,7 @@ class _Chip extends StatelessWidget {}
 class AppSelect<T> extends StatefulWidget {}
 class PrefsSwitchRow extends ConsumerWidget {}
 ''';
-      final found = scanLookAlikes('a.dart', source);
+      final found = _failures(source);
       expect(found, hasLength(3));
       expect(found[0], startsWith('a.dart:1 _Chip rebuilds VChip '));
       expect(found[1], startsWith('a.dart:2 AppSelect rebuilds VSelect '));
@@ -119,15 +267,11 @@ class PrefsSwitchRow extends ConsumerWidget {}
 
     test('names every widget that fills a role with more than one', () {
       expect(
-        scanLookAlikes(
-          'a.dart',
-          'class AppDialog extends StatelessWidget {}',
-        ).single,
+        _failures('class AppDialog extends StatelessWidget {}').single,
         contains('AppDialog rebuilds VDialog — use VDialog or VAlertDialog '),
       );
       expect(
-        scanLookAlikes(
-          'a.dart',
+        _failures(
           'class AppDialog extends StatelessWidget { Widget b() => VAlertDialog(); }',
         ),
         isEmpty,
@@ -146,8 +290,7 @@ class PrefsSwitchRow extends ConsumerWidget {}
     });
 
     test('an IconButton look-alike points at VIconButton, not VButton', () {
-      final found = scanLookAlikes(
-        'a.dart',
+      final found = _failures(
         'class AppIconButton extends StatelessWidget { Widget b() => VButton(); }',
       );
       expect(found.single, contains('AppIconButton rebuilds VIconButton '));
@@ -180,7 +323,12 @@ class PrefsSwitchRow extends ConsumerWidget {}
     File('${dir.path}/a.dart').writeAsStringSync(_appChip);
     File('${dir.path}/a.g.dart').writeAsStringSync(_appChip);
     File('${dir.path}/b.dart').writeAsStringSync(_appBottomNav);
-    final found = scanLookAlikeDirs([dir.path]);
-    expect(found.single, startsWith('${dir.path}/a.dart:5 AppChip rebuilds'));
+    File('${dir.path}/c.dart').writeAsStringSync(_panelSheet);
+    final report = scanLookAlikeDirs([dir.path]);
+    expect(
+      report.failures.single,
+      startsWith('${dir.path}/a.dart:5 AppChip rebuilds'),
+    );
+    expect(report.accepted.single, startsWith('${dir.path}/c.dart:6 '));
   });
 }

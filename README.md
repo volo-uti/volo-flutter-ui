@@ -130,6 +130,15 @@ Run the index step below before you plan or write any UI. It is what tells a cod
 
    `look_alikes` fails on a widget named for a library role (`AppChip`, `SettingsRow`, `AppBottomNav` ...) whose file never uses the V widget for that role (`VChip`, `VSettingTile`, `VBottomNav` ...). A `TODO(library: …)` marker does not make it pass: build on the V widget and hand-write only the missing detail.
 
+   When no V widget can do the job, or the name only happens to match, write the reason in a `// look-alike: <why the V widget cannot be used>` line right above the class (at least 15 characters) and report the gap to this repository. The check then passes it and lists it under `Accepted look-alikes` on every run, so the exceptions stay in sight.
+
+   ```dart
+   // look-alike: VBottomSheet is modal; this panel stays open while the map moves
+   class MapPanelSheet extends StatelessWidget {
+     ...
+   }
+   ```
+
    You can pass several folders in a row (`raw_widgets lib/features lib/shared`). Start with the feature folders where new code goes. Replace raw widgets in the existing app shell (`lib/app` and the like) with V widgets when you first adopt the package, and leave the shell out of the check until then.
 
 Each widget has a doc with a parameter table under the package's `doc/` folder (the paths in the index are relative to that folder).

@@ -34,7 +34,7 @@ Enforced by: `dart run tool/agent_index.dart --check` and `dart run tool/compone
 
 ## Raw widgets and look-alikes are blocked, with a pointer to the replacement
 
-When a component replaces a raw Flutter widget, using the raw widget in the catalog app is an error. So is a widget named for a component's role (`AppChip`, `SettingsRow`) that never uses the component: a hand-built copy drifts from the theme, even when it marks what it was missing. A prose rule may go unread, but a failure message is always read, so the message names the component to use instead. Products run the same two commands over their own folders.
+When a component replaces a raw Flutter widget, using the raw widget in the catalog app is an error. So is a widget named for a component's role (`AppChip`, `SettingsRow`) that never uses the component: a hand-built copy drifts from the theme, even when it marks what it was missing. A widget that no component can replace says why in a `// look-alike: <why>` line above its class and the gap is reported to the library; the check lets it pass but lists it on every run, so an exception is a visible request and not a quiet way around the rule. A prose rule may go unread, but a failure message is always read, so the message names the component to use instead. Products run the same two commands over their own folders.
 
 Enforced by: `bin/raw_widgets.dart` and `bin/look_alikes.dart` over `widgetbook/lib`, fed by `rawWidgets` in `lib/src/tooling/raw_widgets.dart` and `lookAlikeRoles` in `lib/src/tooling/look_alikes.dart`.
 
