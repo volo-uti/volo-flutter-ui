@@ -135,7 +135,7 @@ See also:
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `title` | `Widget` |  | yes | Heading of the card, usually a [Text]. |
+| `title` | `Widget` |  | yes | Heading of the card, usually a [Text].<br>It takes [VCardStyle.foregroundColor] of the enclosing card when set, else the theme foreground. |
 | `description` | `Widget?` |  |  | Smaller line shown below [title]. |
 | `action` | `Widget?` |  |  | Widget at the end of the header, typically an icon button or menu. |
 
@@ -180,7 +180,7 @@ Supports cascade: theme override → instance override.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
-| `foregroundColor` | `Color?` |  |  | Text foreground color. |
+| `foregroundColor` | `Color?` |  |  | Color of the card's text and icons, a [VCardHeader] title included.<br>When null they keep the color they inherit. Children that set their own color keep it. An instance style wins over the theme override. |
 | `borderColor` | `Color?` |  |  | Border color. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
 | `shadows` | `List<BoxShadow>?` |  |  | Shadows under an elevated card; the theme's medium shadow, large on hover, when null.<br>The list replaces both the resting and the hover shadow, and an empty list draws none. An outlined card draws no shadow. An instance style wins over the theme override. |

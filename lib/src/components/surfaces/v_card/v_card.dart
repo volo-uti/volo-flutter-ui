@@ -192,6 +192,21 @@ class _VCardState extends State<VCard> {
       }
     }
 
+    var content = widget.child;
+    final foregroundColor = resolvedStyle?.foregroundColor;
+    if (foregroundColor != null) {
+      content = _VCardForeground(
+        color: foregroundColor,
+        child: IconTheme.merge(
+          data: IconThemeData(color: foregroundColor),
+          child: DefaultTextStyle.merge(
+            style: TextStyle(color: foregroundColor),
+            child: content,
+          ),
+        ),
+      );
+    }
+
     Widget card = AnimatedContainer(
       duration: theme.animations.fast,
       curve: theme.animations.curveEaseOut,
@@ -202,7 +217,7 @@ class _VCardState extends State<VCard> {
         border: border,
         boxShadow: shadows,
       ),
-      child: widget.child,
+      child: content,
     );
 
     if (_isTappable) {
@@ -257,6 +272,20 @@ class _VCardState extends State<VCard> {
   }
 }
 
+/// Hands a card's style foreground color down to its [VCardHeader].
+class _VCardForeground extends InheritedWidget {
+  const _VCardForeground({required this.color, required super.child});
+
+  final Color color;
+
+  static Color? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_VCardForeground>()?.color;
+
+  @override
+  bool updateShouldNotify(_VCardForeground oldWidget) =>
+      color != oldWidget.color;
+}
+
 /// {@template v_card_header}
 /// Title area at the top of a [VCard], with an optional description and action.
 ///
@@ -286,6 +315,9 @@ class VCardHeader extends StatelessWidget {
   });
 
   /// Heading of the card, usually a [Text].
+  ///
+  /// It takes [VCardStyle.foregroundColor] of the enclosing card when set, else
+  /// the theme foreground.
   final Widget title;
 
   /// Smaller line shown below [title].
@@ -300,8 +332,11 @@ class VCardHeader extends StatelessWidget {
     final colors = theme.colors;
     final typography = theme.typography;
 
+    // The title follows the foreground color of the card's style, if any.
     final titleWidget = DefaultTextStyle.merge(
-      style: typography.titleMedium.copyWith(color: colors.foreground),
+      style: typography.titleMedium.copyWith(
+        color: _VCardForeground.maybeOf(context) ?? colors.foreground,
+      ),
       child: title,
     );
 

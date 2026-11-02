@@ -21,7 +21,10 @@ class VCardStyle implements VComponentStyle {
   /// Background fill color.
   final Color? backgroundColor;
 
-  /// Text foreground color.
+  /// Color of the card's text and icons, a [VCardHeader] title included.
+  ///
+  /// When null they keep the color they inherit. Children that set their own
+  /// color keep it. An instance style wins over the theme override.
   final Color? foregroundColor;
 
   /// Border color.

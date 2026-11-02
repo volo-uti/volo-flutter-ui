@@ -1486,4 +1486,67 @@ void main() {
       expect(shadowsOf(tester), theme.shadows.lg);
     });
   });
+
+  group('VCard foregroundColor', () {
+    final theme = VThemeData.light();
+    const color = Color(0xFF123456);
+
+    // Builds a card styled through the theme or as the instance style.
+    Widget styled(VCardStyle? style, {bool viaTheme = false}) => VTheme(
+      data: theme.copyWith(
+        componentOverrides: VComponentOverrides([
+          if (viaTheme && style != null) style,
+        ]),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(
+          child: VCard(
+            style: viaTheme ? null : style,
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                VCardHeader(title: Text('Title')),
+                Text('Body'),
+                Icon(Icons.star),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    Color? textColor(WidgetTester tester, String text) => tester
+        .widget<RichText>(
+          find.descendant(of: find.text(text), matching: find.byType(RichText)),
+        )
+        .text
+        .style
+        ?.color;
+
+    Color? iconColor(WidgetTester tester) =>
+        IconTheme.of(tester.element(find.byType(Icon))).color;
+
+    testWidgets('text keeps its inherited color by default', (tester) async {
+      await tester.pumpWidget(styled(null));
+      expect(textColor(tester, 'Title'), theme.colors.foreground);
+      expect(textColor(tester, 'Body'), isNot(color));
+      expect(iconColor(tester), isNot(color));
+    });
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('colors the body, icons and header title ($via)', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          styled(const VCardStyle(foregroundColor: color), viaTheme: viaTheme),
+        );
+        expect(textColor(tester, 'Title'), color);
+        expect(textColor(tester, 'Body'), color);
+        expect(iconColor(tester), color);
+      });
+    }
+  });
 }
