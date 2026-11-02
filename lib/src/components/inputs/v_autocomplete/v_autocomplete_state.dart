@@ -338,10 +338,18 @@ class _VAutocompleteState<T> extends State<VAutocomplete<T>> {
 
     // Input trigger
     final sizeToken = _sizeToken;
-    final inputStyle = typography.bodyMedium.copyWith(
-      color: colors.foreground,
-      fontSize: sizeToken.fontSize,
-    );
+    // The body type style at the size's font size, then the style's
+    // textStyle; foregroundColor wins over its color, and the placeholder
+    // stays muted.
+    final inputStyle = typography.bodyMedium
+        .copyWith(fontSize: sizeToken.fontSize)
+        .merge(resolvedStyle?.textStyle)
+        .copyWith(
+          color:
+              resolvedStyle?.foregroundColor ??
+              resolvedStyle?.textStyle?.color ??
+              colors.foreground,
+        );
     final Widget inputField = EditableText(
       controller: _textController,
       focusNode: _focusNode,
@@ -476,9 +484,13 @@ class _VAutocompleteState<T> extends State<VAutocomplete<T>> {
       child: _buildDropdownContent(colors, typography),
     );
 
+    final dropdownBackgroundColor = resolvedStyle?.dropdownBackgroundColor;
     Widget autocomplete = VPopover(
       controller: _popoverController,
       position: VPopoverPosition.bottomStart,
+      style: dropdownBackgroundColor == null
+          ? null
+          : VPopoverStyle(backgroundColor: dropdownBackgroundColor),
       content: dropdown,
       triggerOnTap: false, // VAutocomplete handles tap events directly
       child: Opacity(

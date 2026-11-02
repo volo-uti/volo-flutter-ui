@@ -561,4 +561,127 @@ void main() {
       expect(selectedValues, ['seoul']);
     });
   });
+
+  group('VAutocomplete style fields', () {
+    final theme = VThemeData.light();
+    const items = [VAutocompleteItem(value: 'seoul', label: 'Seoul')];
+
+    // Builds an autocomplete styled through the theme or as the instance
+    // style, inside an overlay for its dropdown.
+    Widget styled(VAutocompleteStyle? style, {bool viaTheme = false}) => VTheme(
+      data: theme.copyWith(
+        componentOverrides: VComponentOverrides([
+          if (viaTheme && style != null) style,
+        ]),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: const MediaQueryData(),
+          child: Overlay(
+            initialEntries: [
+              OverlayEntry(
+                builder: (_) => Center(
+                  child: VAutocomplete<String>(
+                    items: items,
+                    placeholder: 'Search',
+                    style: viaTheme ? null : style,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    TextStyle inputStyle(WidgetTester tester) =>
+        tester.widget<EditableText>(find.byType(EditableText)).style;
+
+    Color? placeholderColor(WidgetTester tester) =>
+        tester.widget<Text>(find.text('Search')).style?.color;
+
+    // The popover panel is the nearest decorated box around the item text.
+    Color? panelColor(WidgetTester tester) => tester
+        .widgetList<Container>(
+          find.ancestor(
+            of: find.text('Seoul'),
+            matching: find.byType(Container),
+          ),
+        )
+        .map((c) => c.decoration)
+        .whereType<BoxDecoration>()
+        .firstWhere((d) => d.boxShadow != null)
+        .color;
+
+    Future<void> openDropdown(WidgetTester tester) async {
+      await tester.tap(find.byType(EditableText));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('defaults to the body style, foreground and popover color', (
+      tester,
+    ) async {
+      await tester.pumpWidget(styled(null));
+      expect(inputStyle(tester).color, theme.colors.foreground);
+      expect(inputStyle(tester).fontSize, theme.sizes.md.fontSize);
+      expect(placeholderColor(tester), theme.colors.mutedForeground);
+
+      await openDropdown(tester);
+      expect(panelColor(tester), theme.colors.popover);
+    });
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('textStyle and foregroundColor style the input ($via)', (
+        tester,
+      ) async {
+        const color = Color(0xFF123456);
+        await tester.pumpWidget(
+          styled(
+            const VAutocompleteStyle(
+              foregroundColor: color,
+              textStyle: TextStyle(
+                fontStyle: FontStyle.italic,
+                color: Color(0xFFFF0000),
+              ),
+            ),
+            viaTheme: viaTheme,
+          ),
+        );
+        expect(inputStyle(tester).color, color);
+        expect(inputStyle(tester).fontStyle, FontStyle.italic);
+        expect(inputStyle(tester).fontSize, theme.sizes.md.fontSize);
+        expect(placeholderColor(tester), theme.colors.mutedForeground);
+      });
+
+      testWidgets('textStyle color is used without foregroundColor ($via)', (
+        tester,
+      ) async {
+        const color = Color(0xFF654321);
+        await tester.pumpWidget(
+          styled(
+            const VAutocompleteStyle(textStyle: TextStyle(color: color)),
+            viaTheme: viaTheme,
+          ),
+        );
+        expect(inputStyle(tester).color, color);
+      });
+
+      testWidgets('dropdownBackgroundColor fills the panel ($via)', (
+        tester,
+      ) async {
+        const color = Color(0xFF123456);
+        await tester.pumpWidget(
+          styled(
+            const VAutocompleteStyle(dropdownBackgroundColor: color),
+            viaTheme: viaTheme,
+          ),
+        );
+        await openDropdown(tester);
+        expect(panelColor(tester), color);
+      });
+    }
+  });
 }

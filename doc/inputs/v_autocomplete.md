@@ -231,13 +231,13 @@ Supports cascade: theme override → instance override.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
-| `foregroundColor` | `Color?` |  |  | Text foreground color. |
+| `foregroundColor` | `Color?` |  |  | Color of the typed text; wins over the color of [textStyle].<br>The placeholder keeps the muted color. An instance style wins over the theme override. |
 | `borderColor` | `Color?` |  |  | Border color. |
 | `focusBorderColor` | `Color?` |  |  | Border color when focused. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
 | `padding` | `EdgeInsets?` |  |  | Internal padding. |
-| `textStyle` | `TextStyle?` |  |  | Text style. |
-| `dropdownBackgroundColor` | `Color?` |  |  | Dropdown menu background color. |
+| `textStyle` | `TextStyle?` |  |  | Text style of the input, merged over the body type style at the size's font size.<br>The placeholder uses it too, in the muted color. An instance style wins over the theme override. |
+| `dropdownBackgroundColor` | `Color?` |  |  | Background color of the suggestion panel; defaults to the popover color.<br>It wins over the theme's `VPopoverStyle.backgroundColor`. An instance style wins over the theme override. |
 
 ### Members
 

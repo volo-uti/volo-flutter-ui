@@ -22,7 +22,10 @@ class VAutocompleteStyle implements VComponentStyle {
   /// Background fill color.
   final Color? backgroundColor;
 
-  /// Text foreground color.
+  /// Color of the typed text; wins over the color of [textStyle].
+  ///
+  /// The placeholder keeps the muted color. An instance style wins over the
+  /// theme override.
   final Color? foregroundColor;
 
   /// Border color.
@@ -37,10 +40,16 @@ class VAutocompleteStyle implements VComponentStyle {
   /// Internal padding.
   final EdgeInsets? padding;
 
-  /// Text style.
+  /// Text style of the input, merged over the body type style at the size's font size.
+  ///
+  /// The placeholder uses it too, in the muted color. An instance style wins
+  /// over the theme override.
   final TextStyle? textStyle;
 
-  /// Dropdown menu background color.
+  /// Background color of the suggestion panel; defaults to the popover color.
+  ///
+  /// It wins over the theme's `VPopoverStyle.backgroundColor`. An instance
+  /// style wins over the theme override.
   final Color? dropdownBackgroundColor;
 
   /// Creates a copy with only the specified properties changed.
