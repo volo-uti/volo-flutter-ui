@@ -1,3 +1,5 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart' show Icons;
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
@@ -382,6 +384,347 @@ void main() {
       );
       expect(menuRect.right, triggerRect.right);
       expect(menuRect.left, lessThan(triggerRect.left));
+    });
+  });
+
+  group('VMenuController', () {
+    late VMenuController controller;
+    setUp(() => controller = VMenuController());
+    tearDown(() => controller.dispose());
+
+    Widget menu({VMenuController? using, Key? key}) => VMenu(
+      key: key,
+      controller: using ?? controller,
+      trigger: const Text('Menu'),
+      items: [VMenuItem(child: const Text('Edit'), onTap: () {})],
+    );
+
+    testWidgets('show and hide open and close the menu', (tester) async {
+      await tester.pumpWidget(buildTestWidget(menu()));
+      expect(find.text('Edit'), findsNothing);
+
+      controller.show();
+      await tester.pump();
+      expect(find.text('Edit'), findsOneWidget);
+      expect(controller.isOpen, isTrue);
+
+      controller.hide();
+      await tester.pump();
+      expect(find.text('Edit'), findsNothing);
+
+      controller.toggle();
+      await tester.pump();
+      expect(find.text('Edit'), findsOneWidget);
+      controller.toggle();
+      await tester.pump();
+      expect(find.text('Edit'), findsNothing);
+    });
+
+    testWidgets('the trigger announces the state the controller sets', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(buildTestWidget(menu()));
+      SemanticsData trigger() =>
+          tester.getSemantics(find.text('Menu')).getSemanticsData();
+      expect(trigger().flagsCollection.isExpanded, Tristate.isFalse);
+
+      controller.show();
+      await tester.pump();
+      expect(trigger().flagsCollection.isExpanded, Tristate.isTrue);
+      handle.dispose();
+    });
+
+    testWidgets('taps, items, Escape and the backdrop update it', (
+      tester,
+    ) async {
+      final heard = <bool>[];
+      controller.addListener(() => heard.add(controller.isOpen));
+      await tester.pumpWidget(buildTestWidget(menu()));
+
+      await tester.tap(find.text('Menu'));
+      await tester.pump();
+      expect(controller.isOpen, isTrue);
+      await tester.tap(find.text('Edit'));
+      await tester.pump();
+      expect(controller.isOpen, isFalse);
+
+      await tester.tap(find.text('Menu'));
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pump();
+      expect(controller.isOpen, isFalse);
+
+      await tester.tap(find.text('Menu'));
+      await tester.pump();
+      await tester.tapAt(const Offset(10, 10));
+      await tester.pump();
+      expect(controller.isOpen, isFalse);
+      expect(find.text('Edit'), findsNothing);
+
+      expect(heard, [true, false, true, false, true, false]);
+    });
+
+    testWidgets('a controller opened before the menu opens it after a frame', (
+      tester,
+    ) async {
+      controller.show();
+      await tester.pumpWidget(buildTestWidget(menu()));
+      expect(tester.takeException(), isNull);
+      await tester.pump();
+
+      expect(find.text('Edit'), findsOneWidget);
+    });
+
+    testWidgets('show during a build waits for the frame', (tester) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          Builder(
+            builder: (context) {
+              controller.show();
+              return menu();
+            },
+          ),
+        ),
+      );
+      expect(tester.takeException(), isNull);
+      await tester.pump();
+
+      expect(find.text('Edit'), findsOneWidget);
+    });
+
+    // The shared host keeps its first overlay entry, so this one swaps the
+    // child through a notifier instead.
+    Future<ValueNotifier<Widget>> host(
+      WidgetTester tester,
+      Widget first,
+    ) async {
+      final child = ValueNotifier<Widget>(first);
+      addTearDown(child.dispose);
+      await tester.pumpWidget(
+        buildTestWidget(
+          ValueListenableBuilder<Widget>(
+            valueListenable: child,
+            builder: (_, value, _) => value,
+          ),
+        ),
+      );
+      return child;
+    }
+
+    testWidgets('a menu removed while open leaves the controller closed', (
+      tester,
+    ) async {
+      final child = await host(tester, menu(key: const Key('a')));
+      controller.show();
+      await tester.pump();
+      expect(find.text('Edit'), findsOneWidget);
+
+      child.value = const SizedBox();
+      await tester.pump();
+      // The entry removed while the menu unmounts leaves on the next frame.
+      await tester.pump();
+      expect(controller.isOpen, isFalse);
+      expect(find.text('Edit'), findsNothing);
+
+      // The controller can open the next menu it drives.
+      child.value = menu(key: const Key('b'));
+      await tester.pump();
+      controller.show();
+      await tester.pump();
+      expect(find.text('Edit'), findsOneWidget);
+    });
+
+    testWidgets('a new controller takes over', (tester) async {
+      final other = VMenuController();
+      addTearDown(other.dispose);
+      final child = await host(tester, menu());
+      controller.show();
+      await tester.pump();
+
+      child.value = menu(using: other);
+      await tester.pump();
+      await tester.pump();
+      expect(find.text('Edit'), findsNothing);
+      expect(controller.isOpen, isFalse);
+
+      controller.show();
+      await tester.pump();
+      expect(find.text('Edit'), findsNothing);
+
+      other.show();
+      await tester.pump();
+      expect(find.text('Edit'), findsOneWidget);
+    });
+
+    testWidgets('keys reach the menu after Enter or a reopen', (tester) async {
+      var edits = 0;
+      await tester.pumpWidget(
+        buildTestWidget(
+          VMenu(
+            controller: controller,
+            trigger: const Text('Menu'),
+            items: [VMenuItem(child: const Text('Edit'), onTap: () => edits++)],
+          ),
+        ),
+      );
+
+      // Open from the focused trigger, then pick the item with keys.
+      tester
+          .widget<Focus>(
+            find
+                .descendant(
+                  of: find.byType(VMenu),
+                  matching: find.byType(Focus),
+                )
+                .first,
+          )
+          .focusNode!
+          .requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(edits, 1);
+      expect(controller.isOpen, isFalse);
+
+      // Reopened by tap, Escape still closes it.
+      await tester.tap(find.text('Menu'));
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.text('Edit'), findsNothing);
+      expect(controller.isOpen, isFalse);
+    });
+  });
+
+  group('VMenuStyle panel', () {
+    BoxDecoration panelOf(WidgetTester tester) {
+      final container = tester.widget<Container>(
+        find
+            .ancestor(of: find.text('Edit'), matching: find.byType(Container))
+            .last,
+      );
+      return container.decoration! as BoxDecoration;
+    }
+
+    Future<void> open(WidgetTester tester, {VMenuStyle? style}) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          VMenu(
+            style: style,
+            trigger: const Text('Menu'),
+            items: [VMenuItem(child: const Text('Edit'), onTap: () {})],
+          ),
+        ),
+      );
+      await tester.tap(find.text('Menu'));
+      await tester.pump();
+    }
+
+    testWidgets('defaults to 180 wide, a 1px border and the large shadow', (
+      tester,
+    ) async {
+      await open(tester);
+
+      final panel = panelOf(tester);
+      expect((panel.border! as Border).top.width, 1);
+      expect(panel.boxShadow, VThemeData.light().shadows.lg);
+      expect(
+        tester
+            .getSize(
+              find
+                  .ancestor(
+                    of: find.text('Edit'),
+                    matching: find.byType(Container),
+                  )
+                  .last,
+            )
+            .width,
+        greaterThanOrEqualTo(180),
+      );
+    });
+
+    testWidgets('style sets the minimum width, border width and shadows', (
+      tester,
+    ) async {
+      const shadow = BoxShadow(blurRadius: 3);
+      await open(
+        tester,
+        style: const VMenuStyle(
+          minWidth: 320,
+          borderWidth: 2,
+          shadows: [shadow],
+        ),
+      );
+
+      final panel = panelOf(tester);
+      expect((panel.border! as Border).top.width, 2);
+      expect(panel.boxShadow, [shadow]);
+      expect(
+        tester
+            .getSize(
+              find
+                  .ancestor(
+                    of: find.text('Edit'),
+                    matching: find.byType(Container),
+                  )
+                  .last,
+            )
+            .width,
+        greaterThanOrEqualTo(320),
+      );
+    });
+
+    testWidgets('an empty shadow list draws no shadow', (tester) async {
+      await open(tester, style: const VMenuStyle(shadows: []));
+
+      expect(panelOf(tester).boxShadow, isEmpty);
+    });
+
+    testWidgets('a theme override applies and an instance style wins', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        VTheme(
+          data: VThemeData.light().copyWith(
+            componentOverrides: const VComponentOverrides([
+              VMenuStyle(borderWidth: 3, minWidth: 240),
+            ]),
+          ),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: MediaQuery(
+              data: const MediaQueryData(size: Size(800, 800)),
+              child: Overlay(
+                initialEntries: [
+                  OverlayEntry(
+                    builder: (_) => Align(
+                      alignment: Alignment.topCenter,
+                      child: VMenu(
+                        style: const VMenuStyle(borderWidth: 2),
+                        trigger: const Text('Menu'),
+                        items: [
+                          VMenuItem(child: const Text('Edit'), onTap: () {}),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Menu'));
+      await tester.pump();
+
+      expect((panelOf(tester).border! as Border).top.width, 2);
+      final panel = find
+          .ancestor(of: find.text('Edit'), matching: find.byType(Container))
+          .last;
+      expect(tester.getSize(panel).width, greaterThanOrEqualTo(240));
     });
   });
 }

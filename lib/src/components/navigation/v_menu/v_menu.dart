@@ -1,3 +1,4 @@
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -73,6 +74,48 @@ class VMenuItem {
 /// ```
 class VMenuDivider extends VMenuItem {
   const VMenuDivider() : super(child: const SizedBox.shrink());
+}
+
+/// Opens and closes a [VMenu] from code outside its trigger.
+///
+/// Pass it to [VMenu.controller]. [show], [hide] and [toggle] work like a tap
+/// on the trigger, and listeners hear every open and close, whether it comes
+/// from code, a tap, a key, an item or a tap outside the menu. A menu that is
+/// removed while open leaves its controller closed without notifying.
+///
+/// ```dart
+/// final controller = VMenuController();
+///
+/// VMenu(controller: controller, trigger: trigger, items: items);
+///
+/// // Open the menu from elsewhere, such as a keyboard shortcut.
+/// controller.show();
+/// ```
+class VMenuController extends ChangeNotifier {
+  bool _isOpen = false;
+
+  /// Whether the menu is open.
+  bool get isOpen => _isOpen;
+
+  /// Opens the menu; does nothing if it is already open.
+  void show() {
+    if (_isOpen) return;
+    _isOpen = true;
+    notifyListeners();
+  }
+
+  /// Closes the menu; does nothing if it is already closed.
+  void hide() {
+    if (!_isOpen) return;
+    _isOpen = false;
+    notifyListeners();
+  }
+
+  /// Opens the menu if it is closed and closes it if it is open.
+  void toggle() {
+    _isOpen = !_isOpen;
+    notifyListeners();
+  }
 }
 
 /// Popup menu of actions that opens below or above its trigger widget.
@@ -154,6 +197,21 @@ class VMenuDivider extends VMenuItem {
 /// Available positions: [VMenuPosition.bottomStart], [VMenuPosition.bottomEnd],
 /// [VMenuPosition.topStart], [VMenuPosition.topEnd]
 ///
+/// ## Menu opened from code
+///
+/// ```dart
+/// final controller = VMenuController();
+///
+/// VMenu(
+///   controller: controller,
+///   trigger: VIconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+///   items: [VMenuItem(onTap: () {}, child: Text('Rename'))],
+/// )
+///
+/// // Elsewhere:
+/// controller.show();
+/// ```
+///
 /// See also:
 ///
 /// - [VMenuItem], for individual menu items
@@ -166,6 +224,7 @@ class VMenu extends StatefulWidget {
     super.key,
     this.position = VMenuPosition.bottomStart,
     this.closeOnSelect = true,
+    this.controller,
     this.style,
   });
 
@@ -181,7 +240,13 @@ class VMenu extends StatefulWidget {
   /// Whether the menu closes after an item is activated.
   final bool closeOnSelect;
 
-  /// Overrides the theme's [VMenuStyle] for this menu.
+  /// Opens and closes the menu from outside its trigger.
+  ///
+  /// When null, the menu keeps its own open state. Taps, keys, items and taps
+  /// outside the menu update the controller as well.
+  final VMenuController? controller;
+
+  /// Overrides the theme's [VMenuStyle] for this menu, such as its panel look.
   final VMenuStyle? style;
 
   @override
@@ -191,8 +256,10 @@ class VMenu extends StatefulWidget {
 class _VMenuState extends State<VMenu> with KeyboardNavigationMixin<VMenu> {
   final LayerLink _layerLink = LayerLink();
   final FocusNode _triggerFocus = FocusNode(debugLabel: 'VMenu trigger');
+  final FocusNode _menuFocus = FocusNode(debugLabel: 'VMenu panel');
   OverlayEntry? _overlayEntry;
-  bool _isOpen = false;
+  VMenuController? _internalController;
+  late VMenuController _controller;
   bool _triggerFocused = false;
   VThemeData? _capturedTheme;
   VMenuStyle? _capturedResolvedStyle;
@@ -237,6 +304,19 @@ class _VMenuState extends State<VMenu> with KeyboardNavigationMixin<VMenu> {
     return _selectableIndices[focusedIndex];
   }
 
+  VMenuController get _effectiveController =>
+      widget.controller ?? (_internalController ??= VMenuController());
+
+  bool get _isOpen => _overlayEntry != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = _effectiveController..addListener(_handleControllerChange);
+    // A controller that is already open opens the menu once it can be shown.
+    if (_controller.isOpen) _syncMenuAfterFrame();
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -255,37 +335,67 @@ class _VMenuState extends State<VMenu> with KeyboardNavigationMixin<VMenu> {
     if (widget.style != oldWidget.style) {
       _updateResolvedStyle();
     }
-  }
-
-  void _toggleMenu() {
-    if (_isOpen) {
-      _closeMenu();
-    } else {
-      _openMenu();
+    if (widget.controller != oldWidget.controller) {
+      _controller.removeListener(_handleControllerChange);
+      // The old controller no longer drives an open menu.
+      _controller._isOpen = false;
+      _controller = _effectiveController..addListener(_handleControllerChange);
+      _syncMenuAfterFrame();
     }
   }
 
-  void _openMenu() {
+  void _toggleMenu() => _controller.toggle();
+
+  void _closeMenu() => _controller.hide();
+
+  void _handleControllerChange() {
+    // WHY: An overlay entry cannot be inserted or removed while the tree
+    // builds, so a change made during a build waits for the frame.
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      _syncMenuAfterFrame();
+    } else {
+      _syncMenu();
+    }
+  }
+
+  void _syncMenuAfterFrame() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _syncMenu();
+    });
+  }
+
+  void _syncMenu() {
+    if (_controller.isOpen && _overlayEntry == null) {
+      _showMenu();
+    } else if (!_controller.isOpen && _overlayEntry != null) {
+      _hideMenu();
+    }
+  }
+
+  void _showMenu() {
     focusedIndex = -1;
     _overlayEntry = _createOverlayEntry();
     Overlay.of(context).insert(_overlayEntry!);
-    setState(() => _isOpen = true);
-    // Focus first enabled item after open
+    setState(() {});
+    // WHY: autofocus is ignored while the trigger holds focus, as it does
+    // after Enter or a previous close, so the panel asks for focus itself and
+    // then marks the first enabled item.
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _overlayEntry == null) return;
+      _menuFocus.requestFocus();
       focusFirst();
       _overlayEntry?.markNeedsBuild();
     });
   }
 
-  void _closeMenu() {
+  void _hideMenu() {
+    final menuHadFocus = _menuFocus.hasFocus;
     _overlayEntry?.remove();
     _overlayEntry = null;
-    setState(() {
-      _isOpen = false;
-      focusedIndex = -1;
-    });
+    setState(() => focusedIndex = -1);
     // Hand focus back to the trigger so a keyboard user is not stranded.
-    _triggerFocus.requestFocus();
+    if (menuHadFocus) _triggerFocus.requestFocus();
   }
 
   void _onItemTap(VMenuItem item) {
@@ -327,6 +437,7 @@ class _VMenuState extends State<VMenu> with KeyboardNavigationMixin<VMenu> {
             child: FocusTraversalGroup(
               policy: WidgetOrderTraversalPolicy(),
               child: Focus(
+                focusNode: _menuFocus,
                 autofocus: true,
                 onKeyEvent: handleKeyEvent,
                 child: _MenuContent(
@@ -358,7 +469,13 @@ class _VMenuState extends State<VMenu> with KeyboardNavigationMixin<VMenu> {
 
   @override
   void dispose() {
+    _controller.removeListener(_handleControllerChange);
+    // WHY: The tree is locked while it unmounts, so listeners cannot be told;
+    // the controller is left closed so a later show() opens a new menu.
+    _controller._isOpen = false;
+    _internalController?.dispose();
     _overlayEntry?.remove();
+    _menuFocus.dispose();
     _triggerFocus.dispose();
     super.dispose();
   }
@@ -370,7 +487,7 @@ class _VMenuState extends State<VMenu> with KeyboardNavigationMixin<VMenu> {
         event.logicalKey == LogicalKeyboardKey.numpadEnter ||
         event.logicalKey == LogicalKeyboardKey.space ||
         event.logicalKey == LogicalKeyboardKey.arrowDown) {
-      _openMenu();
+      _controller.show();
       return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;
@@ -464,14 +581,17 @@ class _MenuContent extends StatelessWidget {
       ),
       child: IntrinsicWidth(
         child: Container(
-          constraints: const BoxConstraints(minWidth: 180),
+          constraints: BoxConstraints(minWidth: resolvedStyle?.minWidth ?? 180),
           margin: EdgeInsets.only(top: theme.spacing.xs),
           padding: menuPadding,
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: borderRadius,
-            border: Border.all(color: borderColor),
-            boxShadow: theme.shadows.lg,
+            border: Border.all(
+              color: borderColor,
+              width: resolvedStyle?.borderWidth ?? 1,
+            ),
+            boxShadow: resolvedStyle?.shadows ?? theme.shadows.lg,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,

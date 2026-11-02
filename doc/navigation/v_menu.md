@@ -83,6 +83,21 @@ VMenu(
 Available positions: [VMenuPosition.bottomStart], [VMenuPosition.bottomEnd],
 [VMenuPosition.topStart], [VMenuPosition.topEnd]
 
+## Menu opened from code
+
+```dart
+final controller = VMenuController();
+
+VMenu(
+  controller: controller,
+  trigger: VIconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+  items: [VMenuItem(onTap: () {}, child: Text('Rename'))],
+)
+
+// Elsewhere:
+controller.show();
+```
+
 See also:
 
 - [VMenuItem], for individual menu items
@@ -99,7 +114,8 @@ See also:
 | `trigger` | `Widget` |  | yes | Widget that opens the menu when tapped. |
 | `position` | `VMenuPosition` | `VMenuPosition.bottomStart` |  | Where the menu opens relative to the trigger. |
 | `closeOnSelect` | `bool` | `true` |  | Whether the menu closes after an item is activated. |
-| `style` | `VMenuStyle?` |  |  | Overrides the theme's [VMenuStyle] for this menu. |
+| `controller` | `VMenuController?` |  |  | Opens and closes the menu from outside its trigger.<br>When null, the menu keeps its own open state. Taps, keys, items and taps outside the menu update the controller as well. |
+| `style` | `VMenuStyle?` |  |  | Overrides the theme's [VMenuStyle] for this menu, such as its panel look. |
 
 ## VMenuPosition
 
@@ -159,6 +175,37 @@ VMenu(
 
 #### `VMenuDivider`
 
+## VMenuController
+
+Opens and closes a [VMenu] from code outside its trigger.
+
+Pass it to [VMenu.controller]. [show], [hide] and [toggle] work like a tap
+on the trigger, and listeners hear every open and close, whether it comes
+from code, a tap, a key, an item or a tap outside the menu. A menu that is
+removed while open leaves its controller closed without notifying.
+
+```dart
+final controller = VMenuController();
+
+VMenu(controller: controller, trigger: trigger, items: items);
+
+// Open the menu from elsewhere, such as a keyboard shortcut.
+controller.show();
+```
+
+### Constructors
+
+#### `VMenuController`
+
+### Members
+
+| Member | Description |
+|---|---|
+| `bool get isOpen` | Whether the menu is open. |
+| `void show()` | Opens the menu; does nothing if it is already open. |
+| `void hide()` | Closes the menu; does nothing if it is already closed. |
+| `void toggle()` | Opens the menu if it is closed and closes it if it is open. |
+
 ## VMenuStyle
 
 Style override for [VMenu].
@@ -176,12 +223,14 @@ Supports cascade: theme override → instance override.
 | `foregroundColor` | `Color?` |  |  | Text foreground color. |
 | `borderColor` | `Color?` |  |  | Border color. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
-| `elevation` | `double?` |  |  | Elevation (shadow depth). |
 | `padding` | `EdgeInsets?` |  |  | Menu container padding. |
 | `itemPadding` | `EdgeInsets?` |  |  | Individual item padding. |
+| `minWidth` | `double?` |  |  | Minimum width of the menu panel; 180 when null.<br>The panel still grows to fit its widest row. An instance style wins over the theme override. |
+| `borderWidth` | `double?` |  |  | Width of the panel border; 1 when null.<br>An instance style wins over the theme override. |
+| `shadows` | `List<BoxShadow>?` |  |  | Shadows under the panel; the theme's large shadow when null.<br>An empty list draws no shadow. An instance style wins over the theme override. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VMenuStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? borderColor, BorderRadius? borderRadius, double? elevation, EdgeInsets? padding, EdgeInsets? itemPadding})` | Creates a copy with only the specified properties changed. |
+| `VMenuStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? borderColor, BorderRadius? borderRadius, EdgeInsets? padding, EdgeInsets? itemPadding, double? minWidth, double? borderWidth, List<BoxShadow>? shadows})` | Creates a copy with only the specified properties changed. |
