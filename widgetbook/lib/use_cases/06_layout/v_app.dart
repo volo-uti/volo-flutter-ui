@@ -200,27 +200,20 @@ class _ModeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: EdgeInsets.all(theme.spacing.md),
-    child: DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.card,
-        borderRadius: BorderRadius.circular(theme.radius.md),
-        border: Border.all(color: colors.border),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(theme.spacing.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(mode, style: typography.titleSmall),
-            SizedBox(height: theme.spacing.xs),
-            Text(
-              description,
-              style: typography.bodySmall.copyWith(
-                color: colors.mutedForeground,
-              ),
-            ),
-          ],
-        ),
+    child: VCard.outlined(
+      padding: EdgeInsets.all(theme.spacing.md),
+      borderRadius: theme.radius.mdRadius,
+      style: VCardStyle(backgroundColor: colors.card),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(mode, style: typography.titleSmall),
+          SizedBox(height: theme.spacing.xs),
+          Text(
+            description,
+            style: typography.bodySmall.copyWith(color: colors.mutedForeground),
+          ),
+        ],
       ),
     ),
   );
