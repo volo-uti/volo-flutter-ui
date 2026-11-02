@@ -283,6 +283,8 @@ class VButton extends StatefulWidget {
 
   /// Content of the button; a plain `Text` or `Icon` picks up the button's
   /// color, size and weight.
+  ///
+  /// When the button is narrower than the label, the label wraps.
   final Widget child;
 
   /// Called when the button is tapped; `null` renders it disabled.
@@ -300,7 +302,10 @@ class VButton extends StatefulWidget {
   /// Color role of the button.
   final VButtonColor color;
 
-  /// Height and text size preset.
+  /// Minimum height and text size preset.
+  ///
+  /// The height is a minimum: the button grows with the text scale and when a
+  /// long label wraps onto more lines.
   final VButtonSize size;
 
   /// Corner radius style.

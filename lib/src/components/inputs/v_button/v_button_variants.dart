@@ -290,6 +290,18 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
     }
   }
 
+  /// Returns the alignment of wrapped label lines.
+  TextAlign _getTextAlign() {
+    switch (widget.align) {
+      case VButtonAlign.left:
+        return TextAlign.start;
+      case VButtonAlign.center:
+        return TextAlign.center;
+      case VButtonAlign.right:
+        return TextAlign.end;
+    }
+  }
+
   /// Builds the loading indicator.
   Widget _buildLoadingIndicator(Color color, double size) {
     if (widget.loadingIndicator != null) {
@@ -419,8 +431,8 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
           ..add(SizedBox(width: effectiveLeadingGap));
       }
 
-      // child
-      items.add(childWidget);
+      // child: flexible, so a long label wraps instead of overflowing
+      items.add(Flexible(child: childWidget));
 
       // Trailing or loading (end)
       if (isLoading && widget.loadingPosition == VButtonLoadingPosition.end) {
@@ -448,8 +460,13 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
       );
     }
 
-    // Wrap with DefaultTextStyle to apply color to Widget children
-    content = DefaultTextStyle(style: textStyle, child: content);
+    // Wrap with DefaultTextStyle to apply color to Widget children; wrapped
+    // lines follow the content alignment.
+    content = DefaultTextStyle(
+      style: textStyle,
+      textAlign: _getTextAlign(),
+      child: content,
+    );
 
     // Button container
     final actualButtonWidth = isIconVariant
@@ -492,15 +509,20 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
             duration: theme.animations.fast,
             curve: theme.animations.curveEaseOut,
             width: actualButtonWidth,
-            height: sizeProps.height,
+            // A minimum, not a fixed height: the button grows with the text
+            // scale and with a label that wraps.
+            constraints: BoxConstraints(minHeight: sizeProps.height),
             padding: buttonPadding,
             decoration: BoxDecoration(
               color: hoverBackgroundColor,
               borderRadius: borderRadius,
               border: border,
             ),
-            alignment: _getContainerAlignment(),
-            child: content,
+            child: Align(
+              alignment: _getContainerAlignment(),
+              heightFactor: 1,
+              child: content,
+            ),
           ),
         ),
       ),

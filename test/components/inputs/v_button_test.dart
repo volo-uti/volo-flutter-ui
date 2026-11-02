@@ -599,6 +599,183 @@ void main() {
       });
     });
 
+    group('large text and narrow screens', () {
+      final theme = VThemeData.light();
+
+      // A 320 x 640 screen with text at twice the size.
+      Future<void> pumpLargeText(WidgetTester tester, Widget child) async {
+        tester.view
+          ..physicalSize = const Size(320, 640)
+          ..devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          MediaQuery(
+            data: const MediaQueryData(
+              size: Size(320, 640),
+              textScaler: TextScaler.linear(2),
+            ),
+            child: buildTestWidget(child),
+          ),
+        );
+      }
+
+      VComponentSize sizeToken(VButtonSize size) => switch (size) {
+        VButtonSize.xs => theme.sizes.xs,
+        VButtonSize.sm => theme.sizes.sm,
+        VButtonSize.md => theme.sizes.md,
+        VButtonSize.lg => theme.sizes.lg,
+        VButtonSize.xl => theme.sizes.xl,
+      };
+
+      BoxDecoration decorationOf(WidgetTester tester, Finder button) =>
+          tester
+                  .widget<AnimatedContainer>(
+                    find.descendant(
+                      of: button,
+                      matching: find.byType(AnimatedContainer),
+                    ),
+                  )
+                  .decoration!
+              as BoxDecoration;
+
+      const longLabel = 'Save the changes to this document and close it';
+
+      testWidgets('a long label wraps and the button grows at 320 wide, 2x', (
+        tester,
+      ) async {
+        await pumpLargeText(
+          tester,
+          Center(
+            child: VButton(
+              onPressed: () {},
+              leading: VIcons.check(
+                color: theme.colors.primaryForeground,
+                size: theme.sizes.md.iconSize,
+              ),
+              child: const Text(longLabel),
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        final size = tester.getSize(find.byType(VButton));
+        expect(size.width, lessThanOrEqualTo(320));
+        expect(size.height, greaterThan(theme.sizes.md.height));
+        // Two or more lines of the scaled font.
+        expect(
+          tester.getSize(find.text(longLabel)).height,
+          greaterThanOrEqualTo(2 * 2 * theme.sizes.md.fontSize),
+        );
+      });
+
+      testWidgets('a full-width long label wraps at 320 wide, 2x', (
+        tester,
+      ) async {
+        await pumpLargeText(
+          tester,
+          VButton(
+            onPressed: () {},
+            fullWidth: true,
+            child: const Text(longLabel),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        expect(
+          tester.getSize(find.byType(VButton)).height,
+          greaterThan(theme.sizes.md.height),
+        );
+      });
+
+      testWidgets('keeps the size token height at 1x text', (tester) async {
+        for (final size in VButtonSize.values) {
+          await tester.pumpWidget(
+            buildTestWidget(
+              Center(
+                child: VButton(
+                  // A new key per size, so the height does not animate.
+                  key: ValueKey(size),
+                  size: size,
+                  onPressed: () {},
+                  leading: VIcons.check(
+                    color: theme.colors.primaryForeground,
+                    size: sizeToken(size).iconSize,
+                  ),
+                  child: const Text('Save'),
+                ),
+              ),
+            ),
+          );
+
+          expect(
+            tester.getSize(find.byType(VButton)).height,
+            sizeToken(size).height,
+            reason: '$size',
+          );
+        }
+      });
+
+      testWidgets('the icon variant stays square at 1x and 2x', (tester) async {
+        final md = theme.sizes.md.height;
+        Widget iconButton() => Center(
+          child: VButton.icon(
+            onPressed: () {},
+            child: VIcons.search(
+              color: theme.colors.primary,
+              size: theme.sizes.md.iconSize,
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(buildTestWidget(iconButton()));
+        expect(tester.getSize(find.byType(VButton)), Size(md, md));
+
+        await pumpLargeText(tester, iconButton());
+        expect(tester.takeException(), isNull);
+        expect(tester.getSize(find.byType(VButton)), Size(md, md));
+      });
+
+      testWidgets('a button group keeps its height and joined corners', (
+        tester,
+      ) async {
+        const keys = [Key('first'), Key('middle'), Key('last')];
+        Widget group() => Center(
+          child: VButtonGroup(
+            children: [
+              for (final key in keys)
+                VButton(key: key, onPressed: () {}, child: const Text('A')),
+            ],
+          ),
+        );
+        final r = Radius.circular(theme.sizes.md.borderRadius);
+
+        await tester.pumpWidget(buildTestWidget(group()));
+        for (final key in keys) {
+          expect(tester.getSize(find.byKey(key)).height, theme.sizes.md.height);
+        }
+        expect(
+          decorationOf(tester, find.byKey(keys.first)).borderRadius,
+          BorderRadius.only(topLeft: r, bottomLeft: r),
+        );
+        expect(
+          decorationOf(tester, find.byKey(keys[1])).borderRadius,
+          BorderRadius.zero,
+        );
+        expect(
+          decorationOf(tester, find.byKey(keys.last)).borderRadius,
+          BorderRadius.only(topRight: r, bottomRight: r),
+        );
+
+        await pumpLargeText(tester, group());
+        expect(tester.takeException(), isNull);
+        final heights = {
+          for (final key in keys) tester.getSize(find.byKey(key)).height,
+        };
+        expect(heights, hasLength(1));
+        expect(heights.single, greaterThanOrEqualTo(theme.sizes.md.height));
+      });
+    });
+
     group('style override', () {
       testWidgets('instance style overrides default colors', (tester) async {
         await tester.pumpWidget(
