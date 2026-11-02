@@ -668,6 +668,26 @@ void main() {
         );
       });
 
+      testWidgets('a Flexible passed as the child does not compete', (
+        tester,
+      ) async {
+        await pumpLargeText(
+          tester,
+          Center(
+            child: VButton(
+              onPressed: () {},
+              child: const Flexible(child: Text(longLabel)),
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        expect(
+          tester.getSize(find.text(longLabel)).height,
+          greaterThanOrEqualTo(2 * 2 * theme.sizes.md.fontSize),
+        );
+      });
+
       testWidgets('a pill stays fully rounded when a long label wraps', (
         tester,
       ) async {

@@ -428,9 +428,13 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
       content = loadingIndicator;
     } else {
       // Normal content
+      // A Flexible passed as the child keeps its flex and fit; the button
+      // places only its content, so two Flexibles never compete.
+      final child = widget.child;
+      final flexChild = child is Flexible ? child : null;
       final childWidget = IconTheme.merge(
         data: IconThemeData(color: iconColor, size: sizeProps.iconSize),
-        child: widget.child,
+        child: flexChild?.child ?? child,
       );
       final items = <Widget>[];
 
@@ -451,7 +455,13 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
       }
 
       // child: flexible, so a long label wraps instead of overflowing
-      items.add(Flexible(child: childWidget));
+      items.add(
+        Flexible(
+          flex: flexChild?.flex ?? 1,
+          fit: flexChild?.fit ?? FlexFit.loose,
+          child: childWidget,
+        ),
+      );
 
       // Trailing or loading (end)
       if (isLoading && widget.loadingPosition == VButtonLoadingPosition.end) {

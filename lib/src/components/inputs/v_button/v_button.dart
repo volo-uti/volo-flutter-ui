@@ -284,7 +284,10 @@ class VButton extends StatefulWidget {
   /// Content of the button; a plain `Text` or `Icon` picks up the button's
   /// color, size and weight.
   ///
-  /// When the button is narrower than the label, the label wraps.
+  /// When the button is narrower than the label, the label wraps: the button
+  /// places [child] in a [Flexible] itself. A [Flexible] passed as [child]
+  /// keeps its flex and fit, but a widget whose build returns a [Flexible]
+  /// would compete with the button's own, so do not wrap the label in one.
   final Widget child;
 
   /// Called when the button is tapped; `null` renders it disabled.

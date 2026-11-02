@@ -54,7 +54,7 @@ Creates a filled button.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `child` | `Widget` |  | yes | Content of the button; a plain `Text` or `Icon` picks up the button's color, size and weight.<br>When the button is narrower than the label, the label wraps. |
+| `child` | `Widget` |  | yes | Content of the button; a plain `Text` or `Icon` picks up the button's color, size and weight.<br>When the button is narrower than the label, the label wraps: the button places [child] in a [Flexible] itself. A [Flexible] passed as [child] keeps its flex and fit, but a widget whose build returns a [Flexible] would compete with the button's own, so do not wrap the label in one. |
 | `onPressed` | `void Function()?` |  |  | Called when the button is tapped; `null` renders it disabled. |
 | `onLongPress` | `void Function()?` |  |  | Called when the button is long-pressed; falls back to showing [tooltip]. |
 | `leading` | `Widget?` |  |  | Widget shown before [child], typically an icon. |
@@ -80,7 +80,7 @@ Creates an outlined button.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `child` | `Widget` |  | yes | Content of the button; a plain `Text` or `Icon` picks up the button's color, size and weight.<br>When the button is narrower than the label, the label wraps. |
+| `child` | `Widget` |  | yes | Content of the button; a plain `Text` or `Icon` picks up the button's color, size and weight.<br>When the button is narrower than the label, the label wraps: the button places [child] in a [Flexible] itself. A [Flexible] passed as [child] keeps its flex and fit, but a widget whose build returns a [Flexible] would compete with the button's own, so do not wrap the label in one. |
 | `onPressed` | `void Function()?` |  |  | Called when the button is tapped; `null` renders it disabled. |
 | `onLongPress` | `void Function()?` |  |  | Called when the button is long-pressed; falls back to showing [tooltip]. |
 | `leading` | `Widget?` |  |  | Widget shown before [child], typically an icon. |
@@ -106,7 +106,7 @@ Creates a text button without background.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `child` | `Widget` |  | yes | Content of the button; a plain `Text` or `Icon` picks up the button's color, size and weight.<br>When the button is narrower than the label, the label wraps. |
+| `child` | `Widget` |  | yes | Content of the button; a plain `Text` or `Icon` picks up the button's color, size and weight.<br>When the button is narrower than the label, the label wraps: the button places [child] in a [Flexible] itself. A [Flexible] passed as [child] keeps its flex and fit, but a widget whose build returns a [Flexible] would compete with the button's own, so do not wrap the label in one. |
 | `onPressed` | `void Function()?` |  |  | Called when the button is tapped; `null` renders it disabled. |
 | `onLongPress` | `void Function()?` |  |  | Called when the button is long-pressed; falls back to showing [tooltip]. |
 | `leading` | `Widget?` |  |  | Widget shown before [child], typically an icon. |
@@ -132,7 +132,7 @@ Creates a square button sized for an icon child.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `child` | `Widget` |  | yes | Content of the button; a plain `Text` or `Icon` picks up the button's color, size and weight.<br>When the button is narrower than the label, the label wraps. |
+| `child` | `Widget` |  | yes | Content of the button; a plain `Text` or `Icon` picks up the button's color, size and weight.<br>When the button is narrower than the label, the label wraps: the button places [child] in a [Flexible] itself. A [Flexible] passed as [child] keeps its flex and fit, but a widget whose build returns a [Flexible] would compete with the button's own, so do not wrap the label in one. |
 | `onPressed` | `void Function()?` |  |  | Called when the button is tapped; `null` renders it disabled. |
 | `onLongPress` | `void Function()?` |  |  | Called when the button is long-pressed; falls back to showing [tooltip]. |
 | `leading` | `Widget?` |  |  | Widget shown before [child], typically an icon. |
@@ -158,7 +158,7 @@ Creates a transparent button that shows the accent color on hover.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `child` | `Widget` |  | yes | Content of the button; a plain `Text` or `Icon` picks up the button's color, size and weight.<br>When the button is narrower than the label, the label wraps. |
+| `child` | `Widget` |  | yes | Content of the button; a plain `Text` or `Icon` picks up the button's color, size and weight.<br>When the button is narrower than the label, the label wraps: the button places [child] in a [Flexible] itself. A [Flexible] passed as [child] keeps its flex and fit, but a widget whose build returns a [Flexible] would compete with the button's own, so do not wrap the label in one. |
 | `onPressed` | `void Function()?` |  |  | Called when the button is tapped; `null` renders it disabled. |
 | `onLongPress` | `void Function()?` |  |  | Called when the button is long-pressed; falls back to showing [tooltip]. |
 | `leading` | `Widget?` |  |  | Widget shown before [child], typically an icon. |
@@ -184,7 +184,7 @@ Creates an underlined link-style button.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `child` | `Widget` |  | yes | Content of the button; a plain `Text` or `Icon` picks up the button's color, size and weight.<br>When the button is narrower than the label, the label wraps. |
+| `child` | `Widget` |  | yes | Content of the button; a plain `Text` or `Icon` picks up the button's color, size and weight.<br>When the button is narrower than the label, the label wraps: the button places [child] in a [Flexible] itself. A [Flexible] passed as [child] keeps its flex and fit, but a widget whose build returns a [Flexible] would compete with the button's own, so do not wrap the label in one. |
 | `onPressed` | `void Function()?` |  |  | Called when the button is tapped; `null` renders it disabled. |
 | `onLongPress` | `void Function()?` |  |  | Called when the button is long-pressed; falls back to showing [tooltip]. |
 | `leading` | `Widget?` |  |  | Widget shown before [child], typically an icon. |
