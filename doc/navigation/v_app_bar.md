@@ -144,7 +144,7 @@ Supports cascade: theme override → instance override.
 |---|---|---|---|---|
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
 | `foregroundColor` | `Color?` |  |  | Text / icon foreground color. |
-| `borderColor` | `Color?` |  |  | Bottom border color. |
+| `borderColor` | `Color?` |  |  | Color of a line along the bottom edge of the bar; no line when null.<br>The line is as wide as the subtle border token and runs below [VAppBar.bottom] too. An instance style wins over the theme override. |
 | `elevation` | `double?` |  |  | Elevation (shadow depth). |
 | `padding` | `EdgeInsets?` |  |  | Internal padding. |
 | `titleStyle` | `TextStyle?` |  |  | Title text style. |

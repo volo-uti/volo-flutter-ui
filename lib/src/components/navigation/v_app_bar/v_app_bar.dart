@@ -209,6 +209,7 @@ class VAppBar extends StatelessWidget implements PreferredSizeWidget {
         effectiveTitleStyle = effectiveTitleStyle.copyWith(color: fgColor);
       }
     }
+    final borderColor = resolvedStyle?.borderColor;
     final leadingWidget = _buildLeading(context);
 
     final titleWidget = title == null
@@ -224,6 +225,14 @@ class VAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ? VColors.transparent
                 : bgColor,
             boxShadow: effectiveElevation > 0 ? theme.shadows.sm : null,
+            border: borderColor == null
+                ? null
+                : Border(
+                    bottom: BorderSide(
+                      color: borderColor,
+                      width: theme.borders.subtle.width,
+                    ),
+                  ),
           ),
           child: SafeArea(
             bottom: false,

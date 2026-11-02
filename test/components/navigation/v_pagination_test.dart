@@ -1615,4 +1615,92 @@ void main() {
       handle.dispose();
     });
   });
+
+  group('VPagination style fields', () {
+    final theme = VThemeData.light();
+
+    // Builds a pagination styled through the theme or as the instance style.
+    Widget styled(VPaginationStyle? style, {bool viaTheme = false}) => VTheme(
+      data: theme.copyWith(
+        componentOverrides: VComponentOverrides([
+          if (viaTheme && style != null) style,
+        ]),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(
+          child: VPagination(
+            currentPage: 2,
+            totalPages: 3,
+            onPageChanged: (_) {},
+            style: viaTheme ? null : style,
+          ),
+        ),
+      ),
+    );
+
+    BoxDecoration buttonOf(WidgetTester tester, String label) =>
+        tester
+                .widget<Container>(
+                  find
+                      .ancestor(
+                        of: find.text(label),
+                        matching: find.byType(Container),
+                      )
+                      .first,
+                )
+                .decoration!
+            as BoxDecoration;
+
+    testWidgets('page buttons have no fill or border by default', (
+      tester,
+    ) async {
+      await tester.pumpWidget(styled(null));
+      expect(buttonOf(tester, '1').color, isNull);
+      expect(buttonOf(tester, '1').border, isNull);
+      expect(buttonOf(tester, '2').color, theme.colors.primary);
+    });
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('backgroundColor fills the other page buttons ($via)', (
+        tester,
+      ) async {
+        const color = Color(0xFF123456);
+        await tester.pumpWidget(
+          styled(
+            const VPaginationStyle(backgroundColor: color),
+            viaTheme: viaTheme,
+          ),
+        );
+        expect(buttonOf(tester, '1').color, color);
+        expect(buttonOf(tester, '3').color, color);
+        expect(buttonOf(tester, '2').color, theme.colors.primary);
+      });
+
+      testWidgets('borderColor outlines every page button ($via)', (
+        tester,
+      ) async {
+        const color = Color(0xFF123456);
+        await tester.pumpWidget(
+          styled(
+            const VPaginationStyle(borderColor: color),
+            viaTheme: viaTheme,
+          ),
+        );
+        for (final label in ['1', '2', '3']) {
+          expect(buttonOf(tester, label).border, Border.all(color: color));
+        }
+
+        // The focus ring replaces it on the focused button.
+        Focus.of(tester.element(find.text('1'))).requestFocus();
+        await tester.pumpAndSettle();
+        expect(
+          buttonOf(tester, '1').border,
+          Border.all(color: theme.colors.ring, width: 2),
+        );
+      });
+    }
+  });
 }

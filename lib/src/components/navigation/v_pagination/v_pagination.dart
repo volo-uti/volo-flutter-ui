@@ -439,6 +439,8 @@ class VPagination extends StatelessWidget {
     final activeFg =
         btnResolvedStyle?.activeForegroundColor ?? colors.primaryForeground;
     final normalFg = btnResolvedStyle?.foregroundColor ?? colors.foreground;
+    final normalBg = btnResolvedStyle?.backgroundColor;
+    final borderColor = btnResolvedStyle?.borderColor;
     final effectiveBorderRadius =
         btnResolvedStyle?.borderRadius ?? theme.radius.smRadius;
 
@@ -470,12 +472,14 @@ class VPagination extends StatelessWidget {
                     width: _buttonSizeOf(context),
                     height: _buttonSizeOf(context),
                     decoration: BoxDecoration(
-                      color: isSelected ? activeBg : null,
+                      color: isSelected ? activeBg : normalBg,
                       borderRadius: effectiveBorderRadius,
-                      // Focus ring (WCAG 2.4.7)
+                      // Focus ring (WCAG 2.4.7), else the style's border
                       border: isFocused && !isDisabled
                           ? Border.all(color: colors.ring, width: 2)
-                          : null,
+                          : borderColor == null
+                          ? null
+                          : Border.all(color: borderColor),
                     ),
                     child: Center(
                       child: iconBuilder != null

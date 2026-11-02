@@ -17,7 +17,11 @@ class VPaginationStyle implements VComponentStyle {
     this.borderRadius,
   });
 
-  /// Background fill color.
+  /// Fill of the page and arrow buttons other than the current page; none when null.
+  ///
+  /// The current page takes [activeBackgroundColor]. The text buttons of the
+  /// simple and minimal variants have no fill. An instance style wins over the
+  /// theme override.
   final Color? backgroundColor;
 
   /// Text foreground color.
@@ -29,7 +33,11 @@ class VPaginationStyle implements VComponentStyle {
   /// Active page foreground color.
   final Color? activeForegroundColor;
 
-  /// Border color.
+  /// Border around each page and arrow button; no border when null.
+  ///
+  /// The focus ring replaces it on the focused button. The text buttons of the
+  /// simple and minimal variants have no border. An instance style wins over
+  /// the theme override.
   final Color? borderColor;
 
   /// Border radius.

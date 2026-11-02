@@ -23,7 +23,10 @@ class VAppBarStyle implements VComponentStyle {
   /// Text / icon foreground color.
   final Color? foregroundColor;
 
-  /// Bottom border color.
+  /// Color of a line along the bottom edge of the bar; no line when null.
+  ///
+  /// The line is as wide as the subtle border token and runs below
+  /// [VAppBar.bottom] too. An instance style wins over the theme override.
   final Color? borderColor;
 
   /// Elevation (shadow depth).

@@ -105,7 +105,7 @@ Creates a panel for the start side.
 | `elevation` | `double` | `16` |  | Whether the panel casts a shadow, when above 0. |
 | `semanticLabel` | `String?` |  |  | Screen reader label, defaulting to "Navigation drawer". |
 | `onClose` | `void Function()?` |  |  | Called when Escape is pressed while the panel has focus. |
-| `style` | `VDrawerStyle?` |  |  | Overrides for background, elevation and corner radius. |
+| `style` | `VDrawerStyle?` |  |  | Overrides for background, text color, elevation and corner radius. |
 
 #### `VDrawer.end`
 
@@ -121,7 +121,7 @@ Creates a panel for the end side, with rounded start corners.
 | `elevation` | `double` | `16` |  | Whether the panel casts a shadow, when above 0. |
 | `semanticLabel` | `String?` |  |  | Screen reader label, defaulting to "Navigation drawer". |
 | `onClose` | `void Function()?` |  |  | Called when Escape is pressed while the panel has focus. |
-| `style` | `VDrawerStyle?` |  |  | Overrides for background, elevation and corner radius. |
+| `style` | `VDrawerStyle?` |  |  | Overrides for background, text color, elevation and corner radius. |
 
 #### `VDrawer.persistent`
 
@@ -136,7 +136,7 @@ Creates a flush, shadowless panel that stays beside the content.
 | `backgroundColor` | `Color?` |  |  | Fill color, defaulting to the theme background. |
 | `semanticLabel` | `String?` |  |  | Screen reader label, defaulting to "Navigation drawer". |
 | `onClose` | `void Function()?` |  |  | Called when Escape is pressed while the panel has focus. |
-| `style` | `VDrawerStyle?` |  |  | Overrides for background, elevation and corner radius. |
+| `style` | `VDrawerStyle?` |  |  | Overrides for background, text color, elevation and corner radius. |
 
 ## VDrawerStyle
 
@@ -152,7 +152,7 @@ Supports cascade: theme override → instance override.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
-| `foregroundColor` | `Color?` |  |  | Text foreground color. |
+| `foregroundColor` | `Color?` |  |  | Color of the panel's text and icons; when null they keep what they inherit.<br>Children that set their own color keep it. An instance style wins over the theme override. |
 | `elevation` | `double?` |  |  | Elevation (shadow depth). |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
 

@@ -161,7 +161,7 @@ class VDrawer extends StatefulWidget {
   /// Called when Escape is pressed while the panel has focus.
   final VoidCallback? onClose;
 
-  /// Overrides for background, elevation and corner radius.
+  /// Overrides for background, text color, elevation and corner radius.
   final VDrawerStyle? style;
 
   @override
@@ -227,6 +227,24 @@ class _VDrawerState extends State<VDrawer> {
       }
     }
 
+    Widget content = Column(
+      children: [
+        if (widget.header != null) widget.header!,
+        Expanded(child: widget.child),
+        if (widget.footer != null) widget.footer!,
+      ],
+    );
+    final foregroundColor = resolvedStyle?.foregroundColor;
+    if (foregroundColor != null) {
+      content = IconTheme.merge(
+        data: IconThemeData(color: foregroundColor),
+        child: DefaultTextStyle.merge(
+          style: TextStyle(color: foregroundColor),
+          child: content,
+        ),
+      );
+    }
+
     final drawerWidth = widget.width ?? 320;
     final maxWidth = MediaQuery.of(context).size.width * 0.8;
     final effectiveWidth = drawerWidth.clamp(0.0, maxWidth);
@@ -248,15 +266,7 @@ class _VDrawerState extends State<VDrawer> {
               borderRadius: effectiveBorderRadius,
               boxShadow: effectiveElevation > 0 ? theme.shadows.md : null,
             ),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  if (widget.header != null) widget.header!,
-                  Expanded(child: widget.child),
-                  if (widget.footer != null) widget.footer!,
-                ],
-              ),
-            ),
+            child: SafeArea(child: content),
           ),
         ),
       ),

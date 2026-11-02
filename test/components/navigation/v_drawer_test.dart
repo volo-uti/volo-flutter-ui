@@ -466,4 +466,62 @@ void main() {
       expect(radius.topLeft.x, 0);
     });
   });
+
+  group('VDrawer style fields', () {
+    final theme = VThemeData.light();
+    const color = Color(0xFF123456);
+
+    // Builds a drawer styled through the theme or as the instance style.
+    Widget styled(VDrawerStyle? style, {bool viaTheme = false}) => VTheme(
+      data: theme.copyWith(
+        componentOverrides: VComponentOverrides([
+          if (viaTheme && style != null) style,
+        ]),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: const MediaQueryData(size: Size(800, 600)),
+          child: VDrawer.persistent(
+            style: viaTheme ? null : style,
+            header: const Text('Header'),
+            footer: const Text('Footer'),
+            child: const Column(children: [Text('Body'), Icon(IconData(1))]),
+          ),
+        ),
+      ),
+    );
+
+    Color? textColor(WidgetTester tester, String text) => tester
+        .widget<RichText>(
+          find.descendant(of: find.text(text), matching: find.byType(RichText)),
+        )
+        .text
+        .style
+        ?.color;
+
+    testWidgets('text keeps its inherited color by default', (tester) async {
+      await tester.pumpWidget(styled(null));
+      expect(textColor(tester, 'Body'), isNot(color));
+    });
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('foregroundColor colors header, body, footer, icons ($via)', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          styled(
+            const VDrawerStyle(foregroundColor: color),
+            viaTheme: viaTheme,
+          ),
+        );
+        expect(textColor(tester, 'Header'), color);
+        expect(textColor(tester, 'Body'), color);
+        expect(textColor(tester, 'Footer'), color);
+        expect(IconTheme.of(tester.element(find.byType(Icon))).color, color);
+      });
+    }
+  });
 }

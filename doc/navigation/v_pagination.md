@@ -165,11 +165,11 @@ Supports cascade: theme override → instance override.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `backgroundColor` | `Color?` |  |  | Background fill color. |
+| `backgroundColor` | `Color?` |  |  | Fill of the page and arrow buttons other than the current page; none when null.<br>The current page takes [activeBackgroundColor]. The text buttons of the simple and minimal variants have no fill. An instance style wins over the theme override. |
 | `foregroundColor` | `Color?` |  |  | Text foreground color. |
 | `activeBackgroundColor` | `Color?` |  |  | Active page background color. |
 | `activeForegroundColor` | `Color?` |  |  | Active page foreground color. |
-| `borderColor` | `Color?` |  |  | Border color. |
+| `borderColor` | `Color?` |  |  | Border around each page and arrow button; no border when null.<br>The focus ring replaces it on the focused button. The text buttons of the simple and minimal variants have no border. An instance style wins over the theme override. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
 
 ### Members

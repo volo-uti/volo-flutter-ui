@@ -18,7 +18,10 @@ class VDrawerStyle implements VComponentStyle {
   /// Background fill color.
   final Color? backgroundColor;
 
-  /// Text foreground color.
+  /// Color of the panel's text and icons; when null they keep what they inherit.
+  ///
+  /// Children that set their own color keep it. An instance style wins over
+  /// the theme override.
   final Color? foregroundColor;
 
   /// Elevation (shadow depth).

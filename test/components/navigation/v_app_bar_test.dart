@@ -392,6 +392,68 @@ void main() {
       expect(popResults, [false]);
     });
   });
+
+  group('VAppBar style fields', () {
+    final theme = VThemeData.light();
+
+    // Builds an app bar styled through the theme or as the instance style.
+    Widget styled(VAppBarStyle? style, {bool viaTheme = false}) => VTheme(
+      data: theme.copyWith(
+        componentOverrides: VComponentOverrides([
+          if (viaTheme && style != null) style,
+        ]),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: const MediaQueryData(),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: VAppBar(
+              title: const Text('Title'),
+              style: viaTheme ? null : style,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    BoxBorder? borderOf(WidgetTester tester) =>
+        (tester
+                    .widget<Container>(
+                      find
+                          .descendant(
+                            of: find.byType(VAppBar),
+                            matching: find.byType(Container),
+                          )
+                          .first,
+                    )
+                    .decoration!
+                as BoxDecoration)
+            .border;
+
+    testWidgets('draws no bottom line by default', (tester) async {
+      await tester.pumpWidget(styled(null));
+      expect(borderOf(tester), isNull);
+    });
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('borderColor draws a line along the bottom ($via)', (
+        tester,
+      ) async {
+        const color = Color(0xFF123456);
+        await tester.pumpWidget(
+          styled(const VAppBarStyle(borderColor: color), viaTheme: viaTheme),
+        );
+        final border = borderOf(tester)! as Border;
+        expect(border.bottom.color, color);
+        expect(border.bottom.width, theme.borders.subtle.width);
+        expect(border.top, BorderSide.none);
+      });
+    }
+  });
 }
 
 class _TestPage extends Page<void> {
