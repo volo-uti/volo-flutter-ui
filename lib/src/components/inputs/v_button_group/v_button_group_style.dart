@@ -10,10 +10,15 @@ import 'package:volo_flutter_ui/src/theme/v_component_style.dart';
 class VButtonGroupStyle implements VComponentStyle {
   const VButtonGroupStyle({this.borderColor, this.borderRadius, this.spacing});
 
-  /// Border color.
+  /// Border color every button in the group draws.
+  ///
+  /// A button's own instance style wins over it; it wins over the theme's
+  /// `VButtonStyle.borderColor` and the variant's border.
   final Color? borderColor;
 
-  /// Border radius.
+  /// Outer corner radius of the group; inner corners stay square.
+  ///
+  /// Defaults to the size's radius token. It wins over a button's own corner.
   final BorderRadius? borderRadius;
 
   /// Spacing between buttons.

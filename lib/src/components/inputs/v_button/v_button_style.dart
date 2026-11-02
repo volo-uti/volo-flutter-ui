@@ -27,7 +27,10 @@ class VButtonStyle implements VComponentStyle {
   /// Wins over the color of [textStyle]; defaults to the variant's color.
   final Color? foregroundColor;
 
-  /// Border color.
+  /// Border color, drawn on every variant when set.
+  ///
+  /// Inside a [VButtonGroup] the group's borderColor wins over the theme's
+  /// value, and the instance style wins over the group's.
   final Color? borderColor;
 
   /// Corner radius of a [VButtonCorner.rounded] button.

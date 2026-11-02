@@ -55,7 +55,7 @@ Creates a button group.
 
 ## VButtonGroupData
 
-Size and corner radius a [VButtonGroup] hands down to each child [VButton].
+Size, corner radius and border color a [VButtonGroup] hands down to each [VButton].
 
 ### Constructors
 
@@ -67,6 +67,7 @@ Creates the data a group shares with one of its buttons.
 |---|---|---|---|---|
 | `size` | `VButtonSize?` |  |  | Button size shared across the entire group. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius computed based on position within the group (first/middle/last). |
+| `borderColor` | `Color?` |  |  | Border color every button in the group draws, from [VButtonGroupStyle.borderColor]. |
 
 ## VButtonGroupOrientation
 
@@ -92,8 +93,8 @@ Supports cascade: theme override → instance override.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `borderColor` | `Color?` |  |  | Border color. |
-| `borderRadius` | `BorderRadius?` |  |  | Border radius. |
+| `borderColor` | `Color?` |  |  | Border color every button in the group draws.<br>A button's own instance style wins over it; it wins over the theme's `VButtonStyle.borderColor` and the variant's border. |
+| `borderRadius` | `BorderRadius?` |  |  | Outer corner radius of the group; inner corners stay square.<br>Defaults to the size's radius token. It wins over a button's own corner. |
 | `spacing` | `double?` |  |  | Spacing between buttons. |
 
 ### Members

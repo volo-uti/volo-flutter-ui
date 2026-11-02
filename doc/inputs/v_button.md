@@ -283,7 +283,7 @@ Supports cascade: theme override → instance override.
 |---|---|---|---|---|
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
 | `foregroundColor` | `Color?` |  |  | Text / icon foreground color.<br>Wins over the color of [textStyle]; defaults to the variant's color. |
-| `borderColor` | `Color?` |  |  | Border color. |
+| `borderColor` | `Color?` |  |  | Border color, drawn on every variant when set.<br>Inside a [VButtonGroup] the group's borderColor wins over the theme's value, and the instance style wins over the group's. |
 | `borderRadius` | `BorderRadius?` |  |  | Corner radius of a [VButtonCorner.rounded] button.<br>A [VButtonGroup] position and a square, pill or circle `corner` win over it; defaults to the size's radius token. |
 | `padding` | `EdgeInsets?` |  |  | Padding around the content.<br>Defaults to the size's horizontal padding. `VButton.icon` ignores it, since it is a fixed square. |
 | `textStyle` | `TextStyle?` |  |  | Label text style, merged over the size's font size and medium weight. |

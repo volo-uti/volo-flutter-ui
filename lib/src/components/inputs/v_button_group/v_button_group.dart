@@ -6,16 +6,19 @@ import 'v_button_group_style.dart';
 
 // ── VButtonGroupScope (InheritedWidget for group → button data propagation) ──
 
-/// Size and corner radius a [VButtonGroup] hands down to each child [VButton].
+/// Size, corner radius and border color a [VButtonGroup] hands down to each [VButton].
 class VButtonGroupData {
   /// Creates the data a group shares with one of its buttons.
-  const VButtonGroupData({this.size, this.borderRadius});
+  const VButtonGroupData({this.size, this.borderRadius, this.borderColor});
 
   /// Button size shared across the entire group.
   final VButtonSize? size;
 
   /// Border radius computed based on position within the group (first/middle/last).
   final BorderRadius? borderRadius;
+
+  /// Border color every button in the group draws, from [VButtonGroupStyle.borderColor].
+  final Color? borderColor;
 }
 
 /// Inherited scope that makes a [VButtonGroupData] visible to descendants.
@@ -37,7 +40,8 @@ class VButtonGroupScope extends InheritedWidget {
   @override
   bool updateShouldNotify(VButtonGroupScope oldWidget) =>
       data.size != oldWidget.data.size ||
-      data.borderRadius != oldWidget.data.borderRadius;
+      data.borderRadius != oldWidget.data.borderRadius ||
+      data.borderColor != oldWidget.data.borderColor;
 }
 
 // ── VButtonGroup ──
@@ -100,7 +104,7 @@ class VButtonGroup extends StatelessWidget {
 
     final isHorizontal = orientation == VButtonGroupOrientation.horizontal;
 
-    // Resolve border radius from size token
+    // Outer corners: the style's borderRadius, else the size's radius token
     final sizeToken = switch (size) {
       VButtonSize.xs => theme.sizes.xs,
       VButtonSize.sm => theme.sizes.sm,
@@ -108,7 +112,9 @@ class VButtonGroup extends StatelessWidget {
       VButtonSize.xl => theme.sizes.xl,
       _ => theme.sizes.md,
     };
-    final r = sizeToken.borderRadius;
+    final outer =
+        resolvedStyle?.borderRadius ??
+        BorderRadius.circular(sizeToken.borderRadius);
 
     // Apply resolvedStyle overrides
     final effectiveSpacing = resolvedStyle?.spacing ?? spacing;
@@ -122,33 +128,37 @@ class VButtonGroup extends StatelessWidget {
 
       BorderRadius borderRadius;
       if (isSingle) {
-        borderRadius = BorderRadius.circular(r);
+        borderRadius = outer;
       } else if (isFirst) {
         borderRadius = isHorizontal
             ? BorderRadius.only(
-                topLeft: Radius.circular(r),
-                bottomLeft: Radius.circular(r),
+                topLeft: outer.topLeft,
+                bottomLeft: outer.bottomLeft,
               )
             : BorderRadius.only(
-                topLeft: Radius.circular(r),
-                topRight: Radius.circular(r),
+                topLeft: outer.topLeft,
+                topRight: outer.topRight,
               );
       } else if (isLast) {
         borderRadius = isHorizontal
             ? BorderRadius.only(
-                topRight: Radius.circular(r),
-                bottomRight: Radius.circular(r),
+                topRight: outer.topRight,
+                bottomRight: outer.bottomRight,
               )
             : BorderRadius.only(
-                bottomLeft: Radius.circular(r),
-                bottomRight: Radius.circular(r),
+                bottomLeft: outer.bottomLeft,
+                bottomRight: outer.bottomRight,
               );
       } else {
         borderRadius = BorderRadius.zero;
       }
 
       final child = VButtonGroupScope(
-        data: VButtonGroupData(size: size, borderRadius: borderRadius),
+        data: VButtonGroupData(
+          size: size,
+          borderRadius: borderRadius,
+          borderColor: resolvedStyle?.borderColor,
+        ),
         child: children[i],
       );
 

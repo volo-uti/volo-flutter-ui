@@ -18,6 +18,13 @@ void main() {
       const data = VButtonGroupData();
       expect(data.size, isNull);
       expect(data.borderRadius, isNull);
+      expect(data.borderColor, isNull);
+    });
+
+    test('stores borderColor', () {
+      const data = VButtonGroupData(borderColor: Color(0xFF00AA00));
+
+      expect(data.borderColor, const Color(0xFF00AA00));
     });
   });
 

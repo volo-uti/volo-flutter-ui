@@ -383,10 +383,14 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
     if (resolvedStyle != null) {
       backgroundColor = resolvedStyle.backgroundColor ?? backgroundColor;
       foregroundColor = resolvedStyle.foregroundColor ?? foregroundColor;
-      if (resolvedStyle.borderColor != null) {
-        border = Border.all(color: resolvedStyle.borderColor!);
-      }
     }
+    // Border color: the instance style, then the enclosing group's, then the
+    // theme style, then the variant's border.
+    final borderColor =
+        widget.style?.borderColor ??
+        VButtonGroupScope.maybeOf(context)?.borderColor ??
+        themeStyle?.borderColor;
+    if (borderColor != null) border = Border.all(color: borderColor);
 
     // Text style: the size's font size and medium weight, then the style's
     // textStyle on top. An explicit foregroundColor wins over its color.
