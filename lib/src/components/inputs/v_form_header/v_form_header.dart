@@ -150,7 +150,9 @@ class _VFormHeaderState extends State<VFormHeader> {
         children: [
           widget.child,
           PositionedDirectional(
-            start: 12,
+            // With the label's own padding, this lines the text up with the
+            // control's inner padding.
+            start: theme.spacing.md,
             top: 0,
             child: IgnorePointer(
               child: FractionalTranslation(

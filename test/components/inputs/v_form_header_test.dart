@@ -166,5 +166,33 @@ void main() {
         tester.getTopRight(find.byType(VFormHeader)).dx,
       );
     });
+
+    testWidgets('the floating label is placed by the spacing token', (
+      tester,
+    ) async {
+      final base = VThemeData.light();
+      for (final md in [base.spacing.md, 20.0]) {
+        await tester.pumpWidget(
+          VTheme(
+            data: base.copyWith(spacing: base.spacing.copyWith(md: md)),
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: VFormHeader(
+                label: 'Label',
+                floatingLabel: true,
+                child: Container(height: 40),
+              ),
+            ),
+          ),
+        );
+
+        expect(
+          tester
+              .widget<PositionedDirectional>(find.byType(PositionedDirectional))
+              .start,
+          md,
+        );
+      }
+    });
   });
 }
