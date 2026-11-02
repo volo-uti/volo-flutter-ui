@@ -278,7 +278,7 @@ void main() {
         );
 
         final theme = VThemeData.light();
-        // The inner AnimatedContainer (.last) uses explicit height param
+        // The inner AnimatedContainer (.last) takes the size's height
         final container = tester
             .widgetList<AnimatedContainer>(
               find.descendant(
@@ -288,7 +288,8 @@ void main() {
             )
             .last;
         expect(container.decoration, isNotNull);
-        expect(container.constraints?.maxHeight, theme.sizes.sm.height);
+        // The size's height is the minimum.
+        expect(container.constraints?.minHeight, theme.sizes.sm.height);
       });
 
       testWidgets('md size applies medium height (default)', (tester) async {
@@ -311,7 +312,8 @@ void main() {
               ),
             )
             .last;
-        expect(container.constraints?.maxHeight, theme.sizes.md.height);
+        // The size's height is the minimum.
+        expect(container.constraints?.minHeight, theme.sizes.md.height);
       });
 
       testWidgets('lg size applies large height', (tester) async {
@@ -335,7 +337,8 @@ void main() {
               ),
             )
             .last;
-        expect(container.constraints?.maxHeight, theme.sizes.lg.height);
+        // The size's height is the minimum.
+        expect(container.constraints?.minHeight, theme.sizes.lg.height);
       });
     });
 
@@ -1539,6 +1542,122 @@ void main() {
         expect(grid.fontSize, theme.sizes.sm.fontSize);
         expect(iconSize, theme.sizes.sm.iconSize);
       });
+    });
+  });
+
+  group('large text', () {
+    final theme = VThemeData.light();
+
+    // A 320 x 640 screen with text at three times the size.
+    Future<void> pumpScaled(
+      WidgetTester tester,
+      Widget child, {
+      double scale = 3,
+    }) async {
+      tester.view
+        ..physicalSize = const Size(320, 640)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        MediaQuery(
+          data: MediaQueryData(
+            size: const Size(320, 640),
+            textScaler: TextScaler.linear(scale),
+          ),
+          child: VTheme(
+            data: theme,
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: Center(child: child),
+            ),
+          ),
+        ),
+      );
+    }
+
+    List<double> optionHeights(WidgetTester tester) => tester
+        .widgetList<AnimatedContainer>(
+          find.descendant(
+            of: find.byType(VToggleButtonGroup<String>),
+            matching: find.byType(AnimatedContainer),
+          ),
+        )
+        .map((c) => tester.getSize(find.byWidget(c)).height)
+        .toList();
+
+    Widget group() => VToggleButtonGroup<String>(
+      items: [
+        const VToggleButtonItem(value: 'a', label: Text('A')),
+        const VToggleButtonItem(value: 'b', label: Text('B')),
+        VToggleButtonItem(
+          value: 'c',
+          label: const Text('C'),
+          icon: VIcons.check(
+            color: theme.colors.foreground,
+            size: theme.sizes.md.iconSize,
+          ),
+        ),
+      ],
+      value: 'a',
+      onChanged: (_) {},
+    );
+
+    testWidgets('a single toggle is not clipped at 320 wide and 3x text', (
+      tester,
+    ) async {
+      await pumpScaled(
+        tester,
+        VToggleButton(
+          isSelected: false,
+          onChanged: (_) {},
+          child: const Text('Bold'),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      // The FlutterTest font draws a line as tall as the scaled font size.
+      expect(
+        tester.getSize(find.text('Bold')).height,
+        greaterThanOrEqualTo(3 * theme.sizes.md.fontSize),
+      );
+      expect(
+        tester.getSize(find.byType(VToggleButton)).height,
+        greaterThan(theme.sizes.md.height),
+      );
+    });
+
+    testWidgets('group options grow together at 320 wide and 3x text', (
+      tester,
+    ) async {
+      await pumpScaled(tester, group());
+
+      expect(tester.takeException(), isNull);
+      expect(
+        tester.getSize(find.text('A')).height,
+        greaterThanOrEqualTo(3 * theme.sizes.md.fontSize),
+      );
+      final heights = optionHeights(tester);
+      expect(heights.toSet(), hasLength(1));
+      expect(heights.first, greaterThan(theme.sizes.md.height));
+    });
+
+    testWidgets('keeps the size height at 1x text', (tester) async {
+      await pumpScaled(
+        tester,
+        VToggleButton(
+          isSelected: false,
+          onChanged: (_) {},
+          child: const Text('Bold'),
+        ),
+        scale: 1,
+      );
+      expect(
+        tester.getSize(find.byType(VToggleButton)).height,
+        theme.sizes.md.height,
+      );
+
+      await pumpScaled(tester, group(), scale: 1);
+      expect(optionHeights(tester), everyElement(theme.sizes.md.height));
     });
   });
 }

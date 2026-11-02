@@ -91,6 +91,8 @@ class VToggleButton extends StatefulWidget {
   final VToggleButtonType type;
 
   /// Button size; defaults to medium.
+  ///
+  /// Its height is a minimum: the button grows with the text scale.
   final VToggleButtonSize? size;
 
   /// Style override merged over the theme's [VToggleButtonStyle].
@@ -274,7 +276,9 @@ class _VToggleButtonState extends State<VToggleButton>
         scale: _scaleAnimation.value,
         child: AnimatedContainer(
           duration: theme.animations.fast,
-          height: height,
+          // A minimum, not a fixed height: the button grows with the text
+          // scale instead of clipping its content.
+          constraints: BoxConstraints(minHeight: height),
           padding:
               resolvedStyle?.padding ??
               EdgeInsets.symmetric(horizontal: padding),
@@ -283,7 +287,8 @@ class _VToggleButtonState extends State<VToggleButton>
             borderRadius: borderRadius,
             border: border,
           ),
-          child: Center(
+          child: Align(
+            heightFactor: 1,
             child: IconTheme(
               data: IconThemeData(
                 color: foregroundColor,
@@ -458,6 +463,9 @@ class VToggleButtonGroup<T> extends StatelessWidget {
   final VToggleButtonType type;
 
   /// Option height, text size and icon size; defaults to medium.
+  ///
+  /// The height is a minimum: the options grow with the text scale, all to the
+  /// height of the tallest.
   final VToggleButtonSize? size;
 
   /// Whether the group fills the available width.
@@ -499,45 +507,56 @@ class VToggleButtonGroup<T> extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: groupRadius,
-          child: Row(
-            mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
-            children: List.generate(items.length, (index) {
-              final item = items[index];
-              final isSelected = allowMultiple
-                  ? values.contains(item.value)
-                  : value == item.value;
+          // WHY: Options grow with the text scale; IntrinsicHeight and stretch
+          // keep every option as tall as the tallest one. The Align lets the
+          // row take its own height inside a tight parent, as before.
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            widthFactor: 1,
+            heightFactor: 1,
+            child: IntrinsicHeight(
+              child: Row(
+                mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: List.generate(items.length, (index) {
+                  final item = items[index];
+                  final isSelected = allowMultiple
+                      ? values.contains(item.value)
+                      : value == item.value;
 
-              // Corner radius: the group's outer corners only
-              BorderRadius? borderRadius;
-              if (items.length == 1) {
-                borderRadius = groupRadius;
-              } else if (index == 0) {
-                borderRadius = BorderRadius.only(
-                  topLeft: groupRadius.topLeft,
-                  bottomLeft: groupRadius.bottomLeft,
-                );
-              } else if (index == items.length - 1) {
-                borderRadius = BorderRadius.only(
-                  topRight: groupRadius.topRight,
-                  bottomRight: groupRadius.bottomRight,
-                );
-              }
+                  // Corner radius: the group's outer corners only
+                  BorderRadius? borderRadius;
+                  if (items.length == 1) {
+                    borderRadius = groupRadius;
+                  } else if (index == 0) {
+                    borderRadius = BorderRadius.only(
+                      topLeft: groupRadius.topLeft,
+                      bottomLeft: groupRadius.bottomLeft,
+                    );
+                  } else if (index == items.length - 1) {
+                    borderRadius = BorderRadius.only(
+                      topRight: groupRadius.topRight,
+                      bottomRight: groupRadius.bottomRight,
+                    );
+                  }
 
-              final itemWidget = _ToggleButtonGroupItem<T>(
-                item: item,
-                isSelected: isSelected,
-                borderRadius: borderRadius,
-                sizeToken: sizeToken,
-                exclusive: !allowMultiple,
-                fullWidth: fullWidth,
-                style: resolvedStyle,
-                onTap: !item.enabled
-                    ? null
-                    : () => _handleItemTap(item.value, isSelected),
-              );
+                  final itemWidget = _ToggleButtonGroupItem<T>(
+                    item: item,
+                    isSelected: isSelected,
+                    borderRadius: borderRadius,
+                    sizeToken: sizeToken,
+                    exclusive: !allowMultiple,
+                    fullWidth: fullWidth,
+                    style: resolvedStyle,
+                    onTap: !item.enabled
+                        ? null
+                        : () => _handleItemTap(item.value, isSelected),
+                  );
 
-              return fullWidth ? Expanded(child: itemWidget) : itemWidget;
-            }),
+                  return fullWidth ? Expanded(child: itemWidget) : itemWidget;
+                }),
+              ),
+            ),
           ),
         ),
       ),
@@ -681,14 +700,14 @@ class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
 
     Widget toggle = AnimatedContainer(
       duration: theme.animations.fast,
-      height: sizeToken.height,
+      constraints: BoxConstraints(minHeight: sizeToken.height),
       padding:
           style?.padding ?? EdgeInsets.symmetric(horizontal: theme.spacing.md),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: widget.borderRadius,
       ),
-      child: Center(child: content),
+      child: Align(heightFactor: 1, child: content),
     );
 
     // Opacity when disabled

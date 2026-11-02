@@ -31,7 +31,7 @@ Creates a toggle button showing [child].
 | `onChanged` | `void Function(bool)?` |  |  | Called with the new state when the user taps the button. |
 | `enabled` | `bool` | `true` |  | Whether the button reacts to input. |
 | `type` | `VToggleButtonType` | `VToggleButtonType.ghost` |  | Look of the button while it is off. |
-| `size` | `VToggleButtonSize?` |  |  | Button size; defaults to medium. |
+| `size` | `VToggleButtonSize?` |  |  | Button size; defaults to medium.<br>Its height is a minimum: the button grows with the text scale. |
 | `style` | `VToggleButtonStyle?` |  |  | Style override merged over the theme's [VToggleButtonStyle]. |
 
 ## VToggleButtonGroup
@@ -78,7 +78,7 @@ Creates a toggle group; set [allowMultiple] to select several values.
 | `allowMultiple` | `bool` | `false` |  | Whether several options can be selected at once. |
 | `allowEmpty` | `bool` | `true` |  | Whether the last selected option can be deselected. |
 | `type` | `VToggleButtonType` | `VToggleButtonType.ghost` |  | Look of the unselected options. |
-| `size` | `VToggleButtonSize?` |  |  | Option height, text size and icon size; defaults to medium. |
+| `size` | `VToggleButtonSize?` |  |  | Option height, text size and icon size; defaults to medium.<br>The height is a minimum: the options grow with the text scale, all to the height of the tallest. |
 | `fullWidth` | `bool` | `false` |  | Whether the group fills the available width. |
 | `style` | `VToggleButtonStyle?` |  |  | Style override merged over the theme's [VToggleButtonStyle].<br>The same style a single [VToggleButton] reads: its colors and padding apply to each option, its borderRadius and borderColor to the group. |
 
