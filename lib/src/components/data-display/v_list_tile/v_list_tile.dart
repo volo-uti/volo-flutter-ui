@@ -7,8 +7,10 @@ import 'v_list_tile_style.dart';
 /// Tile with leading, title, subtitle and trailing slots for list rows.
 ///
 /// Comes in default (56), [VListTile.dense] (48) and [VListTile.threeLine]
-/// (88) heights. Taps and long presses are reported through [onTap] and
-/// [onLongPress]; the tile is inert while [enabled] is false.
+/// (88) minimum heights, and grows with its content. Taps and long presses are
+/// reported through [onTap] and [onLongPress]; the tile is inert while
+/// [enabled] is false. [VListTileStyle] sets the leading slot width, the gaps
+/// beside the text and the minimum height.
 ///
 /// ```dart
 /// VListTile(
@@ -21,7 +23,7 @@ import 'v_list_tile_style.dart';
 /// )
 /// ```
 class VListTile extends StatefulWidget {
-  /// Creates a 56px tile (72px with a subtitle).
+  /// Creates a tile at least 56px tall (72px with a subtitle).
   const VListTile({
     required this.title,
     super.key,
@@ -38,7 +40,7 @@ class VListTile extends StatefulWidget {
     this.style,
   }) : _variant = _VListTileVariant.normal;
 
-  /// Creates a compact 48px tile.
+  /// Creates a compact tile at least 48px tall.
   const VListTile.dense({
     required this.title,
     super.key,
@@ -55,7 +57,7 @@ class VListTile extends StatefulWidget {
     this.style,
   }) : _variant = _VListTileVariant.dense;
 
-  /// Creates an 88px tile whose title and subtitle wrap to two lines.
+  /// Creates a tile at least 88px tall whose title and subtitle wrap to two lines.
   const VListTile.threeLine({
     required this.title,
     super.key,
@@ -75,15 +77,24 @@ class VListTile extends StatefulWidget {
   final _VListTileVariant _variant;
 
   /// Primary content, typically a [Text]; styled with the tile's title style.
+  ///
+  /// It ends with an ellipsis after one line, or two on a three-line tile. A
+  /// [Text] that sets its own `maxLines` keeps it; `maxLines: null` falls back
+  /// to the tile's limit, so give a number.
   final Widget title;
 
   /// Secondary content below [title], typically a [Text].
+  ///
+  /// Lines are limited as for [title].
   final Widget? subtitle;
 
   /// Widget before the text, such as an icon or avatar.
   final Widget? leading;
 
   /// Widget after the text, such as a chevron or a switch.
+  ///
+  /// It takes its natural width and does not shrink, so wrap a long one in a
+  /// `ConstrainedBox(constraints: BoxConstraints(maxWidth: ...))` to bound it.
   final Widget? trailing;
 
   /// Called when the tile is tapped; the tile does not react to taps when null.
@@ -121,7 +132,8 @@ class _VListTileState extends State<VListTile> {
   bool _isHovered = false;
   bool _isFocused = false;
 
-  double get _minHeight {
+  double _minHeight(VListTileStyle? style) {
+    if (style?.minHeight case final minHeight?) return minHeight;
     final theme = VTheme.of(context);
     final sizes = theme.sizes;
     switch (widget._variant) {
@@ -197,16 +209,21 @@ class _VListTileState extends State<VListTile> {
         resolvedStyle?.subtitleStyle ??
         typography.bodyMedium.copyWith(color: colors.mutedForeground);
 
+    final leadingSize = theme.sizes.md.height;
     final Widget content = Row(
       crossAxisAlignment: _leadingAlignment,
       children: [
         if (widget.leading != null)
           Padding(
-            padding: EdgeInsets.only(right: theme.spacing.lg),
-            child: SizedBox(
-              width: theme.sizes.md.height,
-              height: theme.sizes.md.height,
-              child: Center(child: widget.leading),
+            padding: EdgeInsetsDirectional.only(
+              end: resolvedStyle?.leadingGap ?? theme.spacing.lg,
+            ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints.tightFor(
+                width: resolvedStyle?.leadingWidth ?? leadingSize,
+              ).copyWith(minHeight: leadingSize),
+              // heightFactor 1 hugs the leading widget, at least the slot.
+              child: Center(heightFactor: 1, child: widget.leading),
             ),
           ),
         Expanded(
@@ -230,7 +247,9 @@ class _VListTileState extends State<VListTile> {
         ),
         if (widget.trailing != null)
           Padding(
-            padding: EdgeInsets.only(left: theme.spacing.lg),
+            padding: EdgeInsetsDirectional.only(
+              start: resolvedStyle?.trailingGap ?? theme.spacing.lg,
+            ),
             child: widget.trailing,
           ),
       ],
@@ -244,7 +263,7 @@ class _VListTileState extends State<VListTile> {
       child: AnimatedContainer(
         duration: theme.animations.normal,
         curve: Curves.easeOut,
-        constraints: BoxConstraints(minHeight: _minHeight),
+        constraints: BoxConstraints(minHeight: _minHeight(resolvedStyle)),
         padding:
             resolvedStyle?.padding ??
             widget.contentPadding ??
