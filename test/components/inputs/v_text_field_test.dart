@@ -824,5 +824,154 @@ void main() {
         expect(find.byType(VTextField), findsOneWidget);
       });
     });
+
+    group('style fields', () {
+      final theme = VThemeData.light();
+      const style = VTextFieldStyle(
+        backgroundColor: Color(0xFFFAFAF0),
+        borderColor: Color(0xFF00AA00),
+        focusBorderColor: Color(0xFF0000AA),
+        borderRadius: BorderRadius.all(Radius.circular(3)),
+        padding: EdgeInsets.symmetric(horizontal: 30),
+        labelStyle: TextStyle(fontSize: 20, color: Color(0xFF654321)),
+        hintStyle: TextStyle(color: Color(0xFF888800)),
+        textStyle: TextStyle(fontSize: 18, color: Color(0xFF112233)),
+      );
+
+      // Applies [style] through the theme or as the instance style.
+      Widget styled({
+        required bool viaTheme,
+        required Widget Function(VTextFieldStyle? instanceStyle) build,
+      }) => VTheme(
+        data: theme.copyWith(
+          componentOverrides: VComponentOverrides(viaTheme ? [style] : []),
+        ),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: MediaQuery(
+            data: const MediaQueryData(),
+            child: Center(
+              child: SizedBox(
+                width: 300,
+                child: build(viaTheme ? null : style),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      Container boxOf(WidgetTester tester) => tester.widget<Container>(
+        find
+            .descendant(
+              of: find.byType(VFormBody),
+              matching: find.byType(Container),
+            )
+            .first,
+      );
+
+      for (final viaTheme in [true, false]) {
+        final via = viaTheme ? 'theme' : 'instance';
+
+        testWidgets('the box takes the style ($via)', (tester) async {
+          await tester.pumpWidget(
+            styled(
+              viaTheme: viaTheme,
+              build: (s) => VTextField(name: 'test', style: s),
+            ),
+          );
+
+          final box = boxOf(tester);
+          final decoration = box.decoration! as BoxDecoration;
+          expect(decoration.color, style.backgroundColor);
+          expect((decoration.border! as Border).top.color, style.borderColor);
+          expect(decoration.borderRadius, style.borderRadius);
+          expect(box.padding, style.padding);
+        });
+
+        testWidgets('the focused box takes focusBorderColor ($via)', (
+          tester,
+        ) async {
+          final focusNode = FocusNode();
+          addTearDown(focusNode.dispose);
+          await tester.pumpWidget(
+            styled(
+              viaTheme: viaTheme,
+              build: (s) =>
+                  VTextField(name: 'test', focusNode: focusNode, style: s),
+            ),
+          );
+          focusNode.requestFocus();
+          await tester.pumpAndSettle();
+
+          final border =
+              (boxOf(tester).decoration! as BoxDecoration).border! as Border;
+          expect(border.top.color, style.focusBorderColor);
+        });
+
+        testWidgets('the label, hint and text take their styles ($via)', (
+          tester,
+        ) async {
+          await tester.pumpWidget(
+            styled(
+              viaTheme: viaTheme,
+              build: (s) => VTextField(
+                name: 'test',
+                label: 'Name',
+                placeholder: 'Your name',
+                style: s,
+              ),
+            ),
+          );
+
+          final label = tester.widget<Text>(find.text('Name')).style!;
+          expect(label.fontSize, 20);
+          expect(label.color, style.labelStyle!.color);
+          final hint = tester.widget<Text>(find.text('Your name')).style!;
+          expect(hint.color, style.hintStyle!.color);
+          final input = tester.widget<EditableText>(find.byType(EditableText));
+          expect(input.style.fontSize, 18);
+          expect(input.style.color, style.textStyle!.color);
+        });
+      }
+
+      testWidgets('foregroundColor wins over the color of textStyle', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          buildTestWidget(
+            const VTextField(
+              name: 'test',
+              style: VTextFieldStyle(
+                foregroundColor: Color(0xFF0000FF),
+                textStyle: TextStyle(color: Color(0xFF112233)),
+              ),
+            ),
+          ),
+        );
+
+        final input = tester.widget<EditableText>(find.byType(EditableText));
+        expect(input.style.color, const Color(0xFF0000FF));
+      });
+
+      testWidgets('without a style, the label and hint keep their colors', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          buildTestWidget(
+            const VTextField(name: 'test', label: 'Name', placeholder: 'Hint'),
+          ),
+        );
+
+        expect(
+          tester.widget<Text>(find.text('Name')).style!.color,
+          theme.colors.foreground,
+        );
+        expect(
+          tester.widget<Text>(find.text('Hint')).style!.color,
+          theme.colors.mutedForeground,
+        );
+        expect((boxOf(tester).decoration! as BoxDecoration).color, isNull);
+      });
+    });
   });
 }

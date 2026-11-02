@@ -73,5 +73,32 @@ void main() {
 
       expect(find.text('?'), findsOneWidget);
     });
+
+    testWidgets('the color of titleStyle and subtitleStyle is drawn', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          VFormHeader(
+            label: 'Label',
+            more: 'Optional',
+            style: const VFormHeaderStyle(
+              titleStyle: TextStyle(color: Color(0xFF654321)),
+              subtitleStyle: TextStyle(color: Color(0xFF123456)),
+            ),
+            child: Container(),
+          ),
+        ),
+      );
+
+      expect(
+        tester.widget<Text>(find.text('Label')).style!.color,
+        const Color(0xFF654321),
+      );
+      expect(
+        tester.widget<Text>(find.text('Optional')).style!.color,
+        const Color(0xFF123456),
+      );
+    });
   });
 }

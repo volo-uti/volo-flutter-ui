@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/feedback/v_loading_spinner/v_loading_spinner.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_form_body/v_form_body.dart';
+import 'package:volo_flutter_ui/src/components/inputs/v_form_body/v_form_body_style.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_form_field/v_form_field.dart';
+import 'package:volo_flutter_ui/src/components/inputs/v_form_field/v_form_field_style.dart';
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/utils/v_debug.dart';
@@ -488,7 +490,9 @@ class VTextField extends StatefulWidget {
   /// Accessibility label.
   final String? semanticLabel;
 
-  /// Style override.
+  /// Style override merged over the theme's [VTextFieldStyle].
+  ///
+  /// Its box fields reach the [VFormBody] and its labelStyle the label.
   final VTextFieldStyle? style;
 
   /// Internal input type.
@@ -776,13 +780,33 @@ class _VTextFieldState extends State<VTextField> {
     final colors = theme.colors;
     final typography = theme.typography;
 
+    // foregroundColor wins over the textStyle's color, which wins over the
+    // token; a hintStyle's color wins over the muted placeholder color.
     final baseTextStyle = _getTextStyle(typography);
     final textStyle = (resolvedStyle?.textStyle ?? baseTextStyle).copyWith(
-      color: resolvedStyle?.foregroundColor ?? colors.foreground,
+      color:
+          resolvedStyle?.foregroundColor ??
+          resolvedStyle?.textStyle?.color ??
+          colors.foreground,
     );
-    final placeholderStyle = (resolvedStyle?.hintStyle ?? textStyle).copyWith(
-      color: colors.mutedForeground,
+    final hintStyle = resolvedStyle?.hintStyle;
+    final placeholderStyle = (hintStyle ?? textStyle).copyWith(
+      color: hintStyle?.color ?? colors.mutedForeground,
     );
+
+    // The box and the label take their part of the style.
+    final bodyStyle = resolvedStyle == null
+        ? null
+        : VFormBodyStyle(
+            backgroundColor: resolvedStyle.backgroundColor,
+            borderColor: resolvedStyle.borderColor,
+            focusBorderColor: resolvedStyle.focusBorderColor,
+            borderRadius: resolvedStyle.borderRadius,
+            padding: resolvedStyle.padding,
+          );
+    final fieldStyle = resolvedStyle?.labelStyle == null
+        ? null
+        : VFormFieldStyle(labelStyle: resolvedStyle!.labelStyle);
     final cursorColor = resolvedStyle?.cursorColor ?? colors.primary;
 
     Widget inputWidget = EditableText(
@@ -848,6 +872,7 @@ class _VTextFieldState extends State<VTextField> {
         success: widget.success,
         leading: widget.leading,
         trailing: _buildTrailingSection(theme),
+        style: bodyStyle,
         child: inputWidget,
       ),
     );
@@ -882,6 +907,7 @@ class _VTextFieldState extends State<VTextField> {
           extra: widget.extra,
           maxLength: widget.maxLength,
           currentLength: _controller.text.length,
+          style: fieldStyle,
           child: buildBody(invalid: widget.error || state.hasError),
         ),
       ),

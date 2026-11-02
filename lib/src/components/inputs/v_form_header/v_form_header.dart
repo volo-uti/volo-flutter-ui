@@ -64,7 +64,7 @@ class VFormHeader extends StatefulWidget {
   /// Whether the label floats over the top edge of [child] instead of sitting above it.
   final bool floatingLabel;
 
-  /// Style override.
+  /// Style override merged over the theme's [VFormHeaderStyle].
   final VFormHeaderStyle? style;
 
   @override
@@ -101,11 +101,16 @@ class _VFormHeaderState extends State<VFormHeader> {
             );
     }
 
-    final labelStyle = (resolvedStyle?.titleStyle ?? typography.labelMedium)
-        .copyWith(color: colors.foreground);
+    // A style's own color wins over the default color.
+    final titleStyle = resolvedStyle?.titleStyle;
+    final labelStyle = (titleStyle ?? typography.labelMedium).copyWith(
+      color: titleStyle?.color ?? colors.foreground,
+    );
 
-    final moreStyle = (resolvedStyle?.subtitleStyle ?? typography.labelSmall)
-        .copyWith(color: colors.mutedForeground);
+    final subtitleStyle = resolvedStyle?.subtitleStyle;
+    final moreStyle = (subtitleStyle ?? typography.labelSmall).copyWith(
+      color: subtitleStyle?.color ?? colors.mutedForeground,
+    );
 
     final requiredStyle = typography.labelMedium.copyWith(
       color: colors.destructive,

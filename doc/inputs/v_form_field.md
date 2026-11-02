@@ -62,7 +62,7 @@ Creates a form field.
 | `counter` | `Widget?` |  |  | Replaces the generated `current/max` counter. |
 | `maxLength` | `int?` |  |  | Character limit; when set, a counter is shown. |
 | `currentLength` | `int` | `0` |  | Characters entered so far, used by the generated counter. |
-| `style` | `VFormFieldStyle?` |  |  | Style override. |
+| `style` | `VFormFieldStyle?` |  |  | Style override merged over the theme's [VFormFieldStyle]. |
 
 ## VFormFieldStyle
 
@@ -77,7 +77,7 @@ Supports cascade: theme override → instance override.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `labelStyle` | `TextStyle?` |  |  | Label text style. |
+| `labelStyle` | `TextStyle?` |  |  | Text style of the generated header's label.<br>Wins over the theme's `VFormHeaderStyle.titleStyle`. |
 | `helperStyle` | `TextStyle?` |  |  | Helper text style. |
 | `errorStyle` | `TextStyle?` |  |  | Error text style. |
 | `spacing` | `double?` |  |  | Spacing between label, field, and helper/error. |

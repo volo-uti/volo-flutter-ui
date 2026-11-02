@@ -116,6 +116,9 @@ class VFormBody extends StatefulWidget {
   final VFormBodySize size;
 
   /// Corner shape.
+  ///
+  /// [VFormBodyCorner.rounded] takes [VFormBodyStyle.borderRadius] when one is
+  /// set.
   final VFormBodyCorner corner;
 
   /// Whether the box stretches to the available width.
@@ -136,7 +139,7 @@ class VFormBody extends StatefulWidget {
   /// Whether the box is drawn with the success border.
   final bool success;
 
-  /// Style override.
+  /// Style override merged over the theme's [VFormBodyStyle].
   final VFormBodyStyle? style;
 
   @override
@@ -144,7 +147,7 @@ class VFormBody extends StatefulWidget {
 }
 
 class _VFormBodyState extends State<VFormBody> {
-  Color _getCurrentBorderColor() {
+  Color _getCurrentBorderColor(VFormBodyStyle? style) {
     final theme = VTheme.of(context);
     final colors = theme.colors;
 
@@ -152,6 +155,7 @@ class _VFormBodyState extends State<VFormBody> {
     if (widget.error) return colors.destructive;
     if (widget.success) return colors.success;
     if (widget.focused) {
+      if (style?.focusBorderColor != null) return style!.focusBorderColor!;
       switch (widget.color) {
         case VFormBodyColor.primary:
           return colors.primary;
@@ -161,7 +165,7 @@ class _VFormBodyState extends State<VFormBody> {
           return colors.destructive;
       }
     }
-    return colors.input;
+    return style?.borderColor ?? colors.input;
   }
 
   double _getHeight() {
@@ -183,13 +187,14 @@ class _VFormBodyState extends State<VFormBody> {
     return EdgeInsets.symmetric(horizontal: paddingH);
   }
 
-  BorderRadiusGeometry _getBorderRadius() {
+  BorderRadiusGeometry _getBorderRadius(BorderRadius? styleRadius) {
     final theme = VTheme.of(context);
 
     switch (widget.corner) {
       case VFormBodyCorner.square:
         return BorderRadius.zero;
       case VFormBodyCorner.rounded:
+        if (styleRadius != null) return styleRadius;
         final sizeToken = switch (widget.size) {
           VFormBodySize.sm => theme.sizes.sm,
           VFormBodySize.md => theme.sizes.md,
@@ -211,15 +216,17 @@ class _VFormBodyState extends State<VFormBody> {
 
     final colors = theme.colors;
 
-    final borderColor = _getCurrentBorderColor();
-    final borderRadius = _getBorderRadius();
+    final borderColor = _getCurrentBorderColor(resolvedStyle);
+    final borderRadius = _getBorderRadius(resolvedStyle?.borderRadius);
     final effectivePadding = resolvedStyle?.padding ?? _getPadding();
+    final slotGap = resolvedStyle?.spacing ?? theme.spacing.sm;
 
     // Background color
-    Color? backgroundColor;
-    if (widget.type == VFormBodyType.filled) {
-      backgroundColor = colors.muted.withValues(alpha: 0.3);
-    }
+    final backgroundColor =
+        resolvedStyle?.backgroundColor ??
+        (widget.type == VFormBodyType.filled
+            ? colors.muted.withValues(alpha: 0.3)
+            : null);
 
     // Border
     Border? border;
@@ -241,13 +248,13 @@ class _VFormBodyState extends State<VFormBody> {
       children: [
         if (widget.leading != null)
           Padding(
-            padding: EdgeInsets.only(right: theme.spacing.sm),
+            padding: EdgeInsets.only(right: slotGap),
             child: widget.leading,
           ),
         Expanded(child: widget.child),
         if (widget.trailing != null)
           Padding(
-            padding: EdgeInsets.only(left: theme.spacing.sm),
+            padding: EdgeInsets.only(left: slotGap),
             child: widget.trailing,
           ),
       ],

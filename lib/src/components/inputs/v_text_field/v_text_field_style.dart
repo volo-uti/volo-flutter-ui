@@ -21,31 +21,40 @@ class VTextFieldStyle implements VComponentStyle {
     this.cursorColor,
   });
 
-  /// Background fill color.
+  /// Fill color of the field's box.
   final Color? backgroundColor;
 
-  /// Text foreground color.
+  /// Color of the typed text; wins over the color of [textStyle].
   final Color? foregroundColor;
 
-  /// Border color.
+  /// Border color of the box while it is not focused.
+  ///
+  /// The disabled, error and success colors win over it.
   final Color? borderColor;
 
-  /// Border color when focused.
+  /// Border color of the box while it is focused.
+  ///
+  /// The disabled, error and success colors win over it.
   final Color? focusBorderColor;
 
-  /// Border radius.
+  /// Corner radius of a rounded box; a square or pill `corner` wins over it.
   final BorderRadius? borderRadius;
 
-  /// Internal padding.
+  /// Padding inside the box; defaults to the size's horizontal padding.
   final EdgeInsets? padding;
 
-  /// Input text style.
+  /// Text style of the typed text; replaces the size's body type style.
   final TextStyle? textStyle;
 
-  /// Hint text style.
+  /// Text style of the placeholder; defaults to [textStyle].
+  ///
+  /// Its color wins over the muted placeholder color.
   final TextStyle? hintStyle;
 
-  /// Label text style.
+  /// Text style of the label above the field.
+  ///
+  /// Replaces the label medium type style; its color wins over the foreground
+  /// color.
   final TextStyle? labelStyle;
 
   /// Cursor color.

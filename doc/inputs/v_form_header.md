@@ -46,7 +46,7 @@ Creates a form header.
 | `requiredMark` | `String` | `'*'` |  | Character shown after the label when [required] is true. |
 | `tooltip` | `Widget?` |  |  | Widget shown next to the label, typically a help icon. |
 | `floatingLabel` | `bool` | `false` |  | Whether the label floats over the top edge of [child] instead of sitting above it. |
-| `style` | `VFormHeaderStyle?` |  |  | Style override. |
+| `style` | `VFormHeaderStyle?` |  |  | Style override merged over the theme's [VFormHeaderStyle]. |
 
 ## VFormHeaderStyle
 
@@ -61,8 +61,8 @@ Supports cascade: theme override → instance override.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `titleStyle` | `TextStyle?` |  |  | Title text style. |
-| `subtitleStyle` | `TextStyle?` |  |  | Subtitle text style. |
+| `titleStyle` | `TextStyle?` |  |  | Text style of the label; replaces the label medium type style.<br>Its color wins over the foreground color. |
+| `subtitleStyle` | `TextStyle?` |  |  | Text style of the side note; replaces the label small type style.<br>Its color wins over the muted foreground color. |
 | `padding` | `EdgeInsets?` |  |  | Internal padding. |
 
 ### Members

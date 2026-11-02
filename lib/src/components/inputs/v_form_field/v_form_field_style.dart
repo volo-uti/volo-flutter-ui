@@ -15,7 +15,9 @@ class VFormFieldStyle implements VComponentStyle {
     this.spacing,
   });
 
-  /// Label text style.
+  /// Text style of the generated header's label.
+  ///
+  /// Wins over the theme's `VFormHeaderStyle.titleStyle`.
   final TextStyle? labelStyle;
 
   /// Helper text style.

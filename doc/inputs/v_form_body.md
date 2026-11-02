@@ -45,14 +45,14 @@ Creates a form body.
 | `type` | `VFormBodyType` | `VFormBodyType.outlined` |  | Visual type: outlined, filled or underline. |
 | `color` | `VFormBodyColor` | `VFormBodyColor.primary` |  | Accent color used for focus and borders. |
 | `size` | `VFormBodySize` | `VFormBodySize.md` |  | Height preset. |
-| `corner` | `VFormBodyCorner` | `VFormBodyCorner.rounded` |  | Corner shape. |
+| `corner` | `VFormBodyCorner` | `VFormBodyCorner.rounded` |  | Corner shape.<br>[VFormBodyCorner.rounded] takes [VFormBodyStyle.borderRadius] when one is set. |
 | `fullWidth` | `bool` | `false` |  | Whether the box stretches to the available width. |
 | `enabled` | `bool` | `true` |  | Whether the body accepts pointer input. When false it is dimmed and ignores taps. |
 | `readOnly` | `bool` | `false` |  | Whether the box is drawn in its read-only look. |
 | `focused` | `bool` | `false` |  | Whether the box is drawn with its focus ring. |
 | `error` | `bool` | `false` |  | Whether the box is drawn with the error border. |
 | `success` | `bool` | `false` |  | Whether the box is drawn with the success border. |
-| `style` | `VFormBodyStyle?` |  |  | Style override. |
+| `style` | `VFormBodyStyle?` |  |  | Style override merged over the theme's [VFormBodyStyle]. |
 
 ## VFormBodyType
 
@@ -115,11 +115,15 @@ Supports cascade: theme override → instance override.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `spacing` | `double?` |  |  | Spacing between fields. |
-| `padding` | `EdgeInsets?` |  |  | Internal padding. |
+| `spacing` | `double?` |  |  | Gap between the leading or trailing slot and the child.<br>Defaults to the small spacing token. |
+| `padding` | `EdgeInsets?` |  |  | Padding inside the box; defaults to the size's horizontal padding. |
+| `backgroundColor` | `Color?` |  |  | Fill color of the box.<br>Defaults to a muted tint for the filled type and to none otherwise. |
+| `borderColor` | `Color?` |  |  | Border color while the box is not focused.<br>The disabled, error and success colors win over it; defaults to the input color token. |
+| `focusBorderColor` | `Color?` |  |  | Border color while the box is focused.<br>The disabled, error and success colors win over it; defaults to the accent color of `color`. |
+| `borderRadius` | `BorderRadius?` |  |  | Corner radius of a rounded box.<br>A square or pill `corner` wins over it; defaults to the size's radius token. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VFormBodyStyle copyWith({double? spacing, EdgeInsets? padding})` | Creates a copy with only the specified properties changed. |
+| `VFormBodyStyle copyWith({double? spacing, EdgeInsets? padding, Color? backgroundColor, Color? borderColor, Color? focusBorderColor, BorderRadius? borderRadius})` | Creates a copy with only the specified properties changed. |

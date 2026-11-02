@@ -87,7 +87,7 @@ Default text field.
 | `obscureText` | `bool` | `false` |  | Whether the text is hidden, as for passwords. |
 | `keyboardType` | `TextInputType?` |  |  | Keyboard layout to request. |
 | `semanticLabel` | `String?` |  |  | Accessibility label. |
-| `style` | `VTextFieldStyle?` |  |  | Style override. |
+| `style` | `VTextFieldStyle?` |  |  | Style override merged over the theme's [VTextFieldStyle].<br>Its box fields reach the [VFormBody] and its labelStyle the label. |
 
 #### `VTextField.email`
 
@@ -133,7 +133,7 @@ Email input field.
 | `inputFormatters` | `List<TextInputFormatter>?` |  |  | Formatters applied to the text as the user types. |
 | `textInputAction` | `TextInputAction?` |  |  | Action button shown on the software keyboard. |
 | `semanticLabel` | `String?` |  |  | Accessibility label. |
-| `style` | `VTextFieldStyle?` |  |  | Style override. |
+| `style` | `VTextFieldStyle?` |  |  | Style override merged over the theme's [VTextFieldStyle].<br>Its box fields reach the [VFormBody] and its labelStyle the label. |
 
 #### `VTextField.password`
 
@@ -179,7 +179,7 @@ Password input field.
 | `inputFormatters` | `List<TextInputFormatter>?` |  |  | Formatters applied to the text as the user types. |
 | `textInputAction` | `TextInputAction?` |  |  | Action button shown on the software keyboard. |
 | `semanticLabel` | `String?` |  |  | Accessibility label. |
-| `style` | `VTextFieldStyle?` |  |  | Style override. |
+| `style` | `VTextFieldStyle?` |  |  | Style override merged over the theme's [VTextFieldStyle].<br>Its box fields reach the [VFormBody] and its labelStyle the label. |
 
 #### `VTextField.search`
 
@@ -225,7 +225,7 @@ Search input field.
 | `inputFormatters` | `List<TextInputFormatter>?` |  |  | Formatters applied to the text as the user types. |
 | `textInputAction` | `TextInputAction?` | `TextInputAction.search` |  | Action button shown on the software keyboard. |
 | `semanticLabel` | `String?` |  |  | Accessibility label. |
-| `style` | `VTextFieldStyle?` |  |  | Style override. |
+| `style` | `VTextFieldStyle?` |  |  | Style override merged over the theme's [VTextFieldStyle].<br>Its box fields reach the [VFormBody] and its labelStyle the label. |
 
 #### `VTextField.number`
 
@@ -271,7 +271,7 @@ Number input field.
 | `inputFormatters` | `List<TextInputFormatter>?` |  |  | Formatters applied to the text as the user types. |
 | `textInputAction` | `TextInputAction?` |  |  | Action button shown on the software keyboard. |
 | `semanticLabel` | `String?` |  |  | Accessibility label. |
-| `style` | `VTextFieldStyle?` |  |  | Style override. |
+| `style` | `VTextFieldStyle?` |  |  | Style override merged over the theme's [VTextFieldStyle].<br>Its box fields reach the [VFormBody] and its labelStyle the label. |
 
 #### `VTextField.phone`
 
@@ -317,7 +317,7 @@ Phone number input field.
 | `inputFormatters` | `List<TextInputFormatter>?` |  |  | Formatters applied to the text as the user types. |
 | `textInputAction` | `TextInputAction?` |  |  | Action button shown on the software keyboard. |
 | `semanticLabel` | `String?` |  |  | Accessibility label. |
-| `style` | `VTextFieldStyle?` |  |  | Style override. |
+| `style` | `VTextFieldStyle?` |  |  | Style override merged over the theme's [VTextFieldStyle].<br>Its box fields reach the [VFormBody] and its labelStyle the label. |
 
 #### `VTextField.url`
 
@@ -363,7 +363,7 @@ URL input field.
 | `inputFormatters` | `List<TextInputFormatter>?` |  |  | Formatters applied to the text as the user types. |
 | `textInputAction` | `TextInputAction?` |  |  | Action button shown on the software keyboard. |
 | `semanticLabel` | `String?` |  |  | Accessibility label. |
-| `style` | `VTextFieldStyle?` |  |  | Style override. |
+| `style` | `VTextFieldStyle?` |  |  | Style override merged over the theme's [VTextFieldStyle].<br>Its box fields reach the [VFormBody] and its labelStyle the label. |
 
 ## VTextFieldStyle
 
@@ -378,15 +378,15 @@ Supports cascade: theme override → instance override.
 
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `backgroundColor` | `Color?` |  |  | Background fill color. |
-| `foregroundColor` | `Color?` |  |  | Text foreground color. |
-| `borderColor` | `Color?` |  |  | Border color. |
-| `focusBorderColor` | `Color?` |  |  | Border color when focused. |
-| `borderRadius` | `BorderRadius?` |  |  | Border radius. |
-| `padding` | `EdgeInsets?` |  |  | Internal padding. |
-| `textStyle` | `TextStyle?` |  |  | Input text style. |
-| `hintStyle` | `TextStyle?` |  |  | Hint text style. |
-| `labelStyle` | `TextStyle?` |  |  | Label text style. |
+| `backgroundColor` | `Color?` |  |  | Fill color of the field's box. |
+| `foregroundColor` | `Color?` |  |  | Color of the typed text; wins over the color of [textStyle]. |
+| `borderColor` | `Color?` |  |  | Border color of the box while it is not focused.<br>The disabled, error and success colors win over it. |
+| `focusBorderColor` | `Color?` |  |  | Border color of the box while it is focused.<br>The disabled, error and success colors win over it. |
+| `borderRadius` | `BorderRadius?` |  |  | Corner radius of a rounded box; a square or pill `corner` wins over it. |
+| `padding` | `EdgeInsets?` |  |  | Padding inside the box; defaults to the size's horizontal padding. |
+| `textStyle` | `TextStyle?` |  |  | Text style of the typed text; replaces the size's body type style. |
+| `hintStyle` | `TextStyle?` |  |  | Text style of the placeholder; defaults to [textStyle].<br>Its color wins over the muted placeholder color. |
+| `labelStyle` | `TextStyle?` |  |  | Text style of the label above the field.<br>Replaces the label medium type style; its color wins over the foreground color. |
 | `cursorColor` | `Color?` |  |  | Cursor color. |
 
 ### Members

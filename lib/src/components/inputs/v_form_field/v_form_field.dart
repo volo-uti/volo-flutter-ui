@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_form_footer/v_form_footer.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_form_header/v_form_header.dart';
+import 'package:volo_flutter_ui/src/components/inputs/v_form_header/v_form_header_style.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 
 import 'v_form_field_style.dart';
@@ -121,7 +122,7 @@ class VFormField extends StatelessWidget {
   /// Characters entered so far, used by the generated counter.
   final int currentLength;
 
-  /// Style override.
+  /// Style override merged over the theme's [VFormFieldStyle].
   final VFormFieldStyle? style;
 
   @override
@@ -166,6 +167,7 @@ class VFormField extends StatelessWidget {
 
     // Wrap with VFormHeader (always, for the same reason as the footer)
     if (header == null) {
+      final labelStyle = resolvedStyle?.labelStyle;
       bodyWidget = VFormHeader(
         label: label,
         more: more,
@@ -173,6 +175,9 @@ class VFormField extends StatelessWidget {
         requiredMark: requiredMark,
         tooltip: tooltip,
         floatingLabel: floatingLabel,
+        style: labelStyle == null
+            ? null
+            : VFormHeaderStyle(titleStyle: labelStyle),
         child: bodyWidget,
       );
     } else {

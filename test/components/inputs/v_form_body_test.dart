@@ -144,5 +144,152 @@ void main() {
 
       expect(find.text('Full'), findsOneWidget);
     });
+
+    group('style fields', () {
+      final theme = VThemeData.light();
+      const style = VFormBodyStyle(
+        backgroundColor: Color(0xFFFAFAF0),
+        borderColor: Color(0xFF00AA00),
+        focusBorderColor: Color(0xFF0000AA),
+        borderRadius: BorderRadius.all(Radius.circular(3)),
+        spacing: 20,
+      );
+
+      // Applies [style] through the theme or as the instance style.
+      Widget styled({
+        required bool viaTheme,
+        required Widget Function(VFormBodyStyle? instanceStyle) build,
+      }) => VTheme(
+        data: theme.copyWith(
+          componentOverrides: VComponentOverrides(viaTheme ? [style] : []),
+        ),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Center(
+            child: SizedBox(width: 300, child: build(viaTheme ? null : style)),
+          ),
+        ),
+      );
+
+      BoxDecoration decorationOf(WidgetTester tester) =>
+          tester
+                  .widget<Container>(
+                    find
+                        .descendant(
+                          of: find.byType(VFormBody),
+                          matching: find.byType(Container),
+                        )
+                        .first,
+                  )
+                  .decoration!
+              as BoxDecoration;
+
+      for (final viaTheme in [true, false]) {
+        final via = viaTheme ? 'theme' : 'instance';
+
+        testWidgets('draws backgroundColor, borderColor, borderRadius ($via)', (
+          tester,
+        ) async {
+          await tester.pumpWidget(
+            styled(
+              viaTheme: viaTheme,
+              build: (s) => VFormBody(style: s, child: const Text('x')),
+            ),
+          );
+
+          final decoration = decorationOf(tester);
+          expect(decoration.color, style.backgroundColor);
+          expect((decoration.border! as Border).top.color, style.borderColor);
+          expect(decoration.borderRadius, style.borderRadius);
+        });
+
+        testWidgets('draws focusBorderColor while focused ($via)', (
+          tester,
+        ) async {
+          await tester.pumpWidget(
+            styled(
+              viaTheme: viaTheme,
+              build: (s) =>
+                  VFormBody(style: s, focused: true, child: const Text('x')),
+            ),
+          );
+
+          final border = decorationOf(tester).border! as Border;
+          expect(border.top.color, style.focusBorderColor);
+          expect(border.top.width, 2);
+        });
+
+        testWidgets('error and a square corner win over the style ($via)', (
+          tester,
+        ) async {
+          await tester.pumpWidget(
+            styled(
+              viaTheme: viaTheme,
+              build: (s) => VFormBody(
+                style: s,
+                error: true,
+                corner: VFormBodyCorner.square,
+                child: const Text('x'),
+              ),
+            ),
+          );
+
+          final decoration = decorationOf(tester);
+          expect(
+            (decoration.border! as Border).top.color,
+            theme.colors.destructive,
+          );
+          expect(decoration.borderRadius, BorderRadius.zero);
+        });
+
+        testWidgets('spacing separates the slots from the child ($via)', (
+          tester,
+        ) async {
+          await tester.pumpWidget(
+            styled(
+              viaTheme: viaTheme,
+              build: (s) => VFormBody(
+                style: s,
+                leading: const Text('L'),
+                trailing: const Text('T'),
+                child: const Text('x'),
+              ),
+            ),
+          );
+
+          expect(
+            tester.getTopLeft(find.text('x')).dx -
+                tester.getTopRight(find.text('L')).dx,
+            20,
+          );
+          expect(
+            tester.getTopLeft(find.text('T')).dx -
+                tester.getTopRight(find.byType(Expanded)).dx,
+            20,
+          );
+        });
+      }
+
+      testWidgets('without a style, the tokens draw the box', (tester) async {
+        await tester.pumpWidget(
+          buildTestWidget(
+            const VFormBody(leading: Text('L'), child: Text('x')),
+          ),
+        );
+
+        final decoration = decorationOf(tester);
+        expect(decoration.color, isNull);
+        expect((decoration.border! as Border).top.color, theme.colors.input);
+        expect(
+          decoration.borderRadius,
+          BorderRadius.circular(theme.sizes.md.borderRadius),
+        );
+        expect(
+          tester.getTopLeft(find.text('x')).dx -
+              tester.getTopRight(find.text('L')).dx,
+          theme.spacing.sm,
+        );
+      });
+    });
   });
 }

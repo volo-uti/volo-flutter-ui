@@ -108,5 +108,58 @@ void main() {
       // currentLength uses VFormFooter internal default (0).
       expect(find.text('0/50'), findsOneWidget);
     });
+
+    for (final viaTheme in [true, false]) {
+      final via = viaTheme ? 'theme' : 'instance';
+
+      testWidgets('labelStyle reaches the header label ($via)', (tester) async {
+        const style = VFormFieldStyle(
+          labelStyle: TextStyle(fontSize: 20, color: Color(0xFF654321)),
+        );
+        await tester.pumpWidget(
+          VTheme(
+            data: VThemeData.light().copyWith(
+              componentOverrides: VComponentOverrides(viaTheme ? [style] : []),
+            ),
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: VFormField(
+                label: 'Label',
+                style: viaTheme ? null : style,
+                child: const Text('Content'),
+              ),
+            ),
+          ),
+        );
+
+        final label = tester.widget<Text>(find.text('Label')).style!;
+        expect(label.fontSize, 20);
+        expect(label.color, const Color(0xFF654321));
+      });
+    }
+
+    testWidgets('labelStyle wins over the theme header titleStyle', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        VTheme(
+          data: VThemeData.light().copyWith(
+            componentOverrides: const VComponentOverrides([
+              VFormHeaderStyle(titleStyle: TextStyle(fontSize: 11)),
+            ]),
+          ),
+          child: const Directionality(
+            textDirection: TextDirection.ltr,
+            child: VFormField(
+              label: 'Label',
+              style: VFormFieldStyle(labelStyle: TextStyle(fontSize: 20)),
+              child: Text('Content'),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.widget<Text>(find.text('Label')).style!.fontSize, 20);
+    });
   });
 }

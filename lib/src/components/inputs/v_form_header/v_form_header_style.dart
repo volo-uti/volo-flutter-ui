@@ -10,10 +10,14 @@ import 'package:volo_flutter_ui/src/theme/v_component_style.dart';
 class VFormHeaderStyle implements VComponentStyle {
   const VFormHeaderStyle({this.titleStyle, this.subtitleStyle, this.padding});
 
-  /// Title text style.
+  /// Text style of the label; replaces the label medium type style.
+  ///
+  /// Its color wins over the foreground color.
   final TextStyle? titleStyle;
 
-  /// Subtitle text style.
+  /// Text style of the side note; replaces the label small type style.
+  ///
+  /// Its color wins over the muted foreground color.
   final TextStyle? subtitleStyle;
 
   /// Internal padding.
