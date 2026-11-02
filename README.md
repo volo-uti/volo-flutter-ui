@@ -140,7 +140,7 @@ If a widget almost fits, try its style parameters first. If one detail still can
 | Category | Key Components |
 |----------|----------------|
 | **Inputs** | VButton, VTextField, VSelect, VCheckbox, VRadio, VSwitch, VSlider, VCalendar, VDatePicker, VAutocomplete, VForm, VFormField |
-| **Data Display** | VAvatar, VBadge, VChip, VTable, VTooltip, VListTile, VCheckListTile, VSwitchListTile, VDivider, VHoverCard |
+| **Data Display** | VAvatar, VBadge, VChip, VTable, VTooltip, VListTile, VCheckListTile, VSwitchListTile, VDismissible, VDivider, VHoverCard |
 | **Feedback** | VDialog, VAlertDialog, VAlert, VToast, VSnackbar, VProgress, VSkeleton, VEmptyState, VBackdrop |
 | **Surfaces** | VCard, VSheet, VAccordion, VPopover |
 | **Navigation** | VAppBar, VBottomNav, VTabs, VBreadcrumb, VPagination, VPageIndicator, VStepper, VDrawer, VMenu, VCommand |

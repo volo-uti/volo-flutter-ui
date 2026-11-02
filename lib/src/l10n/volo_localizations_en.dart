@@ -199,4 +199,8 @@ class VoloLocalizationsEn extends VoloLocalizations {
   String stepperStepOf(int step, int total) => 'Step $step of $total';
   @override
   String get alertCloseLabel => 'Close';
+
+  // VDismissible
+  @override
+  String get dismissibleActionLabel => 'Delete';
 }

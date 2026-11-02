@@ -52,6 +52,7 @@ v_avatar|VAvatar: Round or rounded picture, initials or icon that identifies a p
 v_badge|VBadge: Small pill that shows a status or a short count.
 v_check_list_tile|VCheckListTile: Tile with a checkbox that toggles when the whole row is tapped.
 v_chip|VChip: Compact pill for a tag, a filter toggle or a removable input value.
+v_dismissible|VDismissible: Swipe-to-delete row with a screen reader action.
 v_divider|VDivider: Thin horizontal or vertical line that separates groups of content.
 v_hover_card|VHoverCard: Card with rich content that opens when the pointer rests on its trigger.
 v_image|VImage: Image from an asset, URL, file or memory with fade-in, placeholder and error states.

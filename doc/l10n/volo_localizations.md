@@ -76,6 +76,7 @@ Creates a localizations instance.
 | `String get paginationFirst` | Semantics label of the button that jumps to the first page. ('First page') |
 | `String get paginationLast` | Semantics label of the button that jumps to the last page. ('Last page') |
 | `String get alertCloseLabel` | Semantics label of the close button of an alert. ('Close') |
+| `String get dismissibleActionLabel` | Screen reader action and default background text of a dismissible row. ('Delete') |
 | `String nSelected(int n)` | Multiple selection label. ('3 selected') |
 | `String autocompleteNoResults(String query)` | No results with query text. ('No results for "query"') |
 | `String monthYear(int year, int month)` | Month-year header format. ('January 2026') |

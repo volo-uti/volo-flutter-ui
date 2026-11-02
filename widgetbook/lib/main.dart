@@ -40,6 +40,7 @@ import 'use_cases/02_data_display/v_avatar.dart';
 import 'use_cases/02_data_display/v_badge.dart';
 import 'use_cases/02_data_display/v_check_list_tile.dart';
 import 'use_cases/02_data_display/v_chip.dart';
+import 'use_cases/02_data_display/v_dismissible.dart';
 import 'use_cases/02_data_display/v_divider.dart';
 import 'use_cases/02_data_display/v_hover_card.dart';
 import 'use_cases/02_data_display/v_image.dart';
@@ -198,6 +199,7 @@ class WidgetbookApp extends StatelessWidget {
               vCheckListTileComponent(),
               vSwitchListTileComponent(),
               vSettingTileComponent(),
+              vDismissibleComponent(),
               // Data
               vTableComponent(),
               vTooltipComponent(),

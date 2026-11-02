@@ -230,6 +230,11 @@ abstract class VoloLocalizations {
   /// Semantics label of the close button of an alert. ('Close')
   String get alertCloseLabel;
 
+  // -- VDismissible --------------------------------------------
+
+  /// Screen reader action and default background text of a dismissible row. ('Delete')
+  String get dismissibleActionLabel;
+
   // -- Lookup ------------------------------------------------
 
   /// Retrieves the nearest [VoloLocalizations] from the widget tree.

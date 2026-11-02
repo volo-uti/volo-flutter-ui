@@ -6,6 +6,8 @@ export 'v_check_list_tile/v_check_list_tile.dart';
 export 'v_check_list_tile/v_check_list_tile_style.dart';
 export 'v_chip/v_chip.dart';
 export 'v_chip/v_chip_style.dart';
+export 'v_dismissible/v_dismissible.dart';
+export 'v_dismissible/v_dismissible_style.dart';
 export 'v_divider/v_divider.dart';
 export 'v_divider/v_divider_style.dart';
 export 'v_hover_card/v_hover_card.dart';
