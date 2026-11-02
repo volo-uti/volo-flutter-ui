@@ -1,7 +1,7 @@
 name: volo_flutter_ui
 description: "Composable UI component library for Flutter. Mobile/Desktop."
 publish_to: none
-version: 0.1.1
+version: 0.1.2
 homepage: https://github.com/volo-uti/volo-flutter-ui
 repository: https://github.com/volo-uti/volo-flutter-ui
 issue_tracker: https://github.com/volo-uti/volo-flutter-ui/issues
