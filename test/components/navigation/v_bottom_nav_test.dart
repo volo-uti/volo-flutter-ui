@@ -355,4 +355,93 @@ void main() {
       expect(base == merged, isFalse);
     });
   });
+
+  group('VBottomNavStyle.shadows', () {
+    // The bar's own Container is the first one under the VBottomNav.
+    List<BoxShadow>? shadowOf(WidgetTester tester) {
+      final bar = tester.widget<Container>(
+        find
+            .descendant(
+              of: find.byType(VBottomNav),
+              matching: find.byType(Container),
+            )
+            .first,
+      );
+      return (bar.decoration! as BoxDecoration).boxShadow;
+    }
+
+    const shadow = BoxShadow(blurRadius: 3);
+
+    testWidgets('defaults to the small theme shadow', (tester) async {
+      await tester.pumpWidget(buildTestWidget(VBottomNav(items: testItems)));
+
+      expect(shadowOf(tester), VThemeData.light().shadows.sm);
+    });
+
+    testWidgets('style sets the shadows and an empty list draws none', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          VBottomNav(
+            items: testItems,
+            style: const VBottomNavStyle(shadows: [shadow]),
+          ),
+        ),
+      );
+      expect(shadowOf(tester), [shadow]);
+
+      await tester.pumpWidget(
+        buildTestWidget(
+          VBottomNav(
+            items: testItems,
+            style: const VBottomNavStyle(shadows: []),
+          ),
+        ),
+      );
+      expect(shadowOf(tester), isEmpty);
+    });
+
+    testWidgets('elevation 0 turns the shadow off over the style', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          VBottomNav(
+            items: testItems,
+            elevation: 0,
+            style: const VBottomNavStyle(shadows: [shadow]),
+          ),
+        ),
+      );
+
+      expect(shadowOf(tester), isNull);
+    });
+
+    testWidgets('a theme override applies and an instance style wins', (
+      tester,
+    ) async {
+      const other = BoxShadow(blurRadius: 9);
+      Widget themed(VBottomNavStyle? style) => VTheme(
+        data: VThemeData.light().copyWith(
+          componentOverrides: const VComponentOverrides([
+            VBottomNavStyle(shadows: [shadow]),
+          ]),
+        ),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: MediaQuery(
+            data: const MediaQueryData(),
+            child: VBottomNav(items: testItems, style: style),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(themed(null));
+      expect(shadowOf(tester), [shadow]);
+
+      await tester.pumpWidget(themed(const VBottomNavStyle(shadows: [other])));
+      expect(shadowOf(tester), [other]);
+    });
+  });
 }

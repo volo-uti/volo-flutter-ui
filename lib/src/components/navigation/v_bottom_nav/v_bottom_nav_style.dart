@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/v_component_style.dart';
@@ -10,20 +11,16 @@ import 'package:volo_flutter_ui/src/theme/v_component_style.dart';
 class VBottomNavStyle implements VComponentStyle {
   const VBottomNavStyle({
     this.backgroundColor,
-    this.foregroundColor,
     this.activeColor,
     this.inactiveColor,
     this.borderColor,
     this.indicatorColor,
     this.indicatorHeight,
-    this.elevation,
+    this.shadows,
   });
 
   /// Background fill color.
   final Color? backgroundColor;
-
-  /// Text foreground color.
-  final Color? foregroundColor;
 
   /// Active item color.
   final Color? activeColor;
@@ -42,28 +39,30 @@ class VBottomNavStyle implements VComponentStyle {
   /// [indicatorColor] is set.
   final double? indicatorHeight;
 
-  /// Elevation (shadow depth).
-  final double? elevation;
+  /// Shadows under the bar; the theme's small shadow when null.
+  ///
+  /// An empty list draws no shadow, and [VBottomNav.elevation] at 0 turns the
+  /// shadow off whatever this holds. An instance style wins over the theme
+  /// override.
+  final List<BoxShadow>? shadows;
 
   /// Creates a copy with only the specified properties changed.
   VBottomNavStyle copyWith({
     Color? backgroundColor,
-    Color? foregroundColor,
     Color? activeColor,
     Color? inactiveColor,
     Color? borderColor,
     Color? indicatorColor,
     double? indicatorHeight,
-    double? elevation,
+    List<BoxShadow>? shadows,
   }) => VBottomNavStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
-    foregroundColor: foregroundColor ?? this.foregroundColor,
     activeColor: activeColor ?? this.activeColor,
     inactiveColor: inactiveColor ?? this.inactiveColor,
     borderColor: borderColor ?? this.borderColor,
     indicatorColor: indicatorColor ?? this.indicatorColor,
     indicatorHeight: indicatorHeight ?? this.indicatorHeight,
-    elevation: elevation ?? this.elevation,
+    shadows: shadows ?? this.shadows,
   );
 
   /// Merges [other] on top of this style. Non-null values in [other] win.
@@ -72,13 +71,12 @@ class VBottomNavStyle implements VComponentStyle {
     if (other == null) return this;
     return VBottomNavStyle(
       backgroundColor: other.backgroundColor ?? backgroundColor,
-      foregroundColor: other.foregroundColor ?? foregroundColor,
       activeColor: other.activeColor ?? activeColor,
       inactiveColor: other.inactiveColor ?? inactiveColor,
       borderColor: other.borderColor ?? borderColor,
       indicatorColor: other.indicatorColor ?? indicatorColor,
       indicatorHeight: other.indicatorHeight ?? indicatorHeight,
-      elevation: other.elevation ?? elevation,
+      shadows: other.shadows ?? shadows,
     );
   }
 
@@ -87,24 +85,22 @@ class VBottomNavStyle implements VComponentStyle {
     if (identical(this, other)) return true;
     return other is VBottomNavStyle &&
         other.backgroundColor == backgroundColor &&
-        other.foregroundColor == foregroundColor &&
         other.activeColor == activeColor &&
         other.inactiveColor == inactiveColor &&
         other.borderColor == borderColor &&
         other.indicatorColor == indicatorColor &&
         other.indicatorHeight == indicatorHeight &&
-        other.elevation == elevation;
+        listEquals(other.shadows, shadows);
   }
 
   @override
   int get hashCode => Object.hash(
     backgroundColor,
-    foregroundColor,
     activeColor,
     inactiveColor,
     borderColor,
     indicatorColor,
     indicatorHeight,
-    elevation,
+    shadows == null ? null : Object.hashAll(shadows!),
   );
 }

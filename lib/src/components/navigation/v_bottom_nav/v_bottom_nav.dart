@@ -164,9 +164,11 @@ class VBottomNav extends StatelessWidget {
   final Color? unselectedItemColor;
 
   /// Whether the bar casts a shadow, when above 0.
+  ///
+  /// At 0 the bar has no shadow, even when [VBottomNavStyle.shadows] is set.
   final double elevation;
 
-  /// Overrides for colors.
+  /// Overrides for colors, the top line, the indicator and the shadows.
   final VBottomNavStyle? style;
 
   int get _effectiveSelectedIndex => selectedIndex.clamp(0, items.length - 1);
@@ -205,7 +207,9 @@ class VBottomNav extends StatelessWidget {
           border: borderColor == null
               ? null
               : Border(top: BorderSide(color: borderColor)),
-          boxShadow: elevation > 0 ? theme.shadows.sm : null,
+          boxShadow: elevation > 0
+              ? (resolvedStyle?.shadows ?? theme.shadows.sm)
+              : null,
         ),
         child: SafeArea(
           top: false,

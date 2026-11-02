@@ -85,8 +85,8 @@ Creates a bar that shows the label of the selected item only.
 | `backgroundColor` | `Color?` |  |  | Bar fill color, defaulting to the theme background. |
 | `selectedItemColor` | `Color?` |  |  | Icon and label color of the selected item, defaulting to primary. |
 | `unselectedItemColor` | `Color?` |  |  | Icon and label color of the other items, defaulting to muted foreground. |
-| `elevation` | `double` | `8` |  | Whether the bar casts a shadow, when above 0. |
-| `style` | `VBottomNavStyle?` |  |  | Overrides for colors. |
+| `elevation` | `double` | `8` |  | Whether the bar casts a shadow, when above 0.<br>At 0 the bar has no shadow, even when [VBottomNavStyle.shadows] is set. |
+| `style` | `VBottomNavStyle?` |  |  | Overrides for colors, the top line, the indicator and the shadows. |
 
 #### `VBottomNav.labeled`
 
@@ -100,8 +100,8 @@ Creates a bar that shows every label.
 | `backgroundColor` | `Color?` |  |  | Bar fill color, defaulting to the theme background. |
 | `selectedItemColor` | `Color?` |  |  | Icon and label color of the selected item, defaulting to primary. |
 | `unselectedItemColor` | `Color?` |  |  | Icon and label color of the other items, defaulting to muted foreground. |
-| `elevation` | `double` | `8` |  | Whether the bar casts a shadow, when above 0. |
-| `style` | `VBottomNavStyle?` |  |  | Overrides for colors. |
+| `elevation` | `double` | `8` |  | Whether the bar casts a shadow, when above 0.<br>At 0 the bar has no shadow, even when [VBottomNavStyle.shadows] is set. |
+| `style` | `VBottomNavStyle?` |  |  | Overrides for colors, the top line, the indicator and the shadows. |
 
 ## VBottomNavItem
 
@@ -147,16 +147,15 @@ Supports cascade: theme override → instance override.
 | Parameter | Type | Default | Required | Description |
 |---|---|---|---|---|
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
-| `foregroundColor` | `Color?` |  |  | Text foreground color. |
 | `activeColor` | `Color?` |  |  | Active item color. |
 | `inactiveColor` | `Color?` |  |  | Inactive item color. |
 | `borderColor` | `Color?` |  |  | Color of the 1px line along the top edge of the bar. |
 | `indicatorColor` | `Color?` |  |  | Color of the bar drawn along the top edge of the selected item, or `null` to draw none. |
 | `indicatorHeight` | `double?` |  |  | Thickness of the selected item's top bar, 4 when null. Used only when [indicatorColor] is set. |
-| `elevation` | `double?` |  |  | Elevation (shadow depth). |
+| `shadows` | `List<BoxShadow>?` |  |  | Shadows under the bar; the theme's small shadow when null.<br>An empty list draws no shadow, and [VBottomNav.elevation] at 0 turns the shadow off whatever this holds. An instance style wins over the theme override. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VBottomNavStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? activeColor, Color? inactiveColor, Color? borderColor, Color? indicatorColor, double? indicatorHeight, double? elevation})` | Creates a copy with only the specified properties changed. |
+| `VBottomNavStyle copyWith({Color? backgroundColor, Color? activeColor, Color? inactiveColor, Color? borderColor, Color? indicatorColor, double? indicatorHeight, List<BoxShadow>? shadows})` | Creates a copy with only the specified properties changed. |
