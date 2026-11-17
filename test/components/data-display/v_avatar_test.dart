@@ -88,6 +88,27 @@ void main() {
       expect(tapped, isTrue);
     });
 
+    testWidgets('a tappable avatar keeps its size and reaches the minimum tap '
+        'area', (tester) async {
+      Future<Size> pump(double minTap) async {
+        await tester.pumpWidget(
+          VTheme(
+            data: VThemeData.light().copyWith(minTapTargetSize: minTap),
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: Center(
+                child: VAvatar.text('T', size: VAvatarSize.xs, onTap: () {}),
+              ),
+            ),
+          ),
+        );
+        return tester.getSize(find.byType(VAvatar));
+      }
+
+      expect(await pump(24), const Size(24, 24));
+      expect(await pump(48), const Size(48, 48));
+    });
+
     testWidgets('creates VAvatar.icon', (tester) async {
       await tester.pumpWidget(
         VTheme(
