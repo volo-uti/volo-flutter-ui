@@ -36,6 +36,7 @@ Neutral alert.
 | `description` | `Widget` |  | yes | Message body, in the muted body style. |
 | `title` | `Widget?` |  |  | Heading shown above [description], in the semibold title style. |
 | `icon` | `Widget?` |  |  | Replaces the icon that matches the alert type. |
+| `showIcon` | `bool` | `true` |  | Whether the icon column is shown; defaults to true.<br>When false, neither the type icon nor [icon] is drawn, the gap after the icon is removed and the text starts at the box padding. It wins over [icon]. |
 | `action` | `Widget?` |  |  | Widget shown below [description], usually a button. |
 | `onClose` | `void Function()?` |  |  | Called when the close button is tapped; the button is hidden when null.<br>The alert does not remove itself, so the caller must stop building it. |
 | `semanticLabel` | `String?` |  |  | Screen reader label for the whole alert; announced as the alert text. |
@@ -51,6 +52,7 @@ Info alert.
 | `description` | `Widget` |  | yes | Message body, in the muted body style. |
 | `title` | `Widget?` |  |  | Heading shown above [description], in the semibold title style. |
 | `icon` | `Widget?` |  |  | Replaces the icon that matches the alert type. |
+| `showIcon` | `bool` | `true` |  | Whether the icon column is shown; defaults to true.<br>When false, neither the type icon nor [icon] is drawn, the gap after the icon is removed and the text starts at the box padding. It wins over [icon]. |
 | `action` | `Widget?` |  |  | Widget shown below [description], usually a button. |
 | `onClose` | `void Function()?` |  |  | Called when the close button is tapped; the button is hidden when null.<br>The alert does not remove itself, so the caller must stop building it. |
 | `semanticLabel` | `String?` |  |  | Screen reader label for the whole alert; announced as the alert text. |
@@ -66,6 +68,7 @@ Success alert.
 | `description` | `Widget` |  | yes | Message body, in the muted body style. |
 | `title` | `Widget?` |  |  | Heading shown above [description], in the semibold title style. |
 | `icon` | `Widget?` |  |  | Replaces the icon that matches the alert type. |
+| `showIcon` | `bool` | `true` |  | Whether the icon column is shown; defaults to true.<br>When false, neither the type icon nor [icon] is drawn, the gap after the icon is removed and the text starts at the box padding. It wins over [icon]. |
 | `action` | `Widget?` |  |  | Widget shown below [description], usually a button. |
 | `onClose` | `void Function()?` |  |  | Called when the close button is tapped; the button is hidden when null.<br>The alert does not remove itself, so the caller must stop building it. |
 | `semanticLabel` | `String?` |  |  | Screen reader label for the whole alert; announced as the alert text. |
@@ -81,6 +84,7 @@ Warning alert.
 | `description` | `Widget` |  | yes | Message body, in the muted body style. |
 | `title` | `Widget?` |  |  | Heading shown above [description], in the semibold title style. |
 | `icon` | `Widget?` |  |  | Replaces the icon that matches the alert type. |
+| `showIcon` | `bool` | `true` |  | Whether the icon column is shown; defaults to true.<br>When false, neither the type icon nor [icon] is drawn, the gap after the icon is removed and the text starts at the box padding. It wins over [icon]. |
 | `action` | `Widget?` |  |  | Widget shown below [description], usually a button. |
 | `onClose` | `void Function()?` |  |  | Called when the close button is tapped; the button is hidden when null.<br>The alert does not remove itself, so the caller must stop building it. |
 | `semanticLabel` | `String?` |  |  | Screen reader label for the whole alert; announced as the alert text. |
@@ -96,6 +100,7 @@ Error alert.
 | `description` | `Widget` |  | yes | Message body, in the muted body style. |
 | `title` | `Widget?` |  |  | Heading shown above [description], in the semibold title style. |
 | `icon` | `Widget?` |  |  | Replaces the icon that matches the alert type. |
+| `showIcon` | `bool` | `true` |  | Whether the icon column is shown; defaults to true.<br>When false, neither the type icon nor [icon] is drawn, the gap after the icon is removed and the text starts at the box padding. It wins over [icon]. |
 | `action` | `Widget?` |  |  | Widget shown below [description], usually a button. |
 | `onClose` | `void Function()?` |  |  | Called when the close button is tapped; the button is hidden when null.<br>The alert does not remove itself, so the caller must stop building it. |
 | `semanticLabel` | `String?` |  |  | Screen reader label for the whole alert; announced as the alert text. |

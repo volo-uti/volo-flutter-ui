@@ -106,9 +106,10 @@ Supports cascade: theme override → instance override.
 | `leadingGap` | `double?` |  |  | Gap between the leading slot and the text; defaults to large spacing (16).<br>An instance style wins over the theme override. |
 | `trailingGap` | `double?` |  |  | Gap between the text and the trailing widget; defaults to large spacing.<br>An instance style wins over the theme override. |
 | `minHeight` | `double?` |  |  | Minimum tile height that replaces the variant's own minimum.<br>The variant minimums are 56 (72 with a subtitle), 48 for dense and 88 for three-line tiles. The tile still grows with its content. An instance style wins over the theme override. |
+| `leadingMinHeight` | `double?` |  |  | Minimum height of the leading slot; defaults to the medium size step (40).<br>Lower it so a tile without a subtitle is not made taller by its leading slot. It sizes only the leading slot; [minHeight] sizes the whole tile. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VListTileStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? selectedColor, BorderRadius? borderRadius, EdgeInsets? padding, TextStyle? titleStyle, TextStyle? subtitleStyle, double? leadingWidth, double? leadingGap, double? trailingGap, double? minHeight})` | Creates a copy with only the specified properties changed. |
+| `VListTileStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? selectedColor, BorderRadius? borderRadius, EdgeInsets? padding, TextStyle? titleStyle, TextStyle? subtitleStyle, double? leadingWidth, double? leadingGap, double? trailingGap, double? minHeight, double? leadingMinHeight})` | Creates a copy with only the specified properties changed. |

@@ -159,9 +159,11 @@ Supports cascade: theme override → instance override.
 | `foregroundColor` | `Color?` |  |  | Text foreground color.<br>Wins over the color of [textStyle]. |
 | `borderRadius` | `BorderRadius?` |  |  | Border radius. |
 | `textStyle` | `TextStyle?` |  |  | Text style merged over the badge default, so only the fields it sets change.<br>The default is the size preset's font size, weight w500 and line height 1.15 in the variant's foreground color. An instance style's text style replaces the theme override's. |
+| `borderColor` | `Color?` |  |  | Border color of the outline variant; defaults to the theme border color. |
+| `padding` | `EdgeInsets?` |  |  | Space between the badge edge and its label; defaults to the size preset. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VBadgeStyle copyWith({Color? backgroundColor, Color? foregroundColor, BorderRadius? borderRadius, TextStyle? textStyle})` | Creates a copy with only the specified properties changed. |
+| `VBadgeStyle copyWith({Color? backgroundColor, Color? foregroundColor, BorderRadius? borderRadius, TextStyle? textStyle, Color? borderColor, EdgeInsets? padding})` | Creates a copy with only the specified properties changed. |

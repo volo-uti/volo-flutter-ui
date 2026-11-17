@@ -35,6 +35,7 @@ Creates theme data from every token set.
 | `borders` | `VBorders` |  | yes | Border system. |
 | `gradients` | `VGradients` |  | yes | Gradient system. |
 | `componentOverrides` | `VComponentOverrides` | `VComponentOverrides.empty` |  | Component-level style overrides (Level 3 cascade). |
+| `minTapTargetSize` | `double` | `24` |  | Smallest area, in logical pixels, that a tappable widget responds to.<br>Widgets keep their drawn size and grow only the area around them that reacts to a tap, so a small control stays small but is still easy to hit. The default of 24 follows WCAG 2.2 (2.5.8); raise it to 48 to meet the Android tap target guideline. |
 
 #### `VThemeData.light`
 
@@ -60,4 +61,4 @@ Interpolates between themes [a] and [b] at [t] from 0 to 1.
 |---|---|
 | `bool get isDark` | Whether the theme is dark mode. |
 | `bool get isLight` | Whether the theme is light mode. |
-| `VThemeData copyWith({Brightness? brightness, VColors? colors, VTypography? typography, VSpacing? spacing, VRadius? radius, VShadows? shadows, VAnimations? animations, VSizes? sizes, VBorders? borders, VGradients? gradients, VComponentOverrides? componentOverrides})` | Creates a copy with only the specified properties changed. |
+| `VThemeData copyWith({Brightness? brightness, VColors? colors, VTypography? typography, VSpacing? spacing, VRadius? radius, VShadows? shadows, VAnimations? animations, VSizes? sizes, VBorders? borders, VGradients? gradients, VComponentOverrides? componentOverrides, double? minTapTargetSize})` | Creates a copy with only the specified properties changed. |

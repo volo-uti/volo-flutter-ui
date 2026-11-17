@@ -93,6 +93,7 @@ VStack.horizontal(
 | `mainAxisSize` | `MainAxisSize` | `MainAxisSize.max` |  | Whether to fill the main axis or shrink to the children. |
 | `textDirection` | `TextDirection?` |  |  | Order of horizontal children, for right-to-left layouts. |
 | `verticalDirection` | `VerticalDirection` | `VerticalDirection.down` |  | Order of vertical children, top to bottom or reversed. |
+| `textBaseline` | `TextBaseline?` |  |  | Baseline used when [crossAxisAlignment] is baseline, required in that case. |
 | `style` | `VStackStyle?` |  |  | Overrides the theme style, for example the spacing. |
 
 #### `VStack.vertical`
@@ -117,6 +118,7 @@ VStack.vertical(
 | `mainAxisSize` | `MainAxisSize` | `MainAxisSize.max` |  | Whether to fill the main axis or shrink to the children. |
 | `textDirection` | `TextDirection?` |  |  | Order of horizontal children, for right-to-left layouts. |
 | `verticalDirection` | `VerticalDirection` | `VerticalDirection.down` |  | Order of vertical children, top to bottom or reversed. |
+| `textBaseline` | `TextBaseline?` |  |  | Baseline used when [crossAxisAlignment] is baseline, required in that case. |
 | `style` | `VStackStyle?` |  |  | Overrides the theme style, for example the spacing. |
 
 ## VStackStyle

@@ -55,9 +55,12 @@ Supports cascade: theme override → instance override.
 | `iconColor` | `Color?` |  |  | Color of an icon that takes the [IconTheme] color. |
 | `titleStyle` | `TextStyle?` |  |  | Merged onto the title style (titleMedium in the foreground color). |
 | `descriptionStyle` | `TextStyle?` |  |  | Merged onto the description style (bodyMedium in the muted color). |
+| `iconGap` | `double?` |  |  | Gap between the icon and the title; defaults to the theme's lg spacing. |
+| `descriptionGap` | `double?` |  |  | Gap between the title and the description; defaults to the sm spacing. |
+| `actionGap` | `double?` |  |  | Gap between the description and the action; defaults to the xl spacing. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VEmptyStateStyle copyWith({EdgeInsets? padding, Color? iconColor, TextStyle? titleStyle, TextStyle? descriptionStyle})` | Creates a copy with only the specified properties changed. |
+| `VEmptyStateStyle copyWith({EdgeInsets? padding, Color? iconColor, TextStyle? titleStyle, TextStyle? descriptionStyle, double? iconGap, double? descriptionGap, double? actionGap})` | Creates a copy with only the specified properties changed. |

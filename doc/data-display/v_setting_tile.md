@@ -8,8 +8,9 @@ Row for a settings screen: a plain item, a navigation link, a switch or a checkb
 
 Pick the variant with a named constructor: [VSettingTile.simple],
 [VSettingTile.navigation], [VSettingTile.switchTile] or
-[VSettingTile.checkbox]. The toggle variants flip on a tap anywhere on the
-row and report the new value through `onChanged`.
+[VSettingTile.checkbox] or [VSettingTile.radio]. The toggle variants flip on
+a tap anywhere on the row and report the new value through `onChanged`;
+the radio variant reports its own value.
 
 ```dart
 VSettingTile.switchTile(
@@ -78,6 +79,12 @@ Creates a row with a checkbox at the end.
 | `onChanged` | `void Function(bool)?` |  |  |  |
 | `enabled` | `bool` | `true` |  | Whether the row reacts to input; false dims it and ignores taps. |
 | `style` | `VSettingTileStyle?` |  |  | Per-instance style override merged over the theme's [VSettingTileStyle]. |
+
+### Members
+
+| Member | Description |
+|---|---|
+| `static VSettingTile radio<T>({required Widget title, required T value, required T? groupValue, Key? key, Widget? subtitle, Widget? leading, void Function(T?)? onChanged, bool enabled = true, VSettingTileStyle? style})` | Creates a row with a radio button at the end, one option of a group.<br>The row is selected when [value] equals [groupValue]. A tap anywhere on the row, or Enter and Space when focused, calls `onChanged` with [value]. |
 
 ## VSettingTileStyle
 

@@ -56,3 +56,12 @@ VIcons.settings() // IconTheme color, else the theme foreground
 | `static Widget list({Color? color, double size = 24})` | Bulleted list. |
 | `static Widget cloud({Color? color, double size = 24})` | Cloud outline. |
 | `static Widget clock({Color? color, double size = 24})` | Clock face with hands. |
+| `static Widget fromPath(Path path, {Color? color, double size = 24})` | Outline path drawn like the other icons, with a stroke of `size / 12`.<br>The [path] is in a 24-unit grid and is scaled to `size / 24`. |
+| `static Widget bell({Color? color, double size = 24})` | Bell with a clapper. |
+| `static Widget menu({Color? color, double size = 24})` | Three horizontal lines, for a menu. |
+| `static Widget help({Color? color, double size = 24})` | Question mark in an outlined circle. |
+| `static Widget lock({Color? color, double size = 24})` | Closed padlock. |
+| `static Widget mapPin({Color? color, double size = 24})` | Map pin with a dot inside. |
+| `static Widget plus({Color? color, double size = 24})` | Plus sign. |
+| `static Widget minus({Color? color, double size = 24})` | Minus sign. |
+| `static Widget more({Color? color, double size = 24})` | Three dots in a row, for more actions. |

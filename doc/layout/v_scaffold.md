@@ -81,7 +81,7 @@ See also:
 | `floatingActionButtonLocation` | `VFabLocation` | `VFabLocation.endFloat` |  | Where [floatingActionButton] sits; docked values overlap the bottom nav. |
 | `backgroundColor` | `Color?` |  |  | Screen background; wins over [VScaffoldStyle.backgroundColor].<br>Defaults to the style's color, else the theme background. |
 | `resizeToAvoidBottomInset` | `bool` | `true` |  | Whether the bottom of the screen moves up with the on-screen keyboard. |
-| `extendBody` | `bool` | `false` |  | Whether the body extends behind [bottomNavigationBar]. |
+| `extendBody` | `bool` | `false` |  | Whether the body runs to the bottom edge of the screen.<br>The body then draws behind [bottomNavigationBar] and the bottom system inset, which stays in the body's `MediaQuery` padding. The keyboard still lifts the body when [resizeToAvoidBottomInset] is true. |
 | `extendBodyBehindAppBar` | `bool` | `false` |  | Whether the body extends behind [appBar], which then floats over it. |
 | `style` | `VScaffoldStyle?` |  |  | Per-instance style override merged over the theme's [VScaffoldStyle]. |
 

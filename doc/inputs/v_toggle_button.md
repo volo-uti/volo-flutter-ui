@@ -80,7 +80,7 @@ Creates a toggle group; set [allowMultiple] to select several values.
 | `type` | `VToggleButtonType` | `VToggleButtonType.ghost` |  | Look of the unselected options. |
 | `size` | `VToggleButtonSize?` |  |  | Option height, text size and icon size; defaults to medium.<br>The height is a minimum: the options grow with the text scale, all to the height of the tallest. |
 | `fullWidth` | `bool` | `false` |  | Whether the group fills the available width. |
-| `style` | `VToggleButtonStyle?` |  |  | Style override merged over the theme's [VToggleButtonStyle].<br>The same style a single [VToggleButton] reads: its colors and padding apply to each option, its borderRadius and borderColor to the group. |
+| `style` | `VToggleButtonStyle?` |  |  | Style override merged over the theme's [VToggleButtonStyle].<br>The same style a single [VToggleButton] reads: its colors and padding apply to each option, its borderRadius and borderColor to the group, and its trackColor and trackPadding draw the strip behind the options. |
 
 ## VToggleButtonType
 
@@ -146,9 +146,13 @@ Supports cascade: theme override → instance override.
 | `borderColor` | `Color?` |  |  | Border color of a single button, or of the outline around a group. |
 | `borderRadius` | `BorderRadius?` |  |  | Corner radius of a single button, or of the outer corners of a group. |
 | `padding` | `EdgeInsets?` |  |  | Padding inside a single button or a group option. |
+| `trackColor` | `Color?` |  |  | Fill of the strip behind a group's options; none when null.<br>Set it to draw a track that the selected option sits on. |
+| `trackPadding` | `EdgeInsets?` |  |  | Gap between a group's edge and its options, so the selected pill floats.<br>Null keeps the options filling the group edge to edge. |
+| `textStyle` | `TextStyle?` |  |  | Text style merged over the default of an unselected button or option. |
+| `selectedTextStyle` | `TextStyle?` |  |  | Text style merged over the default of a selected button or option. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VToggleButtonStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? selectedBackgroundColor, Color? selectedForegroundColor, Color? borderColor, BorderRadius? borderRadius, EdgeInsets? padding})` | Creates a copy with only the specified properties changed. |
+| `VToggleButtonStyle copyWith({Color? backgroundColor, Color? foregroundColor, Color? selectedBackgroundColor, Color? selectedForegroundColor, Color? borderColor, BorderRadius? borderRadius, EdgeInsets? padding, Color? trackColor, EdgeInsets? trackPadding, TextStyle? textStyle, TextStyle? selectedTextStyle})` | Creates a copy with only the specified properties changed. |

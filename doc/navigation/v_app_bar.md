@@ -80,6 +80,8 @@ Creates an app bar with an optional shadow.
 | `foregroundColor` | `Color?` |  |  | Color of the title text, defaulting to the theme foreground. |
 | `elevation` | `double?` |  |  | Whether the bar casts a shadow, when above 0. |
 | `centerTitle` | `bool?` |  |  | Whether to center the title, defaulting to false except for [VAppBar.centered]. |
+| `toolbarHeight` | `double?` |  |  | Height of the bar row above [bottom], defaulting to the theme's `xl` size.<br>[preferredSize] uses the same value plus the height of [bottom]. |
+| `leadingWidth` | `double?` |  |  | Width of the leading slot, defaulting to the theme's `lg` size. |
 | `style` | `VAppBarStyle?` |  |  | Overrides for colors, padding and title style. |
 
 #### `VAppBar.transparent`
@@ -95,6 +97,8 @@ Transparent app bar.
 | `automaticallyImplyLeading` | `bool` | `true` |  | Whether to show a back button when [leading] is null and the route can pop. |
 | `foregroundColor` | `Color?` |  |  | Color of the title text, defaulting to the theme foreground. |
 | `centerTitle` | `bool?` |  |  | Whether to center the title, defaulting to false except for [VAppBar.centered]. |
+| `toolbarHeight` | `double?` |  |  | Height of the bar row above [bottom], defaulting to the theme's `xl` size.<br>[preferredSize] uses the same value plus the height of [bottom]. |
+| `leadingWidth` | `double?` |  |  | Width of the leading slot, defaulting to the theme's `lg` size. |
 | `style` | `VAppBarStyle?` |  |  | Overrides for colors, padding and title style. |
 
 #### `VAppBar.elevated`
@@ -111,6 +115,8 @@ Elevated app bar with shadow.
 | `backgroundColor` | `Color?` |  |  | Fill color, defaulting to the theme background. |
 | `foregroundColor` | `Color?` |  |  | Color of the title text, defaulting to the theme foreground. |
 | `centerTitle` | `bool?` |  |  | Whether to center the title, defaulting to false except for [VAppBar.centered]. |
+| `toolbarHeight` | `double?` |  |  | Height of the bar row above [bottom], defaulting to the theme's `xl` size.<br>[preferredSize] uses the same value plus the height of [bottom]. |
+| `leadingWidth` | `double?` |  |  | Width of the leading slot, defaulting to the theme's `lg` size. |
 | `style` | `VAppBarStyle?` |  |  | Overrides for colors, padding and title style. |
 
 #### `VAppBar.centered`
@@ -127,6 +133,8 @@ Centered title app bar.
 | `backgroundColor` | `Color?` |  |  | Fill color, defaulting to the theme background. |
 | `foregroundColor` | `Color?` |  |  | Color of the title text, defaulting to the theme foreground. |
 | `elevation` | `double?` |  |  | Whether the bar casts a shadow, when above 0. |
+| `toolbarHeight` | `double?` |  |  | Height of the bar row above [bottom], defaulting to the theme's `xl` size.<br>[preferredSize] uses the same value plus the height of [bottom]. |
+| `leadingWidth` | `double?` |  |  | Width of the leading slot, defaulting to the theme's `lg` size. |
 | `style` | `VAppBarStyle?` |  |  | Overrides for colors, padding and title style. |
 
 ## VAppBarStyle

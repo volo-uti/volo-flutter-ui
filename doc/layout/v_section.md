@@ -179,6 +179,7 @@ See also:
 | `subtitle` | `Widget?` |  |  | Line below [title], in the muted caption style. |
 | `trailing` | `Widget?` |  |  | Widget at the end of the row, such as a "See All" button. |
 | `padding` | `EdgeInsetsGeometry?` |  |  | Space around the header; none by default. |
+| `crossAxisAlignment` | `CrossAxisAlignment` | `CrossAxisAlignment.center` |  | Vertical alignment of the title block and [trailing] in the row. |
 
 ## VSectionFooter
 
@@ -239,9 +240,12 @@ Supports cascade: theme override → instance override.
 | `backgroundColor` | `Color?` |  |  | Background fill color. |
 | `padding` | `EdgeInsets?` |  |  | Internal padding. |
 | `titleStyle` | `TextStyle?` |  |  | Section title text style. |
+| `dividerIndent` | `double?` |  |  | Space before the start of the line between rows; defaults to `spacing.md`. |
+| `dividerEndIndent` | `double?` |  |  | Space after the end of the line between rows; defaults to `spacing.md`. |
+| `dividerColor` | `Color?` |  |  | Color of the line between rows; defaults to the border color. |
 
 ### Members
 
 | Member | Description |
 |---|---|
-| `VSectionStyle copyWith({Color? backgroundColor, EdgeInsets? padding, TextStyle? titleStyle})` | Creates a copy with only the specified properties changed. |
+| `VSectionStyle copyWith({Color? backgroundColor, EdgeInsets? padding, TextStyle? titleStyle, double? dividerIndent, double? dividerEndIndent, Color? dividerColor})` | Creates a copy with only the specified properties changed. |
