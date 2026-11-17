@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:ui' show SemanticsRole;
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/utils/v_debug.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_tabs_style.dart';
 
 /// An item displayed in a [VTabs] widget.
@@ -627,23 +629,27 @@ class _VTabsState extends State<VTabs> {
 
     final selectedIndex = _selectedIndex;
     final contentWidget = Expanded(
-      child: widget.swipeable
-          ? NotificationListener<ScrollNotification>(
-              onNotification: _handlePageScroll,
-              child: PageView(
-                controller: _pageController ??= PageController(
-                  initialPage: selectedIndex,
+      child: Semantics(
+        role: SemanticsRole.tabPanel,
+        container: true,
+        child: widget.swipeable
+            ? NotificationListener<ScrollNotification>(
+                onNotification: _handlePageScroll,
+                child: PageView(
+                  controller: _pageController ??= PageController(
+                    initialPage: selectedIndex,
+                  ),
+                  children: [for (final tab in widget.tabs) tab.content],
                 ),
-                children: [for (final tab in widget.tabs) tab.content],
+              )
+            : AnimatedSwitcher(
+                duration: theme.animations.fast,
+                child: KeyedSubtree(
+                  key: ValueKey(selectedIndex),
+                  child: widget.tabs[selectedIndex].content,
+                ),
               ),
-            )
-          : AnimatedSwitcher(
-              duration: theme.animations.fast,
-              child: KeyedSubtree(
-                key: ValueKey(selectedIndex),
-                child: widget.tabs[selectedIndex].content,
-              ),
-            ),
+      ),
     );
 
     // WHY: FocusTraversalGroup wraps both tab bar and content — ensures
@@ -725,20 +731,29 @@ class _VTabsState extends State<VTabs> {
       );
     });
 
+    // WHY: The bar role sits directly above the tabs, inside any scroll view,
+    // so the scroll view's own semantics node is not a child of the bar.
+    Widget bar(Widget flex) =>
+        Semantics(role: SemanticsRole.tabBar, container: true, child: flex);
+
     Widget tabBar;
     if (widget.orientation == Axis.vertical) {
       if (widget.isScrollable) {
-        tabBar = SingleChildScrollView(child: Column(children: tabWidgets));
+        tabBar = SingleChildScrollView(
+          child: bar(Column(children: tabWidgets)),
+        );
       } else {
-        tabBar = Column(mainAxisSize: MainAxisSize.min, children: tabWidgets);
+        tabBar = bar(
+          Column(mainAxisSize: MainAxisSize.min, children: tabWidgets),
+        );
       }
     } else if (widget.isScrollable) {
       tabBar = SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: Row(children: tabWidgets),
+        child: bar(Row(children: tabWidgets)),
       );
     } else {
-      tabBar = Row(children: tabWidgets);
+      tabBar = bar(Row(children: tabWidgets));
     }
 
     return Focus(
@@ -986,32 +1001,33 @@ class _TabItemState extends State<_TabItem> {
           )
         : null;
 
-    return Focus(
-      focusNode: widget.focusNode,
-      canRequestFocus: _isEnabled,
-      onFocusChange: (focused) {
-        setState(() => _isFocused = focused);
-        // Keep a focused tab visible inside a scrollable tab bar.
-        if (focused && Scrollable.maybeOf(context) != null) {
-          Scrollable.ensureVisible(context);
-        }
-      },
-      onKeyEvent: (node, event) {
-        // Enter and Space activate the focused tab.
-        if (event is KeyDownEvent &&
-            _isEnabled &&
-            (event.logicalKey == LogicalKeyboardKey.enter ||
-                event.logicalKey == LogicalKeyboardKey.numpadEnter ||
-                event.logicalKey == LogicalKeyboardKey.space)) {
-          widget.onTap?.call();
-          return KeyEventResult.handled;
-        }
-        return KeyEventResult.ignored;
-      },
-      child: Semantics(
-        button: true,
-        selected: widget.isSelected,
-        enabled: _isEnabled,
+    return Semantics(
+      role: SemanticsRole.tab,
+      container: true,
+      selected: widget.isSelected,
+      enabled: _isEnabled,
+      child: Focus(
+        focusNode: widget.focusNode,
+        canRequestFocus: _isEnabled,
+        onFocusChange: (focused) {
+          setState(() => _isFocused = focused);
+          // Keep a focused tab visible inside a scrollable tab bar.
+          if (focused && Scrollable.maybeOf(context) != null) {
+            Scrollable.ensureVisible(context);
+          }
+        },
+        onKeyEvent: (node, event) {
+          // Enter and Space activate the focused tab.
+          if (event is KeyDownEvent &&
+              _isEnabled &&
+              (event.logicalKey == LogicalKeyboardKey.enter ||
+                  event.logicalKey == LogicalKeyboardKey.numpadEnter ||
+                  event.logicalKey == LogicalKeyboardKey.space)) {
+            widget.onTap?.call();
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        },
         child: MouseRegion(
           onEnter: _handleMouseEnter,
           onExit: _handleMouseExit,
@@ -1021,13 +1037,15 @@ class _TabItemState extends State<_TabItem> {
           child: GestureDetector(
             onTap: widget.onTap,
             behavior: HitTestBehavior.opaque,
-            child: DecoratedBox(
-              decoration: focusDecoration ?? const BoxDecoration(),
-              child: AnimatedContainer(
-                duration: theme.animations.fast,
-                padding: widget.tabPadding,
-                decoration: decoration,
-                child: Center(child: tabContent),
+            child: VMinTapTarget(
+              child: DecoratedBox(
+                decoration: focusDecoration ?? const BoxDecoration(),
+                child: AnimatedContainer(
+                  duration: theme.animations.fast,
+                  padding: widget.tabPadding,
+                  decoration: decoration,
+                  child: Center(child: tabContent),
+                ),
               ),
             ),
           ),

@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
 
 void main() {
@@ -573,11 +574,89 @@ void main() {
   });
 
   group('VTabs Semantics', () {
-    testWidgets('tabs have button semantics', (tester) async {
+    testWidgets('tabs have the tab role', (tester) async {
       await tester.pumpWidget(buildTestWidget(VTabs(tabs: testTabs)));
 
       final semantics = tester.getSemantics(find.text('Tab 1'));
-      expect(semantics.getSemanticsData().flagsCollection.isButton, isTrue);
+      expect(semantics.getSemanticsData().role, SemanticsRole.tab);
+    });
+
+    for (final entry in <String, Widget Function()>{
+      'default': () => VTabs(tabs: testTabs),
+      'pills': () => VTabs.pills(tabs: testTabs),
+      'underline': () => VTabs.underline(tabs: testTabs),
+      'vertical': () => VTabs(tabs: testTabs, orientation: Axis.vertical),
+      'scrollable': () => VTabs(tabs: testTabs, isScrollable: true),
+      'swipeable': () => VTabs(tabs: testTabs, swipeable: true),
+      'scrollable vertical': () => VTabs.underline(
+        tabs: testTabs,
+        isScrollable: true,
+        orientation: Axis.vertical,
+      ),
+    }.entries) {
+      testWidgets('${entry.key}: bar, tab and panel roles build cleanly', (
+        tester,
+      ) async {
+        final handle = tester.ensureSemantics();
+        await tester.pumpWidget(buildTestWidget(entry.value()));
+
+        final bar = find.semantics.byPredicate(
+          (n) => n.getSemanticsData().role == SemanticsRole.tabBar,
+        );
+        expect(bar, findsOneWidget);
+        final tabs = find.semantics.byPredicate(
+          (n) => n.getSemanticsData().role == SemanticsRole.tab,
+        );
+        expect(tabs, findsNWidgets(testTabs.length));
+        expect(
+          find.semantics.byPredicate(
+            (n) => n.getSemanticsData().role == SemanticsRole.tabPanel,
+          ),
+          findsAtLeastNWidgets(1),
+        );
+        for (final n in tabs.evaluate()) {
+          expect(n.parent, bar.evaluate().single);
+        }
+        expect(tester.takeException(), isNull);
+        handle.dispose();
+      });
+    }
+
+    testWidgets('a disabled tab keeps the tab role and is not enabled', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        buildTestWidget(
+          const VTabs(
+            tabs: [
+              VTab(label: Text('A'), content: Text('a')),
+              VTab(label: Text('B'), content: Text('b'), enabled: false),
+            ],
+          ),
+        ),
+      );
+      final data = tester.getSemantics(find.text('B')).getSemanticsData();
+      expect(data.role, SemanticsRole.tab);
+      expect(data.flagsCollection.isEnabled, Tristate.isFalse);
+      handle.dispose();
+    });
+
+    testWidgets('a short tab hit area grows to the theme minimum', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          VTabs(
+            tabs: testTabs,
+            tabPadding: EdgeInsets.zero,
+            isScrollable: true,
+          ),
+        ),
+      );
+      final size = tester.getSize(find.byType(VMinTapTarget).first);
+      expect(size.height, greaterThanOrEqualTo(24));
+      expect(size.width, greaterThanOrEqualTo(24));
     });
 
     testWidgets('selected tab has selected semantics', (tester) async {
@@ -2185,7 +2264,7 @@ void main() {
       expect(isSelected(tester, 'Tab 2'), isTrue);
       expect(Focus.of(tester.element(find.text('Tab 2'))).hasFocus, isTrue);
       final data = tester.getSemantics(find.text('Tab 2')).getSemanticsData();
-      expect(data.flagsCollection.isButton, isTrue);
+      expect(data.role, SemanticsRole.tab);
     });
 
     testWidgets('a swipe onto a disabled tab slides back', (tester) async {
