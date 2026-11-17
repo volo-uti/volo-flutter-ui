@@ -41,13 +41,41 @@ Widget _sectionPlayground(BuildContext context) {
   final divider = k.boolean(label: 'divider', initialValue: true);
   final backgroundColor = k.colorOrNull(label: 'backgroundColor');
   final radius = k.doubleOrNull.slider(label: 'borderRadius', max: 48);
+  final dividerIndent = k.doubleOrNull.slider(label: 'dividerIndent', max: 64);
+  final dividerEndIndent = k.doubleOrNull.slider(
+    label: 'dividerEndIndent',
+    max: 64,
+  );
+  final dividerColor = k.colorOrNull(label: 'dividerColor');
+  final crossAxisAlignment = k.object.dropdown<CrossAxisAlignment>(
+    label: 'header crossAxisAlignment',
+    options: const [
+      CrossAxisAlignment.start,
+      CrossAxisAlignment.center,
+      CrossAxisAlignment.end,
+    ],
+    initialOption: CrossAxisAlignment.center,
+    labelBuilder: (v) => v.name,
+  );
+  final style = VSectionStyle(
+    dividerIndent: dividerIndent,
+    dividerEndIndent: dividerEndIndent,
+    dividerColor: dividerColor,
+  );
 
   const rows = <Widget>[
     VListTile(title: Text('Profile')),
     VListTile(title: Text('Notifications')),
     VListTile(title: Text('Privacy')),
   ];
-  final headerWidget = header == null ? null : Text(header);
+  final headerWidget = header == null
+      ? null
+      : VSectionHeader(
+          title: Text(header),
+          subtitle: const Text('Two lines'),
+          trailing: const Text('More'),
+          crossAxisAlignment: crossAxisAlignment,
+        );
   final footerWidget = footer == null ? null : Text(footer);
   final borderRadius = radius == null ? null : BorderRadius.circular(radius);
 
@@ -58,6 +86,7 @@ Widget _sectionPlayground(BuildContext context) {
       divider: divider,
       backgroundColor: backgroundColor,
       borderRadius: borderRadius,
+      style: style,
       children: rows,
     ),
     _SectionKind.card => VSection.card(
@@ -66,6 +95,7 @@ Widget _sectionPlayground(BuildContext context) {
       divider: divider,
       backgroundColor: backgroundColor,
       borderRadius: borderRadius,
+      style: style,
       children: rows,
     ),
     _SectionKind.inset => VSection.inset(
@@ -74,6 +104,7 @@ Widget _sectionPlayground(BuildContext context) {
       divider: divider,
       backgroundColor: backgroundColor,
       borderRadius: borderRadius,
+      style: style,
       children: rows,
     ),
   };

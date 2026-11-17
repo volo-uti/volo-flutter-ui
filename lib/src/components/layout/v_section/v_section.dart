@@ -213,8 +213,20 @@ class VSection extends StatelessWidget {
         contentChildren.add(
           Container(
             height: 1,
-            margin: EdgeInsets.symmetric(horizontal: theme.spacing.md),
-            color: theme.colors.border,
+            margin: EdgeInsetsDirectional.only(
+              start:
+                  instanceStyle?.dividerIndent ??
+                  themeStyle?.dividerIndent ??
+                  theme.spacing.md,
+              end:
+                  instanceStyle?.dividerEndIndent ??
+                  themeStyle?.dividerEndIndent ??
+                  theme.spacing.md,
+            ),
+            color:
+                instanceStyle?.dividerColor ??
+                themeStyle?.dividerColor ??
+                theme.colors.border,
           ),
         );
       }
@@ -312,6 +324,7 @@ class VSectionHeader extends StatelessWidget {
     this.subtitle,
     this.trailing,
     this.padding,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
   });
 
   /// Main heading, in the section title style.
@@ -326,6 +339,9 @@ class VSectionHeader extends StatelessWidget {
   /// Space around the header; none by default.
   final EdgeInsetsGeometry? padding;
 
+  /// Vertical alignment of the title block and [trailing] in the row.
+  final CrossAxisAlignment crossAxisAlignment;
+
   @override
   Widget build(BuildContext context) {
     final theme = VTheme.of(context);
@@ -333,6 +349,7 @@ class VSectionHeader extends StatelessWidget {
     return Padding(
       padding: padding ?? EdgeInsets.zero,
       child: Row(
+        crossAxisAlignment: crossAxisAlignment,
         children: [
           Expanded(
             child: Column(

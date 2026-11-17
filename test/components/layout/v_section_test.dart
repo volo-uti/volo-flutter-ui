@@ -471,4 +471,88 @@ void main() {
       expect(containerOf(tester).padding, const EdgeInsets.all(30));
     });
   });
+
+  group('VSection divider options', () {
+    Widget host(Widget child, {VThemeData? data}) => VTheme(
+      data: data ?? VThemeData.light(),
+      child: Directionality(textDirection: TextDirection.ltr, child: child),
+    );
+
+    Container dividerOf(WidgetTester tester) => tester
+        .widgetList<Container>(find.byType(Container))
+        .firstWhere((c) => c.constraints?.maxHeight == 1);
+
+    Widget section({VSectionStyle? style}) => VSection(
+      divider: true,
+      style: style,
+      children: const [Text('a'), Text('b')],
+    );
+
+    testWidgets('defaults keep height 1, md indent and border color', (
+      tester,
+    ) async {
+      final data = VThemeData.light();
+      await tester.pumpWidget(host(section(), data: data));
+      final c = dividerOf(tester);
+      expect(
+        c.margin,
+        EdgeInsetsDirectional.symmetric(horizontal: data.spacing.md),
+      );
+      expect(c.color, data.colors.border);
+    });
+
+    testWidgets('style indent, end indent and color apply', (tester) async {
+      const color = Color(0xFF123456);
+      await tester.pumpWidget(
+        host(
+          section(
+            style: const VSectionStyle(
+              dividerIndent: 40,
+              dividerEndIndent: 8,
+              dividerColor: color,
+            ),
+          ),
+        ),
+      );
+      final c = dividerOf(tester);
+      expect(c.margin, const EdgeInsetsDirectional.only(start: 40, end: 8));
+      expect(c.color, color);
+    });
+
+    testWidgets('header crossAxisAlignment defaults to center and changes', (
+      tester,
+    ) async {
+      await tester.pumpWidget(host(const VSectionHeader(title: Text('T'))));
+      expect(
+        tester.widget<Row>(find.byType(Row)).crossAxisAlignment,
+        CrossAxisAlignment.center,
+      );
+      await tester.pumpWidget(
+        host(
+          const VSectionHeader(
+            title: Text('T'),
+            crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+        ),
+      );
+      expect(
+        tester.widget<Row>(find.byType(Row)).crossAxisAlignment,
+        CrossAxisAlignment.start,
+      );
+    });
+
+    test('style copyWith, merge and equality cover divider fields', () {
+      const a = VSectionStyle(
+        dividerIndent: 1,
+        dividerColor: Color(0xFF000000),
+      );
+      const b = VSectionStyle(dividerEndIndent: 2);
+      final m = a.merge(b);
+      expect(m.dividerIndent, 1);
+      expect(m.dividerEndIndent, 2);
+      expect(m, a.copyWith(dividerEndIndent: 2));
+      expect(m.hashCode, a.copyWith(dividerEndIndent: 2).hashCode);
+      expect(m == a, isFalse);
+    });
+  });
 }
