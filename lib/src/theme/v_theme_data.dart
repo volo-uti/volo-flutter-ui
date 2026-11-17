@@ -1,3 +1,5 @@
+import 'dart:ui' show lerpDouble;
+
 import 'package:flutter/widgets.dart';
 
 import 'v_animations.dart';
@@ -41,6 +43,7 @@ class VThemeData {
     required this.borders,
     required this.gradients,
     this.componentOverrides = VComponentOverrides.empty,
+    this.minTapTargetSize = 24,
   });
 
   /// Volo brand theme - light mode (default).
@@ -89,7 +92,8 @@ class VThemeData {
       gradients = VGradients.lerp(a.gradients, b.gradients, t),
       componentOverrides = t < 0.5
           ? a.componentOverrides
-          : b.componentOverrides;
+          : b.componentOverrides,
+      minTapTargetSize = lerpDouble(a.minTapTargetSize, b.minTapTargetSize, t)!;
 
   /// Brightness mode (light / dark).
   final Brightness brightness;
@@ -127,6 +131,14 @@ class VThemeData {
   /// Component-level style overrides (Level 3 cascade).
   final VComponentOverrides componentOverrides;
 
+  /// Smallest area, in logical pixels, that a tappable widget responds to.
+  ///
+  /// Widgets keep their drawn size and grow only the area around them that
+  /// reacts to a tap, so a small control stays small but is still easy to hit.
+  /// The default of 24 follows WCAG 2.2 (2.5.8); raise it to 48 to meet the
+  /// Android tap target guideline.
+  final double minTapTargetSize;
+
   /// Whether the theme is dark mode.
   bool get isDark => brightness == Brightness.dark;
 
@@ -149,6 +161,7 @@ class VThemeData {
     VBorders? borders,
     VGradients? gradients,
     VComponentOverrides? componentOverrides,
+    double? minTapTargetSize,
   }) => VThemeData(
     brightness: brightness ?? this.brightness,
     colors: colors ?? this.colors,
@@ -161,6 +174,7 @@ class VThemeData {
     borders: borders ?? this.borders,
     gradients: gradients ?? this.gradients,
     componentOverrides: componentOverrides ?? this.componentOverrides,
+    minTapTargetSize: minTapTargetSize ?? this.minTapTargetSize,
   );
 
   @override
@@ -177,7 +191,8 @@ class VThemeData {
         other.sizes == sizes &&
         other.borders == borders &&
         other.gradients == gradients &&
-        other.componentOverrides == componentOverrides;
+        other.componentOverrides == componentOverrides &&
+        other.minTapTargetSize == minTapTargetSize;
   }
 
   @override
@@ -193,5 +208,6 @@ class VThemeData {
     borders,
     gradients,
     componentOverrides,
+    minTapTargetSize,
   );
 }
