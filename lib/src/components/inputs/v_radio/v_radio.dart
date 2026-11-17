@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_checkbox/v_checkbox.dart'
     show VWidgetSize;
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 
 import 'v_radio_style.dart';
 
@@ -388,11 +389,8 @@ class _VRadioState<T> extends State<VRadio<T>>
       );
     }
 
-    // Ensure minimum touch target of 24x24px (WCAG 2.2 SC 2.5.8)
-    radio = ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-      child: radio,
-    );
+    // Keep the tap area at least the theme's minimum tap target size.
+    radio = VMinTapTarget(child: radio);
 
     // Opacity when disabled
     radio = Opacity(opacity: _isEnabled ? 1.0 : 0.5, child: radio);

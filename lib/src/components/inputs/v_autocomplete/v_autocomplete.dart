@@ -9,6 +9,7 @@ import 'package:volo_flutter_ui/src/components/surfaces/v_popover/v_popover_styl
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/utils/v_debug.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 
 import 'v_autocomplete_style.dart';
 

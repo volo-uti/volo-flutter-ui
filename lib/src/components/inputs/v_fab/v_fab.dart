@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_fab_style.dart';
 
 /// Keys that activate the focused control.
@@ -336,11 +337,8 @@ class _VFabState extends State<VFab> with SingleTickerProviderStateMixin {
       ),
     );
 
-    // WCAG 2.5.8: Explicit minimum touch target 24x24
-    fab = ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-      child: fab,
-    );
+    // Keep the tap area at least the theme's minimum tap target size.
+    fab = VMinTapTarget(child: fab);
 
     // Gesture wrapping
     fab = GestureDetector(

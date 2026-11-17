@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
+import '../../utils/min_tap_helpers.dart';
 
 void main() {
   Widget buildTestWidget(Widget child) => VTheme(
@@ -176,5 +177,19 @@ void main() {
 
       expect(tappedIndex, equals(3));
     });
+  });
+
+  group('VPageIndicator min tap target', () {
+    testWidgets(
+      'dot tap target is at least the theme minimum and the drawn size is unchanged',
+      (tester) async {
+        await expectMinTapTarget(
+          tester,
+          VPageIndicator.dots(total: 3, current: 0, onPageChanged: (_) {}),
+          tap: find.byType(GestureDetector),
+          drawn: find.byType(AnimatedContainer),
+        );
+      },
+    );
   });
 }

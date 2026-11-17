@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/utils/keyboard_navigation_mixin.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_menu_style.dart';
 
 /// Corner of its trigger where a [VMenu] opens.
@@ -515,28 +516,30 @@ class _VMenuState extends State<VMenu> with KeyboardNavigationMixin<VMenu> {
             button: true,
             expanded: _isOpen,
             onTap: _toggleMenu,
-            child: DecoratedBox(
-              position: DecorationPosition.foreground,
-              decoration: BoxDecoration(
-                borderRadius: theme?.radius.smRadius,
-                border: showRing
-                    ? Border.all(color: theme.colors.ring, width: 2)
-                    : null,
-              ),
-              child: Stack(
-                children: [
-                  // Trigger widget (visual only, taps ignored)
-                  ExcludeFocus(child: IgnorePointer(child: widget.trigger)),
-                  // Tap handler on top
-                  Positioned.fill(
-                    child: ExcludeSemantics(
-                      child: GestureDetector(
-                        onTap: _toggleMenu,
-                        behavior: HitTestBehavior.opaque,
+            child: VMinTapTarget(
+              child: DecoratedBox(
+                position: DecorationPosition.foreground,
+                decoration: BoxDecoration(
+                  borderRadius: theme?.radius.smRadius,
+                  border: showRing
+                      ? Border.all(color: theme.colors.ring, width: 2)
+                      : null,
+                ),
+                child: Stack(
+                  children: [
+                    // Trigger widget (visual only, taps ignored)
+                    ExcludeFocus(child: IgnorePointer(child: widget.trigger)),
+                    // Tap handler on top
+                    Positioned.fill(
+                      child: ExcludeSemantics(
+                        child: GestureDetector(
+                          onTap: _toggleMenu,
+                          behavior: HitTestBehavior.opaque,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -689,44 +692,48 @@ class _MenuItemWidgetState extends State<_MenuItemWidget> {
         child: GestureDetector(
           onTap: _isEnabled ? widget.onTap : null,
           behavior: HitTestBehavior.opaque,
-          child: AnimatedContainer(
-            duration: theme.animations.fast,
-            padding:
-                widget.itemPadding ??
-                EdgeInsets.symmetric(
-                  horizontal: theme.spacing.sm,
-                  vertical: theme.spacing.xs,
-                ),
-            color: backgroundColor,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (item.leading != null)
-                  Padding(
-                    padding: EdgeInsetsDirectional.only(end: theme.spacing.md),
-                    child: IconTheme(
-                      data: IconThemeData(
-                        color: textColor,
-                        size: theme.sizes.sm.iconSize,
-                      ),
-                      child: item.leading!,
-                    ),
+          child: VMinTapTarget(
+            child: AnimatedContainer(
+              duration: theme.animations.fast,
+              padding:
+                  widget.itemPadding ??
+                  EdgeInsets.symmetric(
+                    horizontal: theme.spacing.sm,
+                    vertical: theme.spacing.xs,
                   ),
-                DefaultTextStyle.merge(style: labelStyle, child: item.child),
-                if (item.trailing != null)
-                  Padding(
-                    padding: EdgeInsetsDirectional.only(
-                      start: theme.spacing.md,
-                    ),
-                    child: IconTheme(
-                      data: IconThemeData(
-                        color: textColor,
-                        size: theme.sizes.sm.iconSize,
+              color: backgroundColor,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (item.leading != null)
+                    Padding(
+                      padding: EdgeInsetsDirectional.only(
+                        end: theme.spacing.md,
                       ),
-                      child: item.trailing!,
+                      child: IconTheme(
+                        data: IconThemeData(
+                          color: textColor,
+                          size: theme.sizes.sm.iconSize,
+                        ),
+                        child: item.leading!,
+                      ),
                     ),
-                  ),
-              ],
+                  DefaultTextStyle.merge(style: labelStyle, child: item.child),
+                  if (item.trailing != null)
+                    Padding(
+                      padding: EdgeInsetsDirectional.only(
+                        start: theme.spacing.md,
+                      ),
+                      child: IconTheme(
+                        data: IconThemeData(
+                          color: textColor,
+                          size: theme.sizes.sm.iconSize,
+                        ),
+                        child: item.trailing!,
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ),

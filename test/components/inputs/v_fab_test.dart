@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
+import '../../utils/min_tap_helpers.dart';
 
 void main() {
   group('VFab', () {
@@ -252,5 +253,22 @@ void main() {
       await tester.pump();
       expect(decorationOf(tester).color, theme.colors.primary);
     });
+  });
+
+  group('VFab min tap target', () {
+    testWidgets(
+      'tap target is at least the theme minimum and the drawn size is unchanged',
+      (tester) async {
+        await expectMinTapTarget(
+          tester,
+          VFab.small(icon: VIcons.close(), onPressed: () {}),
+          tap: find.byType(VFab),
+          drawn: find.descendant(
+            of: find.byType(VFab),
+            matching: find.byType(Container),
+          ),
+        );
+      },
+    );
   });
 }

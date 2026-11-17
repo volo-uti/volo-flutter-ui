@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
+import '../../utils/min_tap_helpers.dart';
 
 void main() {
   group('VLink', () {
@@ -87,5 +88,19 @@ void main() {
         expect(find.text('Link'), findsOneWidget);
       }
     });
+  });
+
+  group('VLink min tap target', () {
+    testWidgets(
+      'tap target is at least the theme minimum and the drawn size is unchanged',
+      (tester) async {
+        await expectMinTapTarget(
+          tester,
+          VLink(child: const Text('Go'), onTap: () {}),
+          tap: find.byType(VLink),
+          drawn: find.text('Go'),
+        );
+      },
+    );
   });
 }

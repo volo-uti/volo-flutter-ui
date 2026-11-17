@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_snackbar_style.dart';
 
 /// Text button shown at the end of a [VSnackbar], such as "Undo".
@@ -458,20 +459,22 @@ class VSnackbar extends StatelessWidget {
                     // fire twice (for example "Undo").
                     _hide();
                   },
-                  // Min 24x24px touch target (WCAG 2.2 SC 2.5.8)
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: theme.spacing.sm,
-                      vertical: theme.spacing.xs,
-                    ),
-                    child: Text(
-                      action!.label,
-                      style: typography.labelMedium.copyWith(
-                        color:
-                            effectiveActionColor ??
-                            action!.textColor ??
-                            textColor,
-                        fontWeight: FontWeight.w600,
+                  // Grown to the theme minimum tap target size.
+                  child: VMinTapTarget(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: theme.spacing.sm,
+                        vertical: theme.spacing.xs,
+                      ),
+                      child: Text(
+                        action!.label,
+                        style: typography.labelMedium.copyWith(
+                          color:
+                              effectiveActionColor ??
+                              action!.textColor ??
+                              textColor,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),

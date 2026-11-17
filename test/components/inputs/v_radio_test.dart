@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
+import '../../utils/min_tap_helpers.dart';
 
 void main() {
   group('VRadio', () {
@@ -217,5 +218,22 @@ void main() {
         expect(find.byType(VRadio<String>), findsOneWidget);
       });
     });
+  });
+
+  group('VRadio min tap target', () {
+    testWidgets(
+      'tap target is at least the theme minimum and the drawn size is unchanged',
+      (tester) async {
+        await expectMinTapTarget(
+          tester,
+          VRadio<int>(value: 1, groupValue: 0, onChanged: (_) {}),
+          tap: find.byType(VRadio<int>),
+          drawn: find.descendant(
+            of: find.byType(VRadio<int>),
+            matching: find.byType(AnimatedContainer),
+          ),
+        );
+      },
+    );
   });
 }

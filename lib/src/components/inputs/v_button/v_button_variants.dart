@@ -578,7 +578,7 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
             ? _handleLongPress
             : null,
         behavior: HitTestBehavior.opaque,
-        child: button,
+        child: VMinTapTarget(child: button),
       ),
     );
 

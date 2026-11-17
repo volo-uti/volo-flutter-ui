@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_popover_style.dart';
 
 /// {@template v_popover_position}
@@ -431,33 +432,35 @@ class _VPopoverState extends State<VPopover>
               }
               return KeyEventResult.ignored;
             },
-            child: DecoratedBox(
-              position: DecorationPosition.foreground,
-              decoration: BoxDecoration(
-                borderRadius: (VTheme.maybeOf(context) ?? VThemeData.light())
-                    .radius
-                    .mdRadius,
-                border: _triggerFocused
-                    ? Border.all(
-                        color: (VTheme.maybeOf(context) ?? VThemeData.light())
-                            .colors
-                            .ring,
-                        width: 2,
-                      )
-                    : null,
-              ),
-              child: Stack(
-                children: [
-                  // Child widget (visual only, taps ignored)
-                  IgnorePointer(child: widget.child),
-                  // Tap handler on top
-                  Positioned.fill(
-                    child: GestureDetector(
-                      onTap: _togglePopover,
-                      behavior: HitTestBehavior.opaque,
+            child: VMinTapTarget(
+              child: DecoratedBox(
+                position: DecorationPosition.foreground,
+                decoration: BoxDecoration(
+                  borderRadius: (VTheme.maybeOf(context) ?? VThemeData.light())
+                      .radius
+                      .mdRadius,
+                  border: _triggerFocused
+                      ? Border.all(
+                          color: (VTheme.maybeOf(context) ?? VThemeData.light())
+                              .colors
+                              .ring,
+                          width: 2,
+                        )
+                      : null,
+                ),
+                child: Stack(
+                  children: [
+                    // Child widget (visual only, taps ignored)
+                    IgnorePointer(child: widget.child),
+                    // Tap handler on top
+                    Positioned.fill(
+                      child: GestureDetector(
+                        onTap: _togglePopover,
+                        behavior: HitTestBehavior.opaque,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

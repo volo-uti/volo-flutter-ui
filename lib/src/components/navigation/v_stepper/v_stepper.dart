@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_button/v_button.dart';
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 
 import 'v_stepper_style.dart';
 
@@ -364,9 +365,11 @@ class VStepper extends StatelessWidget {
                 final stepIndex = index ~/ 2;
                 final isCompleted = stepIndex < _effectiveCurrentStep;
                 return Expanded(
-                  child: Container(
-                    height: 1,
-                    color: isCompleted ? connectorActiveColor : colors.border,
+                  child: VMinTapTarget(
+                    child: Container(
+                      height: 1,
+                      color: isCompleted ? connectorActiveColor : colors.border,
+                    ),
                   ),
                 );
               }
@@ -581,14 +584,19 @@ class VStepper extends StatelessWidget {
             child: GestureDetector(
               onTap: onTap,
               behavior: HitTestBehavior.opaque,
-              child: DecoratedBox(
-                decoration: isFocused && isTappable
-                    ? BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: theme.colors.ring, width: 2),
-                      )
-                    : const BoxDecoration(),
-                child: icon,
+              child: VMinTapTarget(
+                child: DecoratedBox(
+                  decoration: isFocused && isTappable
+                      ? BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: theme.colors.ring,
+                            width: 2,
+                          ),
+                        )
+                      : const BoxDecoration(),
+                  child: icon,
+                ),
               ),
             ),
           );

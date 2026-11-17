@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_switch/v_switch.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 
 import 'v_switch_list_tile_style.dart';
 
@@ -266,7 +267,7 @@ class _VSwitchListTileState extends State<VSwitchListTile> {
             onTapUp: (_) => setState(() => _isPressed = false),
             onTapCancel: () => setState(() => _isPressed = false),
             onTap: _handleTap,
-            child: tile,
+            child: VMinTapTarget(child: tile),
           ),
         ),
       );

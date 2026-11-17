@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
+import '../../utils/min_tap_helpers.dart';
 
 void main() {
   Widget buildTestWidget(Widget child) => VTheme(
@@ -217,5 +218,24 @@ void main() {
 
       expect(taps, 2);
     });
+  });
+
+  group('VBreadcrumb min tap target', () {
+    testWidgets(
+      'link tap target is at least the theme minimum and the drawn size is unchanged',
+      (tester) async {
+        await expectMinTapTarget(
+          tester,
+          VBreadcrumb(
+            items: [
+              VBreadcrumbItem(label: const Text('Home'), onTap: () {}),
+              const VBreadcrumbItem(label: Text('Now'), active: true),
+            ],
+          ),
+          tap: find.byType(GestureDetector),
+          drawn: find.text('Home'),
+        );
+      },
+    );
   });
 }

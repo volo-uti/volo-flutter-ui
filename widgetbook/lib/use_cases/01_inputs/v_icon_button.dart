@@ -49,67 +49,80 @@ Widget _iconButtonPlayground(BuildContext context) {
   final enabled = k.boolean(label: 'enabled', initialValue: true);
   final loading = k.boolean(label: 'loading');
   final pressable = k.boolean(label: 'onPressed', initialValue: true);
+  final minTapTargetSize = k.int.slider(
+    label: 'minTapTargetSize',
+    initialValue: 24,
+    min: 24,
+    max: 64,
+  );
 
-  return StatefulBuilder(
-    builder: (context, setState) {
-      const icon = Icon(IconData(0xe87e, fontFamily: 'MaterialIcons'));
-      const selectedIcon = Icon(IconData(0xe87d, fontFamily: 'MaterialIcons'));
-      final onPressed = pressable
-          ? () => setState(() => selected = !selected)
-          : null;
-      final isSelected = toggle ? selected : null;
-      final tip = tooltip.isEmpty ? null : tooltip;
+  return VTheme(
+    data: VTheme.of(
+      context,
+    ).copyWith(minTapTargetSize: minTapTargetSize.toDouble()),
+    child: StatefulBuilder(
+      builder: (context, setState) {
+        const icon = Icon(IconData(0xe87e, fontFamily: 'MaterialIcons'));
+        const selectedIcon = Icon(
+          IconData(0xe87d, fontFamily: 'MaterialIcons'),
+        );
+        final onPressed = pressable
+            ? () => setState(() => selected = !selected)
+            : null;
+        final isSelected = toggle ? selected : null;
+        final tip = tooltip.isEmpty ? null : tooltip;
 
-      return WidgetbookPlayground(
-        info: ['isSelected: $isSelected'],
-        child: switch (variant) {
-          _IconButtonVariant.standard => VIconButton(
-            icon: icon,
-            selectedIcon: selectedIcon,
-            isSelected: isSelected,
-            onPressed: onPressed,
-            tooltip: tip,
-            size: size,
-            color: color,
-            loading: loading,
-            enabled: enabled,
-          ),
-          _IconButtonVariant.filled => VIconButton.filled(
-            icon: icon,
-            selectedIcon: selectedIcon,
-            isSelected: isSelected,
-            onPressed: onPressed,
-            tooltip: tip,
-            size: size,
-            color: color,
-            loading: loading,
-            enabled: enabled,
-          ),
-          _IconButtonVariant.outlined => VIconButton.outlined(
-            icon: icon,
-            selectedIcon: selectedIcon,
-            isSelected: isSelected,
-            onPressed: onPressed,
-            tooltip: tip,
-            size: size,
-            color: color,
-            loading: loading,
-            enabled: enabled,
-          ),
-          _IconButtonVariant.filledTonal => VIconButton.filledTonal(
-            icon: icon,
-            selectedIcon: selectedIcon,
-            isSelected: isSelected,
-            onPressed: onPressed,
-            tooltip: tip,
-            size: size,
-            color: color,
-            loading: loading,
-            enabled: enabled,
-          ),
-        },
-      );
-    },
+        return WidgetbookPlayground(
+          info: ['isSelected: $isSelected'],
+          child: switch (variant) {
+            _IconButtonVariant.standard => VIconButton(
+              icon: icon,
+              selectedIcon: selectedIcon,
+              isSelected: isSelected,
+              onPressed: onPressed,
+              tooltip: tip,
+              size: size,
+              color: color,
+              loading: loading,
+              enabled: enabled,
+            ),
+            _IconButtonVariant.filled => VIconButton.filled(
+              icon: icon,
+              selectedIcon: selectedIcon,
+              isSelected: isSelected,
+              onPressed: onPressed,
+              tooltip: tip,
+              size: size,
+              color: color,
+              loading: loading,
+              enabled: enabled,
+            ),
+            _IconButtonVariant.outlined => VIconButton.outlined(
+              icon: icon,
+              selectedIcon: selectedIcon,
+              isSelected: isSelected,
+              onPressed: onPressed,
+              tooltip: tip,
+              size: size,
+              color: color,
+              loading: loading,
+              enabled: enabled,
+            ),
+            _IconButtonVariant.filledTonal => VIconButton.filledTonal(
+              icon: icon,
+              selectedIcon: selectedIcon,
+              isSelected: isSelected,
+              onPressed: onPressed,
+              tooltip: tip,
+              size: size,
+              color: color,
+              loading: loading,
+              enabled: enabled,
+            ),
+          },
+        );
+      },
+    ),
   );
 }
 

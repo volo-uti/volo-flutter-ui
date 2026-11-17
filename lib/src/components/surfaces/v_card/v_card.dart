@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_card_style.dart';
 
 /// {@template v_card}
@@ -256,7 +257,7 @@ class _VCardState extends State<VCard> {
             onTapCancel: () => setState(() => _isPressed = false),
             onTap: widget.onTap,
             onLongPress: widget.onLongPress,
-            child: card,
+            child: VMinTapTarget(child: card),
           ),
         ),
       );

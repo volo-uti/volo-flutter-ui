@@ -719,12 +719,13 @@ class _Chip extends StatelessWidget {
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: onRemove,
-              // Min 24x24px touch target (WCAG 2.2 SC 2.5.8)
-              child: Padding(
-                padding: EdgeInsets.all(theme.spacing.xs),
-                child: VIcons.close(
-                  color: colors.mutedForeground,
-                  size: theme.sizes.xs.iconSize,
+              child: VMinTapTarget(
+                child: Padding(
+                  padding: EdgeInsets.all(theme.spacing.xs),
+                  child: VIcons.close(
+                    color: colors.mutedForeground,
+                    size: theme.sizes.xs.iconSize,
+                  ),
                 ),
               ),
             ),

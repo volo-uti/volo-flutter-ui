@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_link_style.dart';
 
 /// Keys that activate the focused control.
@@ -177,11 +178,8 @@ class _VLinkState extends State<VLink> {
       ),
     );
 
-    // WCAG 2.5.8: Minimum touch target 24x24
-    content = ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-      child: content,
-    );
+    // Keep the tap area at least the theme's minimum tap target size.
+    content = VMinTapTarget(child: content);
 
     content = MouseRegion(
       cursor: widget.onTap != null

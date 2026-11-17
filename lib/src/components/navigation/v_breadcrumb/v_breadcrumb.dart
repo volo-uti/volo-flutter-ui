@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_breadcrumb_style.dart';
 
 /// An item displayed in a [VBreadcrumb].
@@ -266,7 +267,6 @@ class VBreadcrumb extends StatelessWidget {
       return Semantics(child: content);
     }
 
-    // WCAG 2.5.8: Minimum touch target 24x24
     return Focus(
       onKeyEvent: (node, event) {
         // Enter and Space follow the focused link.
@@ -284,10 +284,9 @@ class VBreadcrumb extends StatelessWidget {
           final isFocused = Focus.of(focusContext).hasFocus;
           return Semantics(
             link: true,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-              child: GestureDetector(
-                onTap: item.onTap,
+            child: GestureDetector(
+              onTap: item.onTap,
+              child: VMinTapTarget(
                 child: MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: Container(

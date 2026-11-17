@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_checkbox/v_checkbox.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_checkbox/v_checkbox_style.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 
 import 'v_check_list_tile_style.dart';
 
@@ -286,7 +287,7 @@ class _VCheckListTileState extends State<VCheckListTile> {
             onTapUp: (_) => setState(() => _isPressed = false),
             onTapCancel: () => setState(() => _isPressed = false),
             onTap: _handleTap,
-            child: tile,
+            child: VMinTapTarget(child: tile),
           ),
         ),
       );

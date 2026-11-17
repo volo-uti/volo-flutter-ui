@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_chip_style.dart';
 
 /// Minimum height presets for a [VChip].
@@ -320,7 +321,7 @@ class _VChipState extends State<VChip> with SingleTickerProviderStateMixin {
     // Label
     children.add(Flexible(child: labelWidget));
 
-    // Input chip: delete button (WCAG 2.5.8: minimum touch target 24x24)
+    // Input chip: delete button (its tap area grows to the minimum tap target size)
     if (widget._variant == _VChipVariant.input &&
         widget.onDeleted != null &&
         _isEnabled) {
@@ -330,10 +331,9 @@ class _VChipState extends State<VChip> with SingleTickerProviderStateMixin {
           // Its own node, so a screen reader can reach delete apart from the chip.
           container: true,
           label: VoloLocalizations.of(context).chipDelete,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-            child: GestureDetector(
-              onTap: widget.onDeleted,
+          child: GestureDetector(
+            onTap: widget.onDeleted,
+            child: VMinTapTarget(
               child: Padding(
                 padding: EdgeInsets.only(left: gap),
                 child: VIcons.close(
@@ -408,7 +408,7 @@ class _VChipState extends State<VChip> with SingleTickerProviderStateMixin {
           onTapUp: (_) => setState(() => _isPressed = false),
           onTapCancel: () => setState(() => _isPressed = false),
           onTap: _handleTap,
-          child: chip,
+          child: VMinTapTarget(child: chip),
         ),
       );
     }

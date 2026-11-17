@@ -8,6 +8,7 @@ import 'package:volo_flutter_ui/src/components/surfaces/v_popover/v_popover_styl
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/utils/v_debug.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 
 import 'v_select_style.dart';
 
@@ -640,40 +641,42 @@ class _VSelectState<T> extends State<VSelect<T>> {
                           onTap: isItemEnabled
                               ? () => _handleSelect(item)
                               : null,
-                          child: MouseRegion(
-                            onEnter: (_) =>
-                                setState(() => _hoveredIndex = index),
-                            onExit: (_) => setState(() => _hoveredIndex = -1),
-                            child: Container(
-                              constraints: BoxConstraints(
-                                minHeight: sizeToken.height,
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: sizeToken.paddingHorizontal,
-                              ),
-                              color: _hoveredIndex == index
-                                  ? colors.accent
-                                  : isSelected
-                                  ? colors.accent.withValues(alpha: 0.5)
-                                  : VColors.transparent,
-                              child: Opacity(
-                                opacity: isItemEnabled ? 1.0 : 0.5,
-                                child: Row(
-                                  children: [
-                                    if (item.leading != null)
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          right: sizeToken.spacing,
+                          child: VMinTapTarget(
+                            child: MouseRegion(
+                              onEnter: (_) =>
+                                  setState(() => _hoveredIndex = index),
+                              onExit: (_) => setState(() => _hoveredIndex = -1),
+                              child: Container(
+                                constraints: BoxConstraints(
+                                  minHeight: sizeToken.height,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: sizeToken.paddingHorizontal,
+                                ),
+                                color: _hoveredIndex == index
+                                    ? colors.accent
+                                    : isSelected
+                                    ? colors.accent.withValues(alpha: 0.5)
+                                    : VColors.transparent,
+                                child: Opacity(
+                                  opacity: isItemEnabled ? 1.0 : 0.5,
+                                  child: Row(
+                                    children: [
+                                      if (item.leading != null)
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            right: sizeToken.spacing,
+                                          ),
+                                          child: item.leading,
                                         ),
-                                        child: item.leading,
-                                      ),
-                                    Expanded(child: labelWidget),
-                                    if (isSelected)
-                                      VIcons.check(
-                                        color: colors.primary,
-                                        size: sizeToken.iconSize,
-                                      ),
-                                  ],
+                                      Expanded(child: labelWidget),
+                                      if (isSelected)
+                                        VIcons.check(
+                                          color: colors.primary,
+                                          size: sizeToken.iconSize,
+                                        ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

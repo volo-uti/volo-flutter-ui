@@ -6,6 +6,7 @@ import 'package:volo_flutter_ui/src/components/inputs/v_checkbox/v_checkbox.dart
     show VWidgetSize;
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/utils/v_debug.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 
 import 'v_switch_style.dart';
 
@@ -371,11 +372,8 @@ class _VSwitchState extends State<VSwitch> with SingleTickerProviderStateMixin {
       child: switchWidget,
     );
 
-    // WCAG 2.5.8: Minimum touch target 24x24
-    switchWidget = ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-      child: switchWidget,
-    );
+    // Keep the tap area at least the theme's minimum tap target size.
+    switchWidget = VMinTapTarget(child: switchWidget);
 
     // MouseRegion + gesture wrapping
     switchWidget = MouseRegion(

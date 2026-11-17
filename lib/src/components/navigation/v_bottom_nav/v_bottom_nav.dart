@@ -234,7 +234,8 @@ class VBottomNav extends StatelessWidget {
                   onTap?.call(index);
                 }
 
-                // WCAG 2.5.8: Minimum touch target 24x24
+                // Each destination fills its share of a bar at least 80 high, so it is above
+                // the minimum tap target size.
                 return Expanded(
                   child: Focus(
                     onKeyEvent: (node, event) {

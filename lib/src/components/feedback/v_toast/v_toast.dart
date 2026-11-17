@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_toast_style.dart';
 
 /// Toast position.
@@ -332,16 +333,18 @@ class VToast extends StatelessWidget {
                   // fire twice (for example "Undo").
                   dismiss(context);
                 },
-                // Min 24x24px touch target (WCAG 2.2 SC 2.5.8)
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: theme.spacing.sm,
-                    vertical: theme.spacing.xs,
-                  ),
-                  child: Text(
-                    action!.label,
-                    style: typography.labelMedium.copyWith(
-                      color: colors.primary,
+                // Grown to the theme minimum tap target size.
+                child: VMinTapTarget(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: theme.spacing.sm,
+                      vertical: theme.spacing.xs,
+                    ),
+                    child: Text(
+                      action!.label,
+                      style: typography.labelMedium.copyWith(
+                        color: colors.primary,
+                      ),
                     ),
                   ),
                 ),

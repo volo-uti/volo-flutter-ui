@@ -10,6 +10,7 @@ import 'package:volo_flutter_ui/src/components/inputs/v_form_field/v_form_field_
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/utils/v_debug.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 
 import 'v_text_field_style.dart';
 
@@ -700,11 +701,13 @@ class _VTextFieldState extends State<VTextField> {
           onTap: _handleClear,
           child: GestureDetector(
             onTap: _handleClear,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: theme.spacing.xs),
-              child: _ClearIcon(
-                color: colors.mutedForeground,
-                size: sizeToken.iconSize,
+            child: VMinTapTarget(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: theme.spacing.xs),
+                child: _ClearIcon(
+                  color: colors.mutedForeground,
+                  size: sizeToken.iconSize,
+                ),
               ),
             ),
           ),
@@ -723,12 +726,14 @@ class _VTextFieldState extends State<VTextField> {
           onTap: _toggleObscure,
           child: GestureDetector(
             onTap: _toggleObscure,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: theme.spacing.xs),
-              child: _EyeIcon(
-                open: !_obscureText,
-                color: colors.mutedForeground,
-                size: sizeToken.iconSize,
+            child: VMinTapTarget(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: theme.spacing.xs),
+                child: _EyeIcon(
+                  open: !_obscureText,
+                  color: colors.mutedForeground,
+                  size: sizeToken.iconSize,
+                ),
               ),
             ),
           ),

@@ -3,6 +3,7 @@ import 'package:volo_flutter_ui/src/components/inputs/v_date_picker/v_date_picke
     show VDateTimeRange;
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 
 import 'v_calendar_style.dart';
 
@@ -558,13 +559,15 @@ class _VCalendarState extends State<VCalendar> {
         GestureDetector(
           onTap: _previousMonth,
           behavior: HitTestBehavior.opaque,
-          child: Container(
-            width: sizes.sm.height,
-            height: sizes.sm.height,
-            alignment: Alignment.center,
-            child: VIcons.chevronLeft(
-              size: sizes.lg.iconSize,
-              color: colors.foreground,
+          child: VMinTapTarget(
+            child: Container(
+              width: sizes.sm.height,
+              height: sizes.sm.height,
+              alignment: Alignment.center,
+              child: VIcons.chevronLeft(
+                size: sizes.lg.iconSize,
+                color: colors.foreground,
+              ),
             ),
           ),
         ),
@@ -577,13 +580,15 @@ class _VCalendarState extends State<VCalendar> {
         GestureDetector(
           onTap: _nextMonth,
           behavior: HitTestBehavior.opaque,
-          child: Container(
-            width: sizes.sm.height,
-            height: sizes.sm.height,
-            alignment: Alignment.center,
-            child: VIcons.chevronRight(
-              size: sizes.lg.iconSize,
-              color: colors.foreground,
+          child: VMinTapTarget(
+            child: Container(
+              width: sizes.sm.height,
+              height: sizes.sm.height,
+              alignment: Alignment.center,
+              child: VIcons.chevronRight(
+                size: sizes.lg.iconSize,
+                color: colors.foreground,
+              ),
             ),
           ),
         ),
@@ -641,48 +646,50 @@ class _VCalendarState extends State<VCalendar> {
             ? () => _handleDateSelect(date)
             : null,
         behavior: HitTestBehavior.opaque,
-        child: Container(
-          height: 36,
-          margin: const EdgeInsets.symmetric(vertical: 1),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: VTheme.of(context).radius.xsRadius,
-          ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Text(
-                '${date.day}',
-                style: typography.bodySmall.copyWith(
-                  color: textColor,
-                  fontWeight: isToday && !isOutsideMonth
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                ),
-              ),
-              // Event indicators
-              if (events.isNotEmpty)
-                Positioned(
-                  bottom: 2,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: events
-                        .take(3)
-                        .map(
-                          (event) => Container(
-                            width: 4,
-                            height: 4,
-                            margin: const EdgeInsets.symmetric(horizontal: 1),
-                            decoration: BoxDecoration(
-                              color: event.color ?? colors.primary,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        )
-                        .toList(),
+        child: VMinTapTarget(
+          child: Container(
+            height: 36,
+            margin: const EdgeInsets.symmetric(vertical: 1),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: VTheme.of(context).radius.xsRadius,
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Text(
+                  '${date.day}',
+                  style: typography.bodySmall.copyWith(
+                    color: textColor,
+                    fontWeight: isToday && !isOutsideMonth
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
-            ],
+                // Event indicators
+                if (events.isNotEmpty)
+                  Positioned(
+                    bottom: 2,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: events
+                          .take(3)
+                          .map(
+                            (event) => Container(
+                              width: 4,
+                              height: 4,
+                              margin: const EdgeInsets.symmetric(horizontal: 1),
+                              decoration: BoxDecoration(
+                                color: event.color ?? colors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

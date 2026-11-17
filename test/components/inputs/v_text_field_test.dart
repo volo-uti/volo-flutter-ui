@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
+import '../../utils/min_tap_helpers.dart';
 
 void main() {
   group('VTextField', () {
@@ -999,6 +1000,37 @@ void main() {
         greaterThan(theme.sizes.md.height),
       );
     });
+  });
+
+  group('VTextField min tap target', () {
+    testWidgets(
+      'clear button tap target is at least the theme minimum and the drawn size is unchanged',
+      (tester) async {
+        await expectMinTapTarget(
+          tester,
+          const VTextField(name: 'q', value: 'abc', clearable: true),
+          tap: find.bySemanticsLabel('Clear'),
+          drawn: find.descendant(
+            of: find.bySemanticsLabel('Clear'),
+            matching: find.byType(CustomPaint),
+          ),
+        );
+      },
+    );
+    testWidgets(
+      'show password tap target is at least the theme minimum and the drawn size is unchanged',
+      (tester) async {
+        await expectMinTapTarget(
+          tester,
+          const VTextField.password(name: 'p'),
+          tap: find.bySemanticsLabel('Show password'),
+          drawn: find.descendant(
+            of: find.bySemanticsLabel('Show password'),
+            matching: find.byType(CustomPaint),
+          ),
+        );
+      },
+    );
   });
 }
 

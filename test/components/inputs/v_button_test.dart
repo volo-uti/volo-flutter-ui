@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
+import '../../utils/min_tap_helpers.dart';
 
 void main() {
   group('VButton', () {
@@ -1169,5 +1170,22 @@ void main() {
         expect(leadingColor, theme.colors.primaryForeground);
       });
     });
+  });
+
+  group('VButton min tap target', () {
+    testWidgets(
+      'tap target is at least the theme minimum and the drawn size is unchanged',
+      (tester) async {
+        await expectMinTapTarget(
+          tester,
+          VButton(onPressed: () {}, child: const Text('A')),
+          tap: find.byType(VButton),
+          drawn: find.descendant(
+            of: find.byType(VButton),
+            matching: find.byType(AnimatedContainer),
+          ),
+        );
+      },
+    );
   });
 }

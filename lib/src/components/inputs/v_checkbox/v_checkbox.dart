@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/utils/v_debug.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_checkbox_style.dart';
 
 /// Keys that activate the focused control.
@@ -342,11 +343,8 @@ class _VCheckboxState extends State<VCheckbox>
       );
     }
 
-    // Ensure minimum touch target of 24x24px (WCAG 2.2 SC 2.5.8)
-    checkbox = ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-      child: checkbox,
-    );
+    // Keep the tap area at least the theme's minimum tap target size.
+    checkbox = VMinTapTarget(child: checkbox);
 
     // Opacity when disabled
     checkbox = Opacity(opacity: _isEnabled ? 1.0 : 0.5, child: checkbox);

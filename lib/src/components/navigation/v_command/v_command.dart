@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_command_style.dart';
 
 /// Decides whether [item] matches [query] in a [VCommand].
@@ -671,53 +672,55 @@ class _VCommandState extends State<VCommand>
                 ),
               )
             : null,
-        child: MouseRegion(
-          onEnter: (_) {
-            final filteredIndex = _getFilteredIndex(item);
-            if (filteredIndex != -1) {
-              setState(() => _highlightedIndex = filteredIndex);
-            }
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: theme.spacing.md,
-              vertical: theme.spacing.md,
-            ),
-            color: isHighlighted ? theme.colors.accent : VColors.transparent,
-            child: Opacity(
-              opacity: item.enabled ? 1.0 : 0.5,
-              child: Row(
-                children: [
-                  if (item.leading != null)
-                    Padding(
-                      padding: EdgeInsetsDirectional.only(
-                        end: theme.spacing.sm,
+        child: VMinTapTarget(
+          child: MouseRegion(
+            onEnter: (_) {
+              final filteredIndex = _getFilteredIndex(item);
+              if (filteredIndex != -1) {
+                setState(() => _highlightedIndex = filteredIndex);
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: theme.spacing.md,
+                vertical: theme.spacing.md,
+              ),
+              color: isHighlighted ? theme.colors.accent : VColors.transparent,
+              child: Opacity(
+                opacity: item.enabled ? 1.0 : 0.5,
+                child: Row(
+                  children: [
+                    if (item.leading != null)
+                      Padding(
+                        padding: EdgeInsetsDirectional.only(
+                          end: theme.spacing.sm,
+                        ),
+                        child: item.leading,
                       ),
-                      child: item.leading,
-                    ),
-                  Expanded(
-                    child: DefaultTextStyle.merge(
-                      style: theme.typography.bodyMedium.copyWith(
-                        color: theme.colors.foreground,
+                    Expanded(
+                      child: DefaultTextStyle.merge(
+                        style: theme.typography.bodyMedium.copyWith(
+                          color: theme.colors.foreground,
+                        ),
+                        child: _query.isNotEmpty
+                            ? _buildHighlightedText(
+                                context,
+                                item.child,
+                                _query,
+                                theme,
+                              )
+                            : item.child,
                       ),
-                      child: _query.isNotEmpty
-                          ? _buildHighlightedText(
-                              context,
-                              item.child,
-                              _query,
-                              theme,
-                            )
-                          : item.child,
                     ),
-                  ),
-                  if (item.trailing != null)
-                    Padding(
-                      padding: EdgeInsetsDirectional.only(
-                        start: theme.spacing.sm,
+                    if (item.trailing != null)
+                      Padding(
+                        padding: EdgeInsetsDirectional.only(
+                          start: theme.spacing.sm,
+                        ),
+                        child: item.trailing,
                       ),
-                      child: item.trailing,
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

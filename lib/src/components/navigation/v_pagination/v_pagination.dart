@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_pagination_style.dart';
 
 /// Builds the "page x of y" text of [VPagination.simple].
@@ -444,7 +445,7 @@ class VPagination extends StatelessWidget {
     final effectiveBorderRadius =
         btnResolvedStyle?.borderRadius ?? theme.radius.smRadius;
 
-    // WCAG 2.5.8: Minimum touch target 24x24
+    // The tap area is at least the theme's minimum tap target size.
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: theme.spacing.xxs),
       child: Focus(
@@ -463,11 +464,7 @@ class VPagination extends StatelessWidget {
               excludeSemantics: true,
               child: GestureDetector(
                 onTap: onTap,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minWidth: 24,
-                    minHeight: 24,
-                  ),
+                child: VMinTapTarget(
                   child: Container(
                     width: _buttonSizeOf(context),
                     height: _buttonSizeOf(context),
@@ -540,24 +537,26 @@ class VPagination extends StatelessWidget {
             excludeSemantics: true,
             child: GestureDetector(
               onTap: onTap,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: theme.spacing.xs,
-                  vertical: theme.spacing.xxs,
-                ),
-                decoration: isFocused && !isDisabled
-                    ? BoxDecoration(
-                        borderRadius: theme.radius.smRadius,
-                        border: Border.all(color: colors.ring, width: 2),
-                      )
-                    : null,
-                child: Text(
-                  label,
-                  style: typography.labelMedium.copyWith(
-                    fontSize: _fontSizeOf(context),
-                    color: isDisabled
-                        ? colors.mutedForeground.withValues(alpha: 0.5)
-                        : colors.primary,
+              child: VMinTapTarget(
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: theme.spacing.xs,
+                    vertical: theme.spacing.xxs,
+                  ),
+                  decoration: isFocused && !isDisabled
+                      ? BoxDecoration(
+                          borderRadius: theme.radius.smRadius,
+                          border: Border.all(color: colors.ring, width: 2),
+                        )
+                      : null,
+                  child: Text(
+                    label,
+                    style: typography.labelMedium.copyWith(
+                      fontSize: _fontSizeOf(context),
+                      color: isDisabled
+                          ? colors.mutedForeground.withValues(alpha: 0.5)
+                          : colors.primary,
+                    ),
                   ),
                 ),
               ),

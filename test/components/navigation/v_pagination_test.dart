@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
+import '../../utils/min_tap_helpers.dart';
 
 void main() {
   Widget buildTestWidget(Widget child) => VTheme(
@@ -1702,5 +1703,38 @@ void main() {
         );
       });
     }
+  });
+
+  group('VPagination min tap target', () {
+    testWidgets(
+      'simple previous and next tap targets is at least the theme minimum and the drawn size is unchanged',
+      (tester) async {
+        await expectMinTapTarget(
+          tester,
+          VPagination.simple(
+            currentPage: 2,
+            totalPages: 5,
+            onPageChanged: (_) {},
+          ),
+          tap: find.bySemanticsLabel('Previous'),
+          drawn: find.text('< Previous'),
+        );
+      },
+    );
+    testWidgets(
+      'minimal next tap target is at least the theme minimum and the drawn size is unchanged',
+      (tester) async {
+        await expectMinTapTarget(
+          tester,
+          VPagination.minimal(
+            currentPage: 2,
+            totalPages: 5,
+            onPageChanged: (_) {},
+          ),
+          tap: find.bySemanticsLabel('Next'),
+          drawn: find.text('Next >'),
+        );
+      },
+    );
   });
 }

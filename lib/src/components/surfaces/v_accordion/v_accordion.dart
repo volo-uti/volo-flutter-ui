@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_accordion_style.dart';
 
 /// {@template v_accordion_item}
@@ -483,45 +484,49 @@ class _VAccordionItemWidgetState extends State<_VAccordionItemWidget>
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: item.enabled ? widget.onToggle : null,
-                child: Container(
-                  constraints: BoxConstraints(minHeight: theme.sizes.lg.height),
-                  padding: headerPadding,
-                  decoration: _isFocused && item.enabled
-                      ? BoxDecoration(
-                          borderRadius: theme.radius.smRadius,
-                          border: Border.all(color: colors.ring, width: 2),
-                        )
-                      : null,
-                  child: Row(
-                    children: [
-                      if (item.leading != null)
-                        Padding(
-                          padding: EdgeInsets.only(right: theme.spacing.md),
-                          child: item.leading,
-                        ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            titleWidget,
-                            if (subtitleWidget != null)
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  top: theme.spacing.xxs,
+                child: VMinTapTarget(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minHeight: theme.sizes.lg.height,
+                    ),
+                    padding: headerPadding,
+                    decoration: _isFocused && item.enabled
+                        ? BoxDecoration(
+                            borderRadius: theme.radius.smRadius,
+                            border: Border.all(color: colors.ring, width: 2),
+                          )
+                        : null,
+                    child: Row(
+                      children: [
+                        if (item.leading != null)
+                          Padding(
+                            padding: EdgeInsets.only(right: theme.spacing.md),
+                            child: item.leading,
+                          ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              titleWidget,
+                              if (subtitleWidget != null)
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    top: theme.spacing.xxs,
+                                  ),
+                                  child: subtitleWidget,
                                 ),
-                                child: subtitleWidget,
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      RotationTransition(
-                        turns: _rotation,
-                        child: VIcons.chevronDown(
-                          color: iconColor,
-                          size: theme.sizes.md.iconSize,
+                        RotationTransition(
+                          turns: _rotation,
+                          child: VIcons.chevronDown(
+                            color: iconColor,
+                            size: theme.sizes.md.iconSize,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

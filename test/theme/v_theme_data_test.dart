@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
 
 void main() {
+  minTapTargetSizeTests();
   group('VThemeData', () {
     test('zinc() returns a light theme', () {
       final theme = VThemeData.light();
@@ -64,6 +65,35 @@ void main() {
       final dark = VThemeData.dark();
 
       expect(light, isNot(dark));
+    });
+  });
+}
+
+void minTapTargetSizeTests() {
+  group('VThemeData.minTapTargetSize', () {
+    test('defaults to 24', () {
+      expect(VThemeData.light().minTapTargetSize, 24);
+      expect(VThemeData.dark().minTapTargetSize, 24);
+    });
+
+    test('copyWith replaces it and keeps it otherwise', () {
+      final base = VThemeData.light();
+      expect(base.copyWith(minTapTargetSize: 48).minTapTargetSize, 48);
+      expect(base.copyWith().minTapTargetSize, 24);
+    });
+
+    test('lerp moves it between the two values', () {
+      final a = VThemeData.light();
+      final b = a.copyWith(minTapTargetSize: 48);
+      expect(VThemeData.lerp(a, b, 0.5).minTapTargetSize, 36);
+    });
+
+    test('takes part in equality and hashCode', () {
+      final a = VThemeData.light();
+      final b = a.copyWith(minTapTargetSize: 48);
+      expect(a, isNot(b));
+      expect(a, VThemeData.light());
+      expect(a.hashCode, VThemeData.light().hashCode);
     });
   });
 }

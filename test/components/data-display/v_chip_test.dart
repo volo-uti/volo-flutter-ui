@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
+import '../../utils/min_tap_helpers.dart';
 
 void main() {
   group('VChip', () {
@@ -566,5 +567,19 @@ void main() {
       expect(foreground.color, green);
       expect(foreground.letterSpacing, 1);
     });
+  });
+
+  group('VChip min tap target', () {
+    testWidgets(
+      'delete tap target is at least the theme minimum and the drawn size is unchanged',
+      (tester) async {
+        await expectMinTapTarget(
+          tester,
+          VChip.input(label: const Text('x'), onDeleted: () {}),
+          tap: find.bySemanticsLabel('Delete'),
+          drawn: find.byType(CustomPaint),
+        );
+      },
+    );
   });
 }

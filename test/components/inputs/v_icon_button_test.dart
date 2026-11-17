@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
+import '../../utils/min_tap_helpers.dart';
 
 void main() {
   group('VIconButton', () {
@@ -207,5 +208,26 @@ void main() {
         });
       }
     });
+  });
+
+  group('VIconButton min tap target', () {
+    testWidgets(
+      'tap target is at least the theme minimum and the drawn size is unchanged',
+      (tester) async {
+        await expectMinTapTarget(
+          tester,
+          VIconButton(
+            icon: VIcons.close(),
+            size: VIconButtonSize.xs,
+            onPressed: () {},
+          ),
+          tap: find.byType(VIconButton),
+          drawn: find.descendant(
+            of: find.byType(VIconButton),
+            matching: find.byType(AnimatedContainer),
+          ),
+        );
+      },
+    );
   });
 }

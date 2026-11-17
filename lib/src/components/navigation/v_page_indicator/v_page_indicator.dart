@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_page_indicator_style.dart';
 
 /// Look of a [VPageIndicator]: dots, a number or lines.
@@ -321,11 +322,7 @@ class VPageIndicator extends StatelessWidget {
           dot = GestureDetector(
             onTap: () => onPageChanged!(index),
             behavior: HitTestBehavior.opaque,
-            // Min 24x24px touch target (WCAG 2.2 SC 2.5.8)
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-              child: Center(child: dot),
-            ),
+            child: VMinTapTarget(child: dot),
           );
         }
 
@@ -368,13 +365,15 @@ class VPageIndicator extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: current > 0 ? () => onPageChanged!(current - 1) : null,
-            child: Padding(
-              padding: EdgeInsets.all(theme.spacing.sm),
-              child: VIcons.chevronLeft(
-                size: 18,
-                color: current > 0
-                    ? theme.colors.foreground
-                    : theme.colors.mutedForeground.withValues(alpha: 0.5),
+            child: VMinTapTarget(
+              child: Padding(
+                padding: EdgeInsets.all(theme.spacing.sm),
+                child: VIcons.chevronLeft(
+                  size: 18,
+                  color: current > 0
+                      ? theme.colors.foreground
+                      : theme.colors.mutedForeground.withValues(alpha: 0.5),
+                ),
               ),
             ),
           ),
@@ -383,13 +382,15 @@ class VPageIndicator extends StatelessWidget {
             onTap: current < total - 1
                 ? () => onPageChanged!(current + 1)
                 : null,
-            child: Padding(
-              padding: EdgeInsets.all(theme.spacing.sm),
-              child: VIcons.chevronRight(
-                size: 18,
-                color: current < total - 1
-                    ? theme.colors.foreground
-                    : theme.colors.mutedForeground.withValues(alpha: 0.5),
+            child: VMinTapTarget(
+              child: Padding(
+                padding: EdgeInsets.all(theme.spacing.sm),
+                child: VIcons.chevronRight(
+                  size: 18,
+                  color: current < total - 1
+                      ? theme.colors.foreground
+                      : theme.colors.mutedForeground.withValues(alpha: 0.5),
+                ),
               ),
             ),
           ),
@@ -441,9 +442,11 @@ class VPageIndicator extends StatelessWidget {
               line = GestureDetector(
                 onTap: () => onPageChanged!(index),
                 behavior: HitTestBehavior.opaque,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: theme.spacing.sm),
-                  child: line,
+                child: VMinTapTarget(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: theme.spacing.sm),
+                    child: line,
+                  ),
                 ),
               );
             }
