@@ -157,6 +157,54 @@ class VIcons {
   /// Clock face with hands.
   static Widget clock({Color? color, double size = 24}) =>
       _VIcon(size: size, color: color, draw: _drawClock);
+
+  // ===== More =====
+
+  /// Outline path drawn like the other icons, with a stroke of `size / 12`.
+  ///
+  /// The [path] is in a 24-unit grid and is scaled to `size / 24`.
+  static Widget fromPath(Path path, {Color? color, double size = 24}) {
+    final scaled = path.transform(
+      Matrix4.diagonal3Values(size / 24, size / 24, 1).storage,
+    );
+    return _VIcon(
+      size: size,
+      color: color,
+      draw: (c, s, p) => c.drawPath(scaled, p),
+    );
+  }
+
+  /// Bell with a clapper.
+  static Widget bell({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawBell);
+
+  /// Three horizontal lines, for a menu.
+  static Widget menu({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawMenu);
+
+  /// Question mark in an outlined circle.
+  static Widget help({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawHelp);
+
+  /// Closed padlock.
+  static Widget lock({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawLock);
+
+  /// Map pin with a dot inside.
+  static Widget mapPin({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawMapPin);
+
+  /// Plus sign.
+  static Widget plus({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawPlus);
+
+  /// Minus sign.
+  static Widget minus({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawMinus);
+
+  /// Three dots in a row, for more actions.
+  static Widget more({Color? color, double size = 24}) =>
+      _VIcon(size: size, color: color, draw: _drawMore);
 }
 
 // ---------------------------------------------------------------------------
@@ -771,4 +819,114 @@ void _drawClock(Canvas c, Size s, Paint p) {
   c
     ..drawCircle(Offset(s.width * 0.5, s.height * 0.5), s.width * 0.36, p)
     ..drawPath(hands, p);
+}
+
+// ---------------------------------------------------------------------------
+// Draw functions — More
+// ---------------------------------------------------------------------------
+
+void _drawBell(Canvas c, Size s, Paint p) {
+  final w = s.width;
+  final h = s.height;
+  final path = Path()
+    ..moveTo(w * 0.22, h * 0.7)
+    ..lineTo(w * 0.78, h * 0.7)
+    ..cubicTo(w * 0.7, h * 0.62, w * 0.7, h * 0.5, w * 0.7, h * 0.42)
+    ..cubicTo(w * 0.7, h * 0.28, w * 0.6, h * 0.2, w * 0.5, h * 0.2)
+    ..cubicTo(w * 0.4, h * 0.2, w * 0.3, h * 0.28, w * 0.3, h * 0.42)
+    ..cubicTo(w * 0.3, h * 0.5, w * 0.3, h * 0.62, w * 0.22, h * 0.7);
+  final clapper = Path()
+    ..moveTo(w * 0.43, h * 0.8)
+    ..quadraticBezierTo(w * 0.5, h * 0.88, w * 0.57, h * 0.8);
+  c
+    ..drawPath(path, p)
+    ..drawPath(clapper, p);
+}
+
+void _drawMenu(Canvas c, Size s, Paint p) {
+  for (final y in const [0.28, 0.5, 0.72]) {
+    c.drawLine(
+      Offset(s.width * 0.2, s.height * y),
+      Offset(s.width * 0.8, s.height * y),
+      p,
+    );
+  }
+}
+
+void _drawHelp(Canvas c, Size s, Paint p) {
+  final w = s.width;
+  final h = s.height;
+  final mark = Path()
+    ..moveTo(w * 0.4, h * 0.4)
+    ..cubicTo(w * 0.4, h * 0.28, w * 0.6, h * 0.28, w * 0.6, h * 0.4)
+    ..cubicTo(w * 0.6, h * 0.48, w * 0.5, h * 0.5, w * 0.5, h * 0.58);
+  c
+    ..drawCircle(Offset(w * 0.5, h * 0.5), w * 0.36, p)
+    ..drawPath(mark, p)
+    ..drawCircle(Offset(w * 0.5, h * 0.69), w * 0.03, _fill(p));
+}
+
+void _drawLock(Canvas c, Size s, Paint p) {
+  final w = s.width;
+  final h = s.height;
+  final shackle = Path()
+    ..moveTo(w * 0.32, h * 0.45)
+    ..lineTo(w * 0.32, h * 0.33)
+    ..arcToPoint(Offset(w * 0.68, h * 0.33), radius: Radius.circular(w * 0.18))
+    ..lineTo(w * 0.68, h * 0.45);
+  c
+    ..drawRRect(
+      RRect.fromLTRBR(
+        w * 0.22,
+        h * 0.45,
+        w * 0.78,
+        h * 0.82,
+        Radius.circular(w * 0.06),
+      ),
+      p,
+    )
+    ..drawPath(shackle, p)
+    ..drawCircle(Offset(w * 0.5, h * 0.62), w * 0.03, _fill(p));
+}
+
+void _drawMapPin(Canvas c, Size s, Paint p) {
+  final w = s.width;
+  final h = s.height;
+  final drop = Path()
+    ..moveTo(w * 0.5, h * 0.88)
+    ..cubicTo(w * 0.3, h * 0.66, w * 0.22, h * 0.54, w * 0.22, h * 0.4)
+    ..arcToPoint(Offset(w * 0.78, h * 0.4), radius: Radius.circular(w * 0.28))
+    ..cubicTo(w * 0.78, h * 0.54, w * 0.7, h * 0.66, w * 0.5, h * 0.88)
+    ..close();
+  c
+    ..drawPath(drop, p)
+    ..drawCircle(Offset(w * 0.5, h * 0.4), w * 0.09, p);
+}
+
+void _drawPlus(Canvas c, Size s, Paint p) {
+  c
+    ..drawLine(
+      Offset(s.width * 0.5, s.height * 0.22),
+      Offset(s.width * 0.5, s.height * 0.78),
+      p,
+    )
+    ..drawLine(
+      Offset(s.width * 0.22, s.height * 0.5),
+      Offset(s.width * 0.78, s.height * 0.5),
+      p,
+    );
+}
+
+void _drawMinus(Canvas c, Size s, Paint p) {
+  c.drawLine(
+    Offset(s.width * 0.22, s.height * 0.5),
+    Offset(s.width * 0.78, s.height * 0.5),
+    p,
+  );
+}
+
+void _drawMore(Canvas c, Size s, Paint p) {
+  for (final x in const [0.25, 0.5, 0.75]) {
+    c.drawCircle(Offset(s.width * x, s.height * 0.5), s.width * 0.04, _fill(p));
+  }
 }

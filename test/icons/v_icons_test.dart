@@ -13,7 +13,7 @@ void main() {
 
   const testColor = Color(0xFF000000);
 
-  // All 32 icon factory methods on VIcons.
+  // All 40 icon factory methods on VIcons.
   final iconFactories = <String, Widget Function()>{
     'chevronLeft': () => VIcons.chevronLeft(color: testColor),
     'chevronRight': () => VIcons.chevronRight(color: testColor),
@@ -47,6 +47,14 @@ void main() {
     'openInNew': () => VIcons.openInNew(color: testColor),
     'playCircle': () => VIcons.playCircle(color: testColor),
     'arrowDropDown': () => VIcons.arrowDropDown(color: testColor),
+    'bell': () => VIcons.bell(color: testColor),
+    'menu': () => VIcons.menu(color: testColor),
+    'help': () => VIcons.help(color: testColor),
+    'lock': () => VIcons.lock(color: testColor),
+    'mapPin': () => VIcons.mapPin(color: testColor),
+    'plus': () => VIcons.plus(color: testColor),
+    'minus': () => VIcons.minus(color: testColor),
+    'more': () => VIcons.more(color: testColor),
   };
 
   group('VIcons', () {
@@ -168,6 +176,35 @@ void main() {
       );
       expect(paintOf('clock'), paints..circle(color: selected));
       expect(paintOf('list'), paints..circle(color: unselected));
+    });
+
+    testWidgets('fromPath draws the path with the icon brush', (tester) async {
+      final path = Path()
+        ..moveTo(0, 0)
+        ..lineTo(24, 24);
+      await tester.pumpWidget(
+        buildTestWidget(VIcons.fromPath(path, color: testColor, size: 48)),
+      );
+
+      final box = tester.widget<SizedBox>(find.byType(SizedBox));
+      expect(box.width, 48);
+      expect(
+        find.byType(CustomPaint),
+        paints..path(color: testColor, strokeWidth: 4),
+      );
+    });
+
+    testWidgets('fromPath follows the IconTheme color', (tester) async {
+      const color = Color(0xFF00FF00);
+      await tester.pumpWidget(
+        buildTestWidget(
+          IconTheme(
+            data: const IconThemeData(color: color),
+            child: VIcons.fromPath(Path()..lineTo(24, 24)),
+          ),
+        ),
+      );
+      expect(find.byType(CustomPaint), paints..path(color: color));
     });
 
     testWidgets('default size is 24', (tester) async {

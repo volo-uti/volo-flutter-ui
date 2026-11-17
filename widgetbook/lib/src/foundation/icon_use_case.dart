@@ -48,6 +48,16 @@ const _groups = <String, Map<String, _IconBuilder>>{
     'cloud': VIcons.cloud,
     'clock': VIcons.clock,
   },
+  'More': {
+    'bell': VIcons.bell,
+    'menu': VIcons.menu,
+    'help': VIcons.help,
+    'lock': VIcons.lock,
+    'mapPin': VIcons.mapPin,
+    'plus': VIcons.plus,
+    'minus': VIcons.minus,
+    'more': VIcons.more,
+  },
 };
 
 final _all = {for (final g in _groups.values) ...g};
@@ -119,6 +129,27 @@ class _IconShowcase extends StatelessWidget {
               ),
             ],
           ),
+        WidgetbookSection(
+          title: 'fromPath',
+          description:
+              'An app outline in a 24-unit grid, drawn like the icons.',
+          children: [
+            WidgetbookSubsection(
+              title: 'fromPath',
+              labels: const ['VIcons.fromPath(path, size: 32)'],
+              children: [
+                VIcons.fromPath(
+                  Path()
+                    ..moveTo(4, 18)
+                    ..lineTo(12, 5)
+                    ..lineTo(20, 18)
+                    ..close(),
+                  size: 32,
+                ),
+              ],
+            ),
+          ],
+        ),
         WidgetbookSection(
           title: 'Sizes',
           description: 'The icon sizes of the size steps xs to xl.',
