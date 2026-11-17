@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/utils/v_debug.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_toggle_button_style.dart';
 
 /// Keys that activate the focused control.
@@ -259,11 +261,16 @@ class _VToggleButtonState extends State<VToggleButton>
       }
     }
 
-    final textStyle = TextStyle(
-      fontSize: sizeToken.fontSize,
-      fontWeight: FontWeight.w500,
-      color: foregroundColor,
-    );
+    final textStyle =
+        TextStyle(
+          fontSize: sizeToken.fontSize,
+          fontWeight: FontWeight.w500,
+          color: foregroundColor,
+        ).merge(
+          widget.isSelected
+              ? resolvedStyle?.selectedTextStyle
+              : resolvedStyle?.textStyle,
+        );
 
     // The focus ring follows the same corners as the button.
     final borderRadius =
@@ -304,11 +311,8 @@ class _VToggleButtonState extends State<VToggleButton>
       ),
     );
 
-    // WCAG 2.5.8: Minimum touch target 24x24
-    toggle = ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-      child: toggle,
-    );
+    // WCAG 2.5.8: the tap area grows to the theme minimum, the look stays.
+    toggle = VMinTapTarget(child: toggle);
 
     // Opacity when disabled
     toggle = Opacity(opacity: _isEnabled ? 1.0 : 0.5, child: toggle);
@@ -474,7 +478,8 @@ class VToggleButtonGroup<T> extends StatelessWidget {
   /// Style override merged over the theme's [VToggleButtonStyle].
   ///
   /// The same style a single [VToggleButton] reads: its colors and padding
-  /// apply to each option, its borderRadius and borderColor to the group.
+  /// apply to each option, its borderRadius and borderColor to the group, and
+  /// its trackColor and trackPadding draw the strip behind the options.
   final VToggleButtonStyle? style;
 
   @override
@@ -498,10 +503,26 @@ class VToggleButtonGroup<T> extends StatelessWidget {
       VToggleButtonSize.xl => theme.sizes.xl,
       _ => theme.sizes.md,
     };
+    final trackPadding = resolvedStyle?.trackPadding;
+    final trackColor =
+        resolvedStyle?.trackColor ??
+        (type == VToggleButtonType.filled ? theme.colors.muted : null);
+    // With a floating pill every option keeps all four corners rounded.
+    final inset = trackPadding == null
+        ? 0.0
+        : math.min(trackPadding.left, trackPadding.top);
+    final pillRadius = trackPadding == null
+        ? null
+        : BorderRadius.only(
+            topLeft: _deflate(groupRadius.topLeft, inset),
+            topRight: _deflate(groupRadius.topRight, inset),
+            bottomLeft: _deflate(groupRadius.bottomLeft, inset),
+            bottomRight: _deflate(groupRadius.bottomRight, inset),
+          );
     return FocusTraversalGroup(
       child: Container(
         decoration: BoxDecoration(
-          color: type == VToggleButtonType.filled ? theme.colors.muted : null,
+          color: trackColor,
           border: borderColor != null ? Border.all(color: borderColor) : null,
           borderRadius: groupRadius,
         ),
@@ -514,47 +535,52 @@ class VToggleButtonGroup<T> extends StatelessWidget {
             alignment: AlignmentDirectional.centerStart,
             widthFactor: 1,
             heightFactor: 1,
-            child: IntrinsicHeight(
-              child: Row(
-                mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: List.generate(items.length, (index) {
-                  final item = items[index];
-                  final isSelected = allowMultiple
-                      ? values.contains(item.value)
-                      : value == item.value;
+            child: Padding(
+              padding: trackPadding ?? EdgeInsets.zero,
+              child: IntrinsicHeight(
+                child: Row(
+                  mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: List.generate(items.length, (index) {
+                    final item = items[index];
+                    final isSelected = allowMultiple
+                        ? values.contains(item.value)
+                        : value == item.value;
 
-                  // Corner radius: the group's outer corners only
-                  BorderRadius? borderRadius;
-                  if (items.length == 1) {
-                    borderRadius = groupRadius;
-                  } else if (index == 0) {
-                    borderRadius = BorderRadius.only(
-                      topLeft: groupRadius.topLeft,
-                      bottomLeft: groupRadius.bottomLeft,
+                    // Corner radius: the group's outer corners only
+                    BorderRadius? borderRadius;
+                    if (pillRadius != null) {
+                      borderRadius = pillRadius;
+                    } else if (items.length == 1) {
+                      borderRadius = groupRadius;
+                    } else if (index == 0) {
+                      borderRadius = BorderRadius.only(
+                        topLeft: groupRadius.topLeft,
+                        bottomLeft: groupRadius.bottomLeft,
+                      );
+                    } else if (index == items.length - 1) {
+                      borderRadius = BorderRadius.only(
+                        topRight: groupRadius.topRight,
+                        bottomRight: groupRadius.bottomRight,
+                      );
+                    }
+
+                    final itemWidget = _ToggleButtonGroupItem<T>(
+                      item: item,
+                      isSelected: isSelected,
+                      borderRadius: borderRadius,
+                      sizeToken: sizeToken,
+                      exclusive: !allowMultiple,
+                      fullWidth: fullWidth,
+                      style: resolvedStyle,
+                      onTap: !item.enabled
+                          ? null
+                          : () => _handleItemTap(item.value, isSelected),
                     );
-                  } else if (index == items.length - 1) {
-                    borderRadius = BorderRadius.only(
-                      topRight: groupRadius.topRight,
-                      bottomRight: groupRadius.bottomRight,
-                    );
-                  }
 
-                  final itemWidget = _ToggleButtonGroupItem<T>(
-                    item: item,
-                    isSelected: isSelected,
-                    borderRadius: borderRadius,
-                    sizeToken: sizeToken,
-                    exclusive: !allowMultiple,
-                    fullWidth: fullWidth,
-                    style: resolvedStyle,
-                    onTap: !item.enabled
-                        ? null
-                        : () => _handleItemTap(item.value, isSelected),
-                  );
-
-                  return fullWidth ? Expanded(child: itemWidget) : itemWidget;
-                }),
+                    return fullWidth ? Expanded(child: itemWidget) : itemWidget;
+                  }),
+                ),
               ),
             ),
           ),
@@ -562,6 +588,9 @@ class VToggleButtonGroup<T> extends StatelessWidget {
       ),
     );
   }
+
+  static Radius _deflate(Radius r, double by) =>
+      Radius.elliptical(math.max(0, r.x - by), math.max(0, r.y - by));
 
   void _handleItemTap(T itemValue, bool isCurrentlySelected) {
     if (allowMultiple) {
@@ -674,7 +703,7 @@ class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
       fontSize: sizeToken.fontSize,
       fontWeight: FontWeight.w500,
       color: foregroundColor,
-    );
+    ).merge(widget.isSelected ? style?.selectedTextStyle : style?.textStyle);
 
     Widget content;
     if (widget.item.icon != null) {
@@ -734,7 +763,7 @@ class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
           ? GestureDetector(
               onTap: widget.onTap,
               behavior: HitTestBehavior.opaque,
-              child: toggle,
+              child: VMinTapTarget(child: toggle),
             )
           : toggle,
     );

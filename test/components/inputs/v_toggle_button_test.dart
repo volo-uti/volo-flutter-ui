@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
 
 void main() {
@@ -1658,6 +1659,151 @@ void main() {
 
       await pumpScaled(tester, group(), scale: 1);
       expect(optionHeights(tester), everyElement(theme.sizes.md.height));
+    });
+  });
+
+  group('VToggleButtonStyle track and text', () {
+    Widget wrap(Widget child) => VTheme(
+      data: VThemeData.light(),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Align(alignment: Alignment.topLeft, child: child),
+      ),
+    );
+
+    Widget group({VToggleButtonStyle? style, String? value = 'a'}) =>
+        VToggleButtonGroup<String>(
+          value: value,
+          onChanged: (_) {},
+          style: style,
+          items: const [
+            VToggleButtonItem(value: 'a', label: Text('A')),
+            VToggleButtonItem(value: 'b', label: Text('B')),
+          ],
+        );
+
+    Finder track() => find.descendant(
+      of: find.byType(VToggleButtonGroup<String>),
+      matching: find.byWidgetPredicate(
+        (w) =>
+            w is Container &&
+            w.decoration is BoxDecoration &&
+            (w.decoration! as BoxDecoration).color == const Color(0xFF123456),
+      ),
+    );
+
+    testWidgets('no track and no padding by default', (tester) async {
+      await tester.pumpWidget(wrap(group()));
+      final box = tester.getRect(find.byType(VToggleButtonGroup<String>));
+      final a = tester.getRect(find.text('A'));
+      expect(a.left - box.left, VThemeData.light().spacing.md);
+      expect(track(), findsNothing);
+    });
+
+    testWidgets('trackColor draws the track and trackPadding insets', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrap(
+          group(
+            style: const VToggleButtonStyle(
+              trackColor: Color(0xFF123456),
+              trackPadding: EdgeInsets.all(4),
+            ),
+          ),
+        ),
+      );
+      expect(track(), findsOneWidget);
+      final box = tester.getRect(find.byType(VToggleButtonGroup<String>));
+      final a = tester.getRect(find.text('A'));
+      expect(a.left - box.left, VThemeData.light().spacing.md + 4);
+    });
+
+    testWidgets('theme override gives the same track', (tester) async {
+      await tester.pumpWidget(
+        VTheme(
+          data: VThemeData.light().copyWith(
+            componentOverrides: const VComponentOverrides([
+              VToggleButtonStyle(trackColor: Color(0xFF123456)),
+            ]),
+          ),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: group(),
+          ),
+        ),
+      );
+      expect(track(), findsOneWidget);
+    });
+
+    testWidgets('textStyle and selectedTextStyle apply by selection', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrap(
+          group(
+            style: const VToggleButtonStyle(
+              textStyle: TextStyle(fontSize: 11),
+              selectedTextStyle: TextStyle(fontSize: 22),
+            ),
+          ),
+        ),
+      );
+      double sizeOf(String t) => tester
+          .widget<RichText>(
+            find
+                .descendant(
+                  of: find.ancestor(
+                    of: find.text(t),
+                    matching: find.byType(VToggleButtonGroup<String>),
+                  ),
+                  matching: find.byType(RichText),
+                )
+                .at(t == 'A' ? 0 : 1),
+          )
+          .text
+          .style!
+          .fontSize!;
+      expect(sizeOf('A'), 22);
+      expect(sizeOf('B'), 11);
+    });
+
+    testWidgets('value does not move by itself on tap', (tester) async {
+      String? got;
+      await tester.pumpWidget(
+        wrap(
+          VToggleButtonGroup<String>(
+            value: 'a',
+            onChanged: (v) => got = v,
+            items: const [
+              VToggleButtonItem(value: 'a', label: Text('A')),
+              VToggleButtonItem(value: 'b', label: Text('B')),
+            ],
+          ),
+        ),
+      );
+      await tester.tap(find.text('B'));
+      await tester.pump();
+      expect(got, 'b');
+    });
+
+    testWidgets('single button tap area is at least the minimum', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrap(
+          VToggleButton(
+            isSelected: false,
+            onChanged: (_) {},
+            size: VToggleButtonSize.xs,
+            child: const Text('x'),
+          ),
+        ),
+      );
+      expect(
+        tester.getSize(find.byType(VMinTapTarget)).height,
+        greaterThanOrEqualTo(24),
+      );
     });
   });
 }

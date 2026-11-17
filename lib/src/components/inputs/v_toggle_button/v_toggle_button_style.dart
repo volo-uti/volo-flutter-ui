@@ -16,6 +16,10 @@ class VToggleButtonStyle implements VComponentStyle {
     this.borderColor,
     this.borderRadius,
     this.padding,
+    this.trackColor,
+    this.trackPadding,
+    this.textStyle,
+    this.selectedTextStyle,
   });
 
   /// Background of an unselected button or group option, hovered or not.
@@ -39,6 +43,22 @@ class VToggleButtonStyle implements VComponentStyle {
   /// Padding inside a single button or a group option.
   final EdgeInsets? padding;
 
+  /// Fill of the strip behind a group's options; none when null.
+  ///
+  /// Set it to draw a track that the selected option sits on.
+  final Color? trackColor;
+
+  /// Gap between a group's edge and its options, so the selected pill floats.
+  ///
+  /// Null keeps the options filling the group edge to edge.
+  final EdgeInsets? trackPadding;
+
+  /// Text style merged over the default of an unselected button or option.
+  final TextStyle? textStyle;
+
+  /// Text style merged over the default of a selected button or option.
+  final TextStyle? selectedTextStyle;
+
   /// Creates a copy with only the specified properties changed.
   VToggleButtonStyle copyWith({
     Color? backgroundColor,
@@ -48,6 +68,10 @@ class VToggleButtonStyle implements VComponentStyle {
     Color? borderColor,
     BorderRadius? borderRadius,
     EdgeInsets? padding,
+    Color? trackColor,
+    EdgeInsets? trackPadding,
+    TextStyle? textStyle,
+    TextStyle? selectedTextStyle,
   }) => VToggleButtonStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
     foregroundColor: foregroundColor ?? this.foregroundColor,
@@ -58,6 +82,10 @@ class VToggleButtonStyle implements VComponentStyle {
     borderColor: borderColor ?? this.borderColor,
     borderRadius: borderRadius ?? this.borderRadius,
     padding: padding ?? this.padding,
+    trackColor: trackColor ?? this.trackColor,
+    trackPadding: trackPadding ?? this.trackPadding,
+    textStyle: textStyle ?? this.textStyle,
+    selectedTextStyle: selectedTextStyle ?? this.selectedTextStyle,
   );
 
   /// Merges [other] on top of this style. Non-null values in [other] win.
@@ -74,6 +102,10 @@ class VToggleButtonStyle implements VComponentStyle {
       borderColor: other.borderColor ?? borderColor,
       borderRadius: other.borderRadius ?? borderRadius,
       padding: other.padding ?? padding,
+      trackColor: other.trackColor ?? trackColor,
+      trackPadding: other.trackPadding ?? trackPadding,
+      textStyle: other.textStyle ?? textStyle,
+      selectedTextStyle: other.selectedTextStyle ?? selectedTextStyle,
     );
   }
 
@@ -87,7 +119,11 @@ class VToggleButtonStyle implements VComponentStyle {
         other.selectedForegroundColor == selectedForegroundColor &&
         other.borderColor == borderColor &&
         other.borderRadius == borderRadius &&
-        other.padding == padding;
+        other.padding == padding &&
+        other.trackColor == trackColor &&
+        other.trackPadding == trackPadding &&
+        other.textStyle == textStyle &&
+        other.selectedTextStyle == selectedTextStyle;
   }
 
   @override
@@ -99,5 +135,9 @@ class VToggleButtonStyle implements VComponentStyle {
     borderColor,
     borderRadius,
     padding,
+    trackColor,
+    trackPadding,
+    textStyle,
+    selectedTextStyle,
   );
 }

@@ -44,6 +44,19 @@ Widget _toggleButtonPlayground(BuildContext context) {
   final allowMultiple = k.boolean(label: 'allowMultiple');
   final allowEmpty = k.boolean(label: 'allowEmpty', initialValue: true);
   final fullWidth = k.boolean(label: 'fullWidth');
+  final trackColor = k.boolean(label: 'trackColor');
+  final trackPadding = k.boolean(label: 'trackPadding');
+  final textStyle = k.boolean(label: 'textStyle');
+  final selectedTextStyle = k.boolean(label: 'selectedTextStyle');
+  final theme = VTheme.of(context);
+  final style = VToggleButtonStyle(
+    trackColor: trackColor ? theme.colors.muted : null,
+    trackPadding: trackPadding ? const EdgeInsets.all(4) : null,
+    textStyle: textStyle ? const TextStyle(fontStyle: FontStyle.italic) : null,
+    selectedTextStyle: selectedTextStyle
+        ? const TextStyle(fontWeight: FontWeight.w700)
+        : null,
+  );
   String? one = 'b';
   var many = <String>['b'];
 
@@ -78,6 +91,7 @@ Widget _toggleButtonPlayground(BuildContext context) {
                 type: type,
                 size: size,
                 fullWidth: fullWidth,
+                style: style,
               ),
             )
           : VToggleButton(
@@ -86,6 +100,7 @@ Widget _toggleButtonPlayground(BuildContext context) {
               enabled: enabled,
               type: type,
               size: size,
+              style: style,
               child: Text(label),
             ),
     ),
