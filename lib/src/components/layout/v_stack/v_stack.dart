@@ -89,6 +89,7 @@ class VStack extends StatelessWidget {
     this.mainAxisSize = MainAxisSize.max,
     this.textDirection,
     this.verticalDirection = VerticalDirection.down,
+    this.textBaseline,
     this.style,
   }) : _direction = Axis.horizontal;
 
@@ -113,6 +114,7 @@ class VStack extends StatelessWidget {
     this.mainAxisSize = MainAxisSize.max,
     this.textDirection,
     this.verticalDirection = VerticalDirection.down,
+    this.textBaseline,
     this.style,
   }) : _direction = Axis.vertical;
 
@@ -137,6 +139,9 @@ class VStack extends StatelessWidget {
   /// Order of vertical children, top to bottom or reversed.
   final VerticalDirection verticalDirection;
 
+  /// Baseline used when [crossAxisAlignment] is baseline, required in that case.
+  final TextBaseline? textBaseline;
+
   /// Overrides the theme style, for example the spacing.
   final VStackStyle? style;
 
@@ -144,6 +149,11 @@ class VStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(
+      crossAxisAlignment != CrossAxisAlignment.baseline || textBaseline != null,
+      'textBaseline is required if you specify the crossAxisAlignment with '
+      'CrossAxisAlignment.baseline',
+    );
     if (children.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -177,6 +187,7 @@ class VStack extends StatelessWidget {
         mainAxisSize: mainAxisSize,
         textDirection: textDirection,
         verticalDirection: verticalDirection,
+        textBaseline: textBaseline,
         children: spacedChildren,
       );
     } else {
@@ -186,6 +197,7 @@ class VStack extends StatelessWidget {
         mainAxisSize: mainAxisSize,
         textDirection: textDirection,
         verticalDirection: verticalDirection,
+        textBaseline: textBaseline,
         children: spacedChildren,
       );
     }

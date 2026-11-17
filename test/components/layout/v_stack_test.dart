@@ -284,4 +284,67 @@ void main() {
       expect(gapOf(tester), 17);
     });
   });
+
+  group('VStack textBaseline', () {
+    Widget wrap(Widget child) => VTheme(
+      data: VThemeData.light(),
+      child: Directionality(textDirection: TextDirection.ltr, child: child),
+    );
+
+    testWidgets('aligns alphabetic baselines of different text sizes', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrap(
+          const Align(
+            alignment: Alignment.topLeft,
+            child: VStack.horizontal(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text('A', key: Key('a'), style: TextStyle(fontSize: 12)),
+                Text('B', key: Key('b'), style: TextStyle(fontSize: 40)),
+              ],
+            ),
+          ),
+        ),
+      );
+      // Centered, the smaller text would sit 14 lower; on a shared baseline it
+      // sits lower by the difference of the two ascents.
+      final a = tester.getTopLeft(find.byKey(const Key('a'))).dy;
+      final b = tester.getTopLeft(find.byKey(const Key('b'))).dy;
+      expect(a - b, allOf(greaterThan(14), lessThan(28)));
+    });
+
+    testWidgets('vertical stack passes textBaseline to the Column', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrap(
+          const VStack.vertical(
+            textBaseline: TextBaseline.ideographic,
+            children: [Text('A')],
+          ),
+        ),
+      );
+      expect(
+        tester.widget<Column>(find.byType(Column)).textBaseline,
+        TextBaseline.ideographic,
+      );
+    });
+
+    testWidgets('baseline alignment without textBaseline asserts', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrap(
+          const VStack.horizontal(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            children: [Text('A')],
+          ),
+        ),
+      );
+      expect(tester.takeException(), isAssertionError);
+    });
+  });
 }

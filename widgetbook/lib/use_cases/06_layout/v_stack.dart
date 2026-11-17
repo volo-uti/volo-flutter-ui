@@ -62,6 +62,12 @@ Widget _stackPlayground(BuildContext context) {
     labelBuilder: (v) => v.name,
   );
 
+  final textBaseline = k.objectOrNull.dropdown<TextBaseline>(
+    label: 'textBaseline',
+    options: TextBaseline.values,
+    labelBuilder: (v) => v.name,
+  );
+
   const children = [
     VBox.card(padding: EdgeInsets.all(8), child: Text('Item 1')),
     VBox.card(padding: EdgeInsets.all(8), child: Text('Item 2')),
@@ -76,6 +82,7 @@ Widget _stackPlayground(BuildContext context) {
       mainAxisSize: mainAxisSize,
       verticalDirection: verticalDirection,
       textDirection: textDirection,
+      textBaseline: textBaseline,
       children: children,
     ),
     Axis.vertical => VStack.vertical(
@@ -85,6 +92,7 @@ Widget _stackPlayground(BuildContext context) {
       mainAxisSize: mainAxisSize,
       verticalDirection: verticalDirection,
       textDirection: textDirection,
+      textBaseline: textBaseline,
       children: children,
     ),
   };
