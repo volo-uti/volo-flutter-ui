@@ -287,7 +287,7 @@ class _VBadgeState extends State<VBadge> with SingleTickerProviderStateMixin {
       case _VBadgeVariant.outline:
         bgColor = VColors.transparent;
         fgColor = colors.foreground;
-        border = Border.all(color: colors.border);
+        border = Border.all(color: resolvedStyle?.borderColor ?? colors.border);
         break;
     }
 
@@ -312,7 +312,7 @@ class _VBadgeState extends State<VBadge> with SingleTickerProviderStateMixin {
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: Container(
-          padding: _padding,
+          padding: resolvedStyle?.padding ?? _padding,
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius:

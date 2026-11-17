@@ -54,6 +54,12 @@ Widget _badgePlayground(BuildContext context) {
   final invisible = k.boolean(label: 'invisible');
   final semanticLabel = k.string(label: 'semanticLabel');
   final sem = semanticLabel.isEmpty ? null : semanticLabel;
+  final borderColor = k.colorOrNull(label: 'borderColor (outline)');
+  final padding = k.doubleOrNull.slider(label: 'padding', max: 24);
+  final style = VBadgeStyle(
+    borderColor: borderColor,
+    padding: padding == null ? null : EdgeInsets.all(padding),
+  );
 
   return WidgetbookPlayground(
     child: switch (variant) {
@@ -63,48 +69,56 @@ Widget _badgePlayground(BuildContext context) {
         size: size,
         invisible: invisible,
         semanticLabel: sem,
+        style: style,
       ),
       _BadgeVariant.muted => VBadge(
         label: label,
         size: size,
         invisible: invisible,
         semanticLabel: sem,
+        style: style,
       ),
       _BadgeVariant.primary => VBadge.primary(
         label: label,
         size: size,
         invisible: invisible,
         semanticLabel: sem,
+        style: style,
       ),
       _BadgeVariant.secondary => VBadge.secondary(
         label: label,
         size: size,
         invisible: invisible,
         semanticLabel: sem,
+        style: style,
       ),
       _BadgeVariant.success => VBadge.success(
         label: label,
         size: size,
         invisible: invisible,
         semanticLabel: sem,
+        style: style,
       ),
       _BadgeVariant.warning => VBadge.warning(
         label: label,
         size: size,
         invisible: invisible,
         semanticLabel: sem,
+        style: style,
       ),
       _BadgeVariant.destructive => VBadge.destructive(
         label: label,
         size: size,
         invisible: invisible,
         semanticLabel: sem,
+        style: style,
       ),
       _BadgeVariant.outline => VBadge.outline(
         label: label,
         size: size,
         invisible: invisible,
         semanticLabel: sem,
+        style: style,
       ),
     },
   );

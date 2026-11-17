@@ -13,6 +13,8 @@ class VBadgeStyle implements VComponentStyle {
     this.foregroundColor,
     this.borderRadius,
     this.textStyle,
+    this.borderColor,
+    this.padding,
   });
 
   /// Background fill color.
@@ -33,17 +35,27 @@ class VBadgeStyle implements VComponentStyle {
   /// replaces the theme override's.
   final TextStyle? textStyle;
 
+  /// Border color of the outline variant; defaults to the theme border color.
+  final Color? borderColor;
+
+  /// Space between the badge edge and its label; defaults to the size preset.
+  final EdgeInsets? padding;
+
   /// Creates a copy with only the specified properties changed.
   VBadgeStyle copyWith({
     Color? backgroundColor,
     Color? foregroundColor,
     BorderRadius? borderRadius,
     TextStyle? textStyle,
+    Color? borderColor,
+    EdgeInsets? padding,
   }) => VBadgeStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
     foregroundColor: foregroundColor ?? this.foregroundColor,
     borderRadius: borderRadius ?? this.borderRadius,
     textStyle: textStyle ?? this.textStyle,
+    borderColor: borderColor ?? this.borderColor,
+    padding: padding ?? this.padding,
   );
 
   /// Merges [other] on top of this style. Non-null values in [other] win.
@@ -55,6 +67,8 @@ class VBadgeStyle implements VComponentStyle {
       foregroundColor: other.foregroundColor ?? foregroundColor,
       borderRadius: other.borderRadius ?? borderRadius,
       textStyle: other.textStyle ?? textStyle,
+      borderColor: other.borderColor ?? borderColor,
+      padding: other.padding ?? padding,
     );
   }
 
@@ -65,10 +79,18 @@ class VBadgeStyle implements VComponentStyle {
         other.backgroundColor == backgroundColor &&
         other.foregroundColor == foregroundColor &&
         other.borderRadius == borderRadius &&
-        other.textStyle == textStyle;
+        other.textStyle == textStyle &&
+        other.borderColor == borderColor &&
+        other.padding == padding;
   }
 
   @override
-  int get hashCode =>
-      Object.hash(backgroundColor, foregroundColor, borderRadius, textStyle);
+  int get hashCode => Object.hash(
+    backgroundColor,
+    foregroundColor,
+    borderRadius,
+    textStyle,
+    borderColor,
+    padding,
+  );
 }

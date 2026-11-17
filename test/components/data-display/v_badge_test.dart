@@ -306,4 +306,77 @@ void main() {
       expect(instance.fontWeight, FontWeight.w500);
     });
   });
+
+  group('VBadge borderColor and padding', () {
+    Widget host(Widget child, {VThemeData? data}) => VTheme(
+      data: data ?? VThemeData.light(),
+      child: Directionality(textDirection: TextDirection.ltr, child: child),
+    );
+
+    Container containerOf(WidgetTester tester) => tester.widget<Container>(
+      find.descendant(
+        of: find.byType(VBadge),
+        matching: find.byType(Container),
+      ),
+    );
+
+    testWidgets('outline border defaults to the theme border color', (
+      tester,
+    ) async {
+      final data = VThemeData.light();
+      await tester.pumpWidget(
+        host(const VBadge.outline(label: Text('x')), data: data),
+      );
+      final box = containerOf(tester).decoration! as BoxDecoration;
+      expect((box.border! as Border).top.color, data.colors.border);
+    });
+
+    testWidgets('style borderColor and padding apply', (tester) async {
+      const color = Color(0xFF00AA00);
+      await tester.pumpWidget(
+        host(
+          const VBadge.outline(
+            label: Text('x'),
+            style: VBadgeStyle(borderColor: color, padding: EdgeInsets.all(11)),
+          ),
+        ),
+      );
+      final c = containerOf(tester);
+      expect(
+        ((c.decoration! as BoxDecoration).border! as Border).top.color,
+        color,
+      );
+      expect(c.padding, const EdgeInsets.all(11));
+    });
+
+    testWidgets('theme override applies', (tester) async {
+      const color = Color(0xFF00AA00);
+      await tester.pumpWidget(
+        host(
+          const VBadge.outline(label: Text('x')),
+          data: VThemeData.light().copyWith(
+            componentOverrides: const VComponentOverrides([
+              VBadgeStyle(borderColor: color, padding: EdgeInsets.all(9)),
+            ]),
+          ),
+        ),
+      );
+      final c = containerOf(tester);
+      expect(
+        ((c.decoration! as BoxDecoration).border! as Border).top.color,
+        color,
+      );
+      expect(c.padding, const EdgeInsets.all(9));
+    });
+
+    test('style copyWith, merge and equality cover the new fields', () {
+      const a = VBadgeStyle(borderColor: Color(0xFF000000));
+      const b = VBadgeStyle(padding: EdgeInsets.all(2));
+      final m = a.merge(b);
+      expect(m.borderColor, const Color(0xFF000000));
+      expect(m.padding, const EdgeInsets.all(2));
+      expect(m, a.copyWith(padding: const EdgeInsets.all(2)));
+      expect(m == a, isFalse);
+    });
+  });
 }
