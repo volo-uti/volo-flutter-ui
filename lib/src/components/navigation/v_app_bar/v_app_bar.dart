@@ -76,6 +76,8 @@ class VAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.foregroundColor,
     this.elevation,
     this.centerTitle,
+    this.toolbarHeight,
+    this.leadingWidth,
     this.style,
   }) : _variant = _VAppBarVariant.defaultBar;
 
@@ -89,6 +91,8 @@ class VAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.automaticallyImplyLeading = true,
     this.foregroundColor,
     this.centerTitle,
+    this.toolbarHeight,
+    this.leadingWidth,
     this.style,
   }) : _variant = _VAppBarVariant.transparent,
        backgroundColor = VColors.transparent,
@@ -105,6 +109,8 @@ class VAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.centerTitle,
+    this.toolbarHeight,
+    this.leadingWidth,
     this.style,
   }) : _variant = _VAppBarVariant.elevated,
        elevation = 4;
@@ -120,6 +126,8 @@ class VAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.elevation,
+    this.toolbarHeight,
+    this.leadingWidth,
     this.style,
   }) : _variant = _VAppBarVariant.centered,
        centerTitle = true;
@@ -155,13 +163,21 @@ class VAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// Whether to center the title, defaulting to false except for [VAppBar.centered].
   final bool? centerTitle;
 
+  /// Height of the bar row above [bottom], defaulting to the theme's `xl` size.
+  ///
+  /// [preferredSize] uses the same value plus the height of [bottom].
+  final double? toolbarHeight;
+
+  /// Width of the leading slot, defaulting to the theme's `lg` size.
+  final double? leadingWidth;
+
   /// Overrides for colors, padding and title style.
   final VAppBarStyle? style;
 
   @override
   Size get preferredSize {
     final bottomHeight = bottom?.preferredSize.height ?? 0;
-    return Size.fromHeight(56 + bottomHeight);
+    return Size.fromHeight((toolbarHeight ?? 56) + bottomHeight);
   }
 
   Widget? _buildLeading(BuildContext context) {
@@ -240,7 +256,7 @@ class VAppBar extends StatelessWidget implements PreferredSizeWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(
-                  height: theme.sizes.xl.height,
+                  height: toolbarHeight ?? theme.sizes.xl.height,
                   child: Padding(
                     padding: effectivePadding,
                     child: Row(
@@ -248,7 +264,7 @@ class VAppBar extends StatelessWidget implements PreferredSizeWidget {
                         // Leading
                         if (leadingWidget != null)
                           SizedBox(
-                            width: theme.sizes.lg.height,
+                            width: leadingWidth ?? theme.sizes.lg.height,
                             child: Center(child: leadingWidget),
                           )
                         else

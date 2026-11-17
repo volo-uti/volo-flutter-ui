@@ -24,6 +24,16 @@ Widget _appBarPlayground(BuildContext context) {
   );
   final withLeading = k.boolean(label: 'leading');
   final withActions = k.boolean(label: 'actions');
+  final toolbarHeight = k.doubleOrNull.slider(
+    label: 'toolbarHeight',
+    min: 32,
+    max: 96,
+  );
+  final leadingWidth = k.doubleOrNull.slider(
+    label: 'leadingWidth',
+    min: 24,
+    max: 96,
+  );
 
   var presses = 0;
   return StatefulBuilder(
@@ -53,24 +63,32 @@ Widget _appBarPlayground(BuildContext context) {
               leading: leading,
               actions: actions,
               automaticallyImplyLeading: automaticallyImplyLeading,
+              toolbarHeight: toolbarHeight,
+              leadingWidth: leadingWidth,
             ),
             _AppBarVariant.transparent => VAppBar.transparent(
               title: titleWidget,
               leading: leading,
               actions: actions,
               automaticallyImplyLeading: automaticallyImplyLeading,
+              toolbarHeight: toolbarHeight,
+              leadingWidth: leadingWidth,
             ),
             _AppBarVariant.elevated => VAppBar.elevated(
               title: titleWidget,
               leading: leading,
               actions: actions,
               automaticallyImplyLeading: automaticallyImplyLeading,
+              toolbarHeight: toolbarHeight,
+              leadingWidth: leadingWidth,
             ),
             _AppBarVariant.centered => VAppBar.centered(
               title: titleWidget,
               leading: leading,
               actions: actions,
               automaticallyImplyLeading: automaticallyImplyLeading,
+              toolbarHeight: toolbarHeight,
+              leadingWidth: leadingWidth,
             ),
           },
         ),

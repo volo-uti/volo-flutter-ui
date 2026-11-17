@@ -426,7 +426,7 @@ void main() {
                             of: find.byType(VAppBar),
                             matching: find.byType(Container),
                           )
-                          .first,
+                          .last,
                     )
                     .decoration!
                 as BoxDecoration)
@@ -453,6 +453,64 @@ void main() {
         expect(border.top, BorderSide.none);
       });
     }
+  });
+
+  group('VAppBar toolbarHeight and leadingWidth', () {
+    Widget bar(VAppBar b) => buildTestWidget(Align(child: b));
+
+    testWidgets('defaults keep the row height and preferredSize', (
+      tester,
+    ) async {
+      const appBar = VAppBar(title: Text('t'));
+      await tester.pumpWidget(bar(appBar));
+      expect(tester.getSize(find.byType(VAppBar)).height, 56);
+      expect(appBar.preferredSize.height, 56);
+    });
+
+    testWidgets('toolbarHeight sets the drawn and preferred height', (
+      tester,
+    ) async {
+      for (final appBar in const [
+        VAppBar(title: Text('t'), toolbarHeight: 40),
+        VAppBar.elevated(title: Text('t'), toolbarHeight: 40),
+        VAppBar.centered(title: Text('t'), toolbarHeight: 40),
+        VAppBar.transparent(title: Text('t'), toolbarHeight: 40),
+      ]) {
+        await tester.pumpWidget(bar(appBar));
+        expect(tester.getSize(find.byType(VAppBar)).height, 40);
+        expect(appBar.preferredSize.height, 40);
+      }
+    });
+
+    testWidgets('preferredSize adds the bottom height', (tester) async {
+      const appBar = VAppBar(
+        toolbarHeight: 40,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(10),
+          child: SizedBox(height: 10),
+        ),
+      );
+      expect(appBar.preferredSize.height, 50);
+    });
+
+    testWidgets('leadingWidth sets the leading slot width', (tester) async {
+      const leading = SizedBox(key: Key('lead'), width: 200, height: 10);
+      Future<double> slot(double? width) async {
+        await tester.pumpWidget(
+          bar(
+            VAppBar(
+              leading: leading,
+              title: const Text('t'),
+              leadingWidth: width,
+            ),
+          ),
+        );
+        return tester.getSize(find.byKey(const Key('lead'))).width;
+      }
+
+      expect(await slot(null), VThemeData.light().sizes.lg.height);
+      expect(await slot(72), 72);
+    });
   });
 }
 
