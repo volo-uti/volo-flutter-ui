@@ -39,6 +39,16 @@ Widget _listTilePlayground(BuildContext context) {
   final enabled = k.boolean(label: 'enabled', initialValue: true);
   final tappable = k.boolean(label: 'onTap', initialValue: true);
   final longPressable = k.boolean(label: 'onLongPress');
+  final leadingWidth = k.doubleOrNull.slider(
+    label: 'leadingWidth',
+    min: 24,
+    max: 96,
+  );
+  final leadingMinHeight = k.doubleOrNull.slider(
+    label: 'leadingMinHeight',
+    min: 8,
+    max: 80,
+  );
 
   final titleWidget = Text(title);
   final subtitleWidget = subtitle.isEmpty ? null : Text(subtitle);
@@ -46,6 +56,10 @@ Widget _listTilePlayground(BuildContext context) {
   final trailingWidget = trailing
       ? const Icon(IconData(0xe5cc, fontFamily: 'MaterialIcons'))
       : null;
+  final tileStyle = VListTileStyle(
+    leadingWidth: leadingWidth,
+    leadingMinHeight: leadingMinHeight,
+  );
   final onTap = tappable ? () {} : null;
   final onLongPress = longPressable ? () {} : null;
 
@@ -62,6 +76,7 @@ Widget _listTilePlayground(BuildContext context) {
           enabled: enabled,
           onTap: onTap,
           onLongPress: onLongPress,
+          style: tileStyle,
         ),
         _ListTileVariant.dense => VListTile.dense(
           title: titleWidget,
@@ -72,6 +87,7 @@ Widget _listTilePlayground(BuildContext context) {
           enabled: enabled,
           onTap: onTap,
           onLongPress: onLongPress,
+          style: tileStyle,
         ),
         _ListTileVariant.threeLine => VListTile.threeLine(
           title: titleWidget,
@@ -82,6 +98,7 @@ Widget _listTilePlayground(BuildContext context) {
           enabled: enabled,
           onTap: onTap,
           onLongPress: onLongPress,
+          style: tileStyle,
         ),
       },
     ),

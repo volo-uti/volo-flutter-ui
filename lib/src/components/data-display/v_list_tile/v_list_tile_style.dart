@@ -20,6 +20,7 @@ class VListTileStyle implements VComponentStyle {
     this.leadingGap,
     this.trailingGap,
     this.minHeight,
+    this.leadingMinHeight,
   });
 
   /// Background fill color.
@@ -66,6 +67,12 @@ class VListTileStyle implements VComponentStyle {
   /// style wins over the theme override.
   final double? minHeight;
 
+  /// Minimum height of the leading slot; defaults to the medium size step (40).
+  ///
+  /// Lower it so a tile without a subtitle is not made taller by its leading
+  /// slot. It sizes only the leading slot; [minHeight] sizes the whole tile.
+  final double? leadingMinHeight;
+
   /// Creates a copy with only the specified properties changed.
   VListTileStyle copyWith({
     Color? backgroundColor,
@@ -79,6 +86,7 @@ class VListTileStyle implements VComponentStyle {
     double? leadingGap,
     double? trailingGap,
     double? minHeight,
+    double? leadingMinHeight,
   }) => VListTileStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
     foregroundColor: foregroundColor ?? this.foregroundColor,
@@ -91,6 +99,7 @@ class VListTileStyle implements VComponentStyle {
     leadingGap: leadingGap ?? this.leadingGap,
     trailingGap: trailingGap ?? this.trailingGap,
     minHeight: minHeight ?? this.minHeight,
+    leadingMinHeight: leadingMinHeight ?? this.leadingMinHeight,
   );
 
   /// Merges [other] on top of this style. Non-null values in [other] win.
@@ -109,6 +118,7 @@ class VListTileStyle implements VComponentStyle {
       leadingGap: other.leadingGap ?? leadingGap,
       trailingGap: other.trailingGap ?? trailingGap,
       minHeight: other.minHeight ?? minHeight,
+      leadingMinHeight: other.leadingMinHeight ?? leadingMinHeight,
     );
   }
 
@@ -126,7 +136,8 @@ class VListTileStyle implements VComponentStyle {
         other.leadingWidth == leadingWidth &&
         other.leadingGap == leadingGap &&
         other.trailingGap == trailingGap &&
-        other.minHeight == minHeight;
+        other.minHeight == minHeight &&
+        other.leadingMinHeight == leadingMinHeight;
   }
 
   @override
@@ -142,5 +153,6 @@ class VListTileStyle implements VComponentStyle {
     leadingGap,
     trailingGap,
     minHeight,
+    leadingMinHeight,
   );
 }

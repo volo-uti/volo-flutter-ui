@@ -219,9 +219,12 @@ class _VListTileState extends State<VListTile> {
               end: resolvedStyle?.leadingGap ?? theme.spacing.lg,
             ),
             child: ConstrainedBox(
-              constraints: BoxConstraints.tightFor(
-                width: resolvedStyle?.leadingWidth ?? leadingSize,
-              ).copyWith(minHeight: leadingSize),
+              constraints:
+                  BoxConstraints.tightFor(
+                    width: resolvedStyle?.leadingWidth ?? leadingSize,
+                  ).copyWith(
+                    minHeight: resolvedStyle?.leadingMinHeight ?? leadingSize,
+                  ),
               // heightFactor 1 hugs the leading widget, at least the slot.
               child: Center(heightFactor: 1, child: widget.leading),
             ),

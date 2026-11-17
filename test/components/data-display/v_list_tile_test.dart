@@ -524,4 +524,62 @@ void main() {
       );
     });
   });
+
+  group('VListTile leadingMinHeight', () {
+    Future<double> height(WidgetTester tester, VListTileStyle? style) async {
+      await tester.pumpWidget(
+        VTheme(
+          data: VThemeData.light(),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: VListTile(
+                leading: const SizedBox(width: 8, height: 8),
+                title: const Text('Title'),
+                style: style,
+              ),
+            ),
+          ),
+        ),
+      );
+      return tester.getSize(find.byType(VListTile)).height;
+    }
+
+    testWidgets('leadingMinHeight keeps a title-only row from growing', (
+      tester,
+    ) async {
+      const base = VListTileStyle(minHeight: 10, leadingWidth: 8);
+      final tall = await height(tester, base);
+      final short = await height(tester, base.copyWith(leadingMinHeight: 8));
+      expect(short, lessThan(tall));
+    });
+
+    testWidgets('default leading slot is still the medium step', (
+      tester,
+    ) async {
+      final md = VThemeData.light().sizes.md.height;
+      final withDefault = await height(
+        tester,
+        const VListTileStyle(minHeight: 10),
+      );
+      final explicit = await height(
+        tester,
+        VListTileStyle(minHeight: 10, leadingMinHeight: md),
+      );
+      expect(withDefault, explicit);
+    });
+
+    test('style copyWith, merge and equality cover leadingMinHeight', () {
+      const a = VListTileStyle(leadingMinHeight: 4);
+      expect(a.copyWith(leadingMinHeight: 6).leadingMinHeight, 6);
+      expect(a.merge(const VListTileStyle()).leadingMinHeight, 4);
+      expect(
+        a.merge(const VListTileStyle(leadingMinHeight: 5)).leadingMinHeight,
+        5,
+      );
+      expect(a, const VListTileStyle(leadingMinHeight: 4));
+      expect(a == const VListTileStyle(leadingMinHeight: 5), isFalse);
+    });
+  });
 }
