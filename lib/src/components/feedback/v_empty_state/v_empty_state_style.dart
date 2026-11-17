@@ -13,6 +13,9 @@ class VEmptyStateStyle implements VComponentStyle {
     this.iconColor,
     this.titleStyle,
     this.descriptionStyle,
+    this.iconGap,
+    this.descriptionGap,
+    this.actionGap,
   });
 
   /// Space around the content; defaults to the theme's xxl spacing.
@@ -27,17 +30,32 @@ class VEmptyStateStyle implements VComponentStyle {
   /// Merged onto the description style (bodyMedium in the muted color).
   final TextStyle? descriptionStyle;
 
+  /// Gap between the icon and the title; defaults to the theme's lg spacing.
+  final double? iconGap;
+
+  /// Gap between the title and the description; defaults to the sm spacing.
+  final double? descriptionGap;
+
+  /// Gap between the description and the action; defaults to the xl spacing.
+  final double? actionGap;
+
   /// Creates a copy with only the specified properties changed.
   VEmptyStateStyle copyWith({
     EdgeInsets? padding,
     Color? iconColor,
     TextStyle? titleStyle,
     TextStyle? descriptionStyle,
+    double? iconGap,
+    double? descriptionGap,
+    double? actionGap,
   }) => VEmptyStateStyle(
     padding: padding ?? this.padding,
     iconColor: iconColor ?? this.iconColor,
     titleStyle: titleStyle ?? this.titleStyle,
     descriptionStyle: descriptionStyle ?? this.descriptionStyle,
+    iconGap: iconGap ?? this.iconGap,
+    descriptionGap: descriptionGap ?? this.descriptionGap,
+    actionGap: actionGap ?? this.actionGap,
   );
 
   /// Merges [other] on top of this style. Non-null values in [other] win.
@@ -49,6 +67,9 @@ class VEmptyStateStyle implements VComponentStyle {
       iconColor: other.iconColor ?? iconColor,
       titleStyle: other.titleStyle ?? titleStyle,
       descriptionStyle: other.descriptionStyle ?? descriptionStyle,
+      iconGap: other.iconGap ?? iconGap,
+      descriptionGap: other.descriptionGap ?? descriptionGap,
+      actionGap: other.actionGap ?? actionGap,
     );
   }
 
@@ -59,10 +80,20 @@ class VEmptyStateStyle implements VComponentStyle {
         other.padding == padding &&
         other.iconColor == iconColor &&
         other.titleStyle == titleStyle &&
-        other.descriptionStyle == descriptionStyle;
+        other.descriptionStyle == descriptionStyle &&
+        other.iconGap == iconGap &&
+        other.descriptionGap == descriptionGap &&
+        other.actionGap == actionGap;
   }
 
   @override
-  int get hashCode =>
-      Object.hash(padding, iconColor, titleStyle, descriptionStyle);
+  int get hashCode => Object.hash(
+    padding,
+    iconColor,
+    titleStyle,
+    descriptionStyle,
+    iconGap,
+    descriptionGap,
+    actionGap,
+  );
 }

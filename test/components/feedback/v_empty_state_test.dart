@@ -232,4 +232,77 @@ void main() {
       expect(find.text(longDescription), findsOneWidget);
     });
   });
+
+  group('VEmptyState gaps', () {
+    const icon = SizedBox(key: Key('i'), width: 10, height: 10);
+    const action = SizedBox(key: Key('act'), width: 10, height: 10);
+
+    Future<List<double>> gaps(
+      WidgetTester tester, {
+      VEmptyStateStyle? style,
+      VThemeData? theme,
+    }) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          Align(
+            child: VEmptyState(
+              icon: icon,
+              title: 'Title',
+              description: 'Desc',
+              action: action,
+              style: style,
+            ),
+          ),
+          theme: theme,
+        ),
+      );
+      final i = tester.getRect(find.byKey(const Key('i')));
+      final t = tester.getRect(find.text('Title'));
+      final d = tester.getRect(find.text('Desc'));
+      final a = tester.getRect(find.byKey(const Key('act')));
+      return [t.top - i.bottom, d.top - t.bottom, a.top - d.bottom];
+    }
+
+    testWidgets('defaults keep the theme spacing', (tester) async {
+      final s = VThemeData.light().spacing;
+      expect(await gaps(tester), [s.lg, s.sm, s.xl]);
+    });
+
+    testWidgets('instance style sets the gaps', (tester) async {
+      expect(
+        await gaps(
+          tester,
+          style: const VEmptyStateStyle(
+            iconGap: 1,
+            descriptionGap: 2,
+            actionGap: 3,
+          ),
+        ),
+        [1, 2, 3],
+      );
+    });
+
+    testWidgets('theme override sets the gaps', (tester) async {
+      final theme = VThemeData.light().copyWith(
+        componentOverrides: const VComponentOverrides([
+          VEmptyStateStyle(iconGap: 5, actionGap: 7),
+        ]),
+      );
+      final s = VThemeData.light().spacing;
+      expect(await gaps(tester, theme: theme), [5, s.sm, 7]);
+    });
+
+    test('style copyWith, merge and equality cover the gaps', () {
+      const a = VEmptyStateStyle(iconGap: 1, descriptionGap: 2, actionGap: 3);
+      expect(a.copyWith(iconGap: 9).iconGap, 9);
+      expect(a.merge(const VEmptyStateStyle(actionGap: 8)).actionGap, 8);
+      expect(a.merge(const VEmptyStateStyle(actionGap: 8)).iconGap, 1);
+      expect(
+        a,
+        const VEmptyStateStyle(iconGap: 1, descriptionGap: 2, actionGap: 3),
+      );
+      expect(a == a.copyWith(descriptionGap: 4), isFalse);
+      expect(a.hashCode == a.copyWith(actionGap: 4).hashCode, isFalse);
+    });
+  });
 }

@@ -32,6 +32,12 @@ Widget _emptyStatePlayground(BuildContext context) {
     initialValue: 'Entries you save appear here.',
   );
   final hasAction = k.boolean(label: 'action', initialValue: true);
+  final iconGap = k.doubleOrNull.slider(label: 'iconGap', max: 64);
+  final descriptionGap = k.doubleOrNull.slider(
+    label: 'descriptionGap',
+    max: 64,
+  );
+  final actionGap = k.doubleOrNull.slider(label: 'actionGap', max: 64);
   final height = k.double.slider(
     label: 'box height',
     initialValue: 360,
@@ -49,6 +55,11 @@ Widget _emptyStatePlayground(BuildContext context) {
         height: height,
         child: VEmptyState(
           icon: hasIcon ? VIcons.list(size: 48) : null,
+          style: VEmptyStateStyle(
+            iconGap: iconGap,
+            descriptionGap: descriptionGap,
+            actionGap: actionGap,
+          ),
           title: title,
           description: description.isEmpty ? null : description,
           action: hasAction

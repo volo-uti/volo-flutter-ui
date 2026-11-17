@@ -80,21 +80,24 @@ class VEmptyState extends StatelessWidget {
               ),
               child: icon!,
             ),
-            SizedBox(height: spacing.lg),
+            SizedBox(height: resolvedStyle?.iconGap ?? spacing.lg),
           ],
           Semantics(
             header: true,
             child: Text(title, style: titleStyle, textAlign: TextAlign.center),
           ),
           if (description != null) ...[
-            SizedBox(height: spacing.sm),
+            SizedBox(height: resolvedStyle?.descriptionGap ?? spacing.sm),
             Text(
               description!,
               style: descriptionStyle,
               textAlign: TextAlign.center,
             ),
           ],
-          if (action != null) ...[SizedBox(height: spacing.xl), action!],
+          if (action != null) ...[
+            SizedBox(height: resolvedStyle?.actionGap ?? spacing.xl),
+            action!,
+          ],
         ],
       ),
     );
