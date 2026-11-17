@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
 
 void main() {
@@ -219,6 +220,54 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
 
       expect(closed, 1);
+    });
+
+    testWidgets('showIcon defaults to true and draws the icon', (tester) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          const VAlert.info(title: Text('T'), description: Text('D')),
+        ),
+      );
+      expect(tester.getTopLeft(find.text('T')).dx, greaterThan(16 + 1 + 20));
+    });
+
+    testWidgets('showIcon false starts the text at the box padding', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          const Align(
+            alignment: Alignment.topLeft,
+            child: VAlert.info(
+              title: Text('T'),
+              description: Text('D'),
+              icon: SizedBox(width: 30, height: 30),
+              showIcon: false,
+            ),
+          ),
+        ),
+      );
+      final box = tester.getTopLeft(find.byType(VAlert)).dx;
+      final padding = VThemeData.light().spacing.lg;
+      expect(tester.getTopLeft(find.text('T')).dx, box + 1 + padding);
+      expect(
+        find
+            .byType(SizedBox)
+            .evaluate()
+            .any((e) => (e.widget as SizedBox).width == 30),
+        isFalse,
+      );
+    });
+
+    testWidgets('close button hit area is at least the minimum', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestWidget(VAlert(description: const Text('x'), onClose: () {})),
+      );
+      final size = tester.getSize(find.byType(VMinTapTarget));
+      expect(size.width, greaterThanOrEqualTo(24));
+      expect(size.height, greaterThanOrEqualTo(24));
     });
   });
 }

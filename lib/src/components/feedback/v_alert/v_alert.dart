@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_alert_style.dart';
 
 /// Alert appearance variant.
@@ -51,6 +52,7 @@ class VAlert extends StatelessWidget {
     super.key,
     this.title,
     this.icon,
+    this.showIcon = true,
     this.action,
     this.onClose,
     this.semanticLabel,
@@ -64,6 +66,7 @@ class VAlert extends StatelessWidget {
     super.key,
     this.title,
     this.icon,
+    this.showIcon = true,
     this.action,
     this.onClose,
     this.semanticLabel,
@@ -77,6 +80,7 @@ class VAlert extends StatelessWidget {
     super.key,
     this.title,
     this.icon,
+    this.showIcon = true,
     this.action,
     this.onClose,
     this.semanticLabel,
@@ -90,6 +94,7 @@ class VAlert extends StatelessWidget {
     super.key,
     this.title,
     this.icon,
+    this.showIcon = true,
     this.action,
     this.onClose,
     this.semanticLabel,
@@ -103,6 +108,7 @@ class VAlert extends StatelessWidget {
     super.key,
     this.title,
     this.icon,
+    this.showIcon = true,
     this.action,
     this.onClose,
     this.semanticLabel,
@@ -123,6 +129,13 @@ class VAlert extends StatelessWidget {
 
   /// Replaces the icon that matches the alert type.
   final Widget? icon;
+
+  /// Whether the icon column is shown; defaults to true.
+  ///
+  /// When false, neither the type icon nor [icon] is drawn, the gap after the
+  /// icon is removed and the text starts at the box padding. It wins over
+  /// [icon].
+  final bool showIcon;
 
   /// Widget shown below [description], usually a button.
   final Widget? action;
@@ -290,19 +303,20 @@ class VAlert extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Icon
-            Padding(
-              padding: EdgeInsetsDirectional.only(
-                end: theme.spacing.md,
-                top: theme.spacing.xxs,
+            if (showIcon)
+              Padding(
+                padding: EdgeInsetsDirectional.only(
+                  end: theme.spacing.md,
+                  top: theme.spacing.xxs,
+                ),
+                child:
+                    icon ??
+                    _getDefaultIcon(
+                      colors,
+                      theme.sizes.lg.iconSize,
+                      effectiveIconColor,
+                    ),
               ),
-              child:
-                  icon ??
-                  _getDefaultIcon(
-                    colors,
-                    theme.sizes.lg.iconSize,
-                    effectiveIconColor,
-                  ),
-            ),
             // Content (WCAG 4.1.3: liveRegion for dynamic alert content)
             Expanded(
               child: Semantics(
@@ -353,15 +367,17 @@ class VAlert extends StatelessWidget {
                   child: GestureDetector(
                     onTap: onClose,
                     behavior: HitTestBehavior.opaque,
-                    child: Padding(
-                      padding: EdgeInsetsDirectional.only(
-                        start: theme.spacing.sm,
-                      ),
-                      child: VIcons.close(
-                        color: isFilled
-                            ? colors.background.withValues(alpha: 0.8)
-                            : colors.mutedForeground,
-                        size: theme.sizes.md.iconSize,
+                    child: VMinTapTarget(
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.only(
+                          start: theme.spacing.sm,
+                        ),
+                        child: VIcons.close(
+                          color: isFilled
+                              ? colors.background.withValues(alpha: 0.8)
+                              : colors.mutedForeground,
+                          size: theme.sizes.md.iconSize,
+                        ),
                       ),
                     ),
                   ),

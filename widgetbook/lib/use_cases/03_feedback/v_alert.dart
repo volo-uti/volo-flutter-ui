@@ -44,6 +44,7 @@ Widget _alertPlayground(BuildContext context) {
   );
   final semanticLabel = k.string(label: 'semanticLabel');
   final hasAction = k.boolean(label: 'action');
+  final showIcon = k.boolean(label: 'showIcon', initialValue: true);
   final closable = k.boolean(label: 'onClose', initialValue: true);
 
   var closes = 0;
@@ -63,6 +64,7 @@ Widget _alertPlayground(BuildContext context) {
           title: title.isEmpty ? null : Text(title),
           description: Text(description),
           variant: variant,
+          showIcon: showIcon,
           semanticLabel: semanticLabel.isEmpty ? null : semanticLabel,
           action: hasAction
               ? VButton.outlined(onPressed: () {}, child: const Text('Action'))
