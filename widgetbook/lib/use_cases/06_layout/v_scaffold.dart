@@ -347,7 +347,7 @@ class _ScaffoldShowcase extends StatelessWidget {
             _guidelineRow(
               theme,
               'extendBody',
-              'Use when the body should extend behind the bottom nav',
+              'Use when the body should run to the screen bottom, behind the nav and the system inset',
             ),
           ],
         ),

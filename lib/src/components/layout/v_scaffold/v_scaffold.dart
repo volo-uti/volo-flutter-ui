@@ -139,7 +139,11 @@ class VScaffold extends StatefulWidget {
   /// Whether the bottom of the screen moves up with the on-screen keyboard.
   final bool resizeToAvoidBottomInset;
 
-  /// Whether the body extends behind [bottomNavigationBar].
+  /// Whether the body runs to the bottom edge of the screen.
+  ///
+  /// The body then draws behind [bottomNavigationBar] and the bottom system
+  /// inset, which stays in the body's `MediaQuery` padding. The keyboard still
+  /// lifts the body when [resizeToAvoidBottomInset] is true.
   final bool extendBody;
 
   /// Whether the body extends behind [appBar], which then floats over it.
@@ -362,8 +366,13 @@ class _VScaffoldState extends State<VScaffold> with TickerProviderStateMixin {
                 // Bottom navigation bar
                 if (hasNav && !widget.extendBody) bottomNav(),
 
-                // Bottom safe area
-                SizedBox(height: mediaQuery.padding.bottom + bottomInset),
+                // Bottom safe area; an extended body keeps it in its own
+                // MediaQuery padding and runs to the screen bottom.
+                SizedBox(
+                  height: widget.extendBody
+                      ? bottomInset
+                      : mediaQuery.padding.bottom + bottomInset,
+                ),
               ],
             ),
 

@@ -464,4 +464,75 @@ void main() {
       expect(screenColor(tester), color);
     });
   });
+
+  group('VScaffold extendBody bottom inset', () {
+    Widget frame(Widget child, {EdgeInsets viewInsets = EdgeInsets.zero}) =>
+        VTheme(
+          data: VThemeData.light(),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: MediaQuery(
+              data: MediaQueryData(
+                size: const Size(400, 800),
+                padding: const EdgeInsets.only(top: 40, bottom: 30),
+                viewInsets: viewInsets,
+              ),
+              child: child,
+            ),
+          ),
+        );
+
+    void useSurface(WidgetTester tester) {
+      tester.view
+        ..physicalSize = const Size(400, 800)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+    }
+
+    testWidgets('extendBody runs the body to the screen bottom', (
+      tester,
+    ) async {
+      useSurface(tester);
+      EdgeInsets? seen;
+      await tester.pumpWidget(
+        frame(
+          VScaffold(
+            extendBody: true,
+            body: Builder(
+              builder: (context) {
+                seen = MediaQuery.paddingOf(context);
+                return const SizedBox.expand(key: Key('body'));
+              },
+            ),
+          ),
+        ),
+      );
+      expect(tester.getRect(find.byKey(const Key('body'))).bottom, 800);
+      expect(seen!.bottom, 30);
+    });
+
+    testWidgets('default keeps the body above the bottom inset', (
+      tester,
+    ) async {
+      useSurface(tester);
+      await tester.pumpWidget(
+        frame(const VScaffold(body: SizedBox.expand(key: Key('body')))),
+      );
+      expect(tester.getRect(find.byKey(const Key('body'))).bottom, 770);
+    });
+
+    testWidgets('keyboard still lifts an extended body', (tester) async {
+      useSurface(tester);
+      await tester.pumpWidget(
+        frame(
+          const VScaffold(
+            extendBody: true,
+            body: SizedBox.expand(key: Key('body')),
+          ),
+          viewInsets: const EdgeInsets.only(bottom: 300),
+        ),
+      );
+      expect(tester.getRect(find.byKey(const Key('body'))).bottom, 500);
+    });
+  });
 }
