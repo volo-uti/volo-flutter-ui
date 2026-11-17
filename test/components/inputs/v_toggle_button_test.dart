@@ -1671,16 +1671,20 @@ void main() {
       ),
     );
 
-    Widget group({VToggleButtonStyle? style, String? value = 'a'}) =>
-        VToggleButtonGroup<String>(
-          value: value,
-          onChanged: (_) {},
-          style: style,
-          items: const [
-            VToggleButtonItem(value: 'a', label: Text('A')),
-            VToggleButtonItem(value: 'b', label: Text('B')),
-          ],
-        );
+    Widget group({
+      VToggleButtonStyle? style,
+      String? value = 'a',
+      VToggleButtonSize? size,
+    }) => VToggleButtonGroup<String>(
+      size: size,
+      value: value,
+      onChanged: (_) {},
+      style: style,
+      items: const [
+        VToggleButtonItem(value: 'a', label: Text('A')),
+        VToggleButtonItem(value: 'b', label: Text('B')),
+      ],
+    );
 
     Finder track() => find.descendant(
       of: find.byType(VToggleButtonGroup<String>),
@@ -1805,5 +1809,44 @@ void main() {
         greaterThanOrEqualTo(24),
       );
     });
+
+    for (final size in [
+      VToggleButtonSize.xs,
+      VToggleButtonSize.sm,
+      VToggleButtonSize.md,
+    ]) {
+      testWidgets('group ${size.name}: drawn box is the same at 24 and 48 and '
+          'the semantics node is at least 48', (tester) async {
+        Future<List<Size>> boxes(double min) async {
+          await tester.pumpWidget(
+            VTheme(
+              data: VThemeData.light().copyWith(minTapTargetSize: min),
+              child: Directionality(
+                textDirection: TextDirection.ltr,
+                child: Center(child: group(size: size)),
+              ),
+            ),
+          );
+          return [
+            for (final e in find.byType(VMinTapTarget).evaluate())
+              tester.getSize(
+                find.descendant(
+                  of: find.byWidget(e.widget),
+                  matching: find.byWidget((e.widget as VMinTapTarget).child),
+                ),
+              ),
+          ];
+        }
+
+        final base = await boxes(24);
+        final handle = tester.ensureSemantics();
+        final big = await boxes(48);
+        expect(big, base);
+        final node = tester.getSemantics(find.text('A'));
+        expect(node.rect.width, greaterThanOrEqualTo(48));
+        expect(node.rect.height, greaterThanOrEqualTo(48));
+        handle.dispose();
+      });
+    }
   });
 }

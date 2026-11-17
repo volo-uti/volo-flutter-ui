@@ -62,5 +62,33 @@ void main() {
       await tester.pumpWidget(minTapApp(child, min: 32));
       expect(tester.getSize(find.byType(VMinTapTarget)), const Size(32, 32));
     });
+
+    testWidgets('growLayout false keeps the box and still reaches the child', (
+      tester,
+    ) async {
+      var taps = 0;
+      await tester.pumpWidget(
+        minTapApp(
+          SizedBox(
+            width: 40,
+            height: 40,
+            child: Center(
+              child: VMinTapTarget(
+                growLayout: false,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => taps++,
+                  child: const SizedBox(width: 10, height: 10),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      expect(tester.getSize(find.byType(VMinTapTarget)), const Size(10, 10));
+      final c = tester.getCenter(find.byType(VMinTapTarget));
+      await tester.tapAt(c + const Offset(-10, -10));
+      expect(taps, 1);
+    });
   });
 }

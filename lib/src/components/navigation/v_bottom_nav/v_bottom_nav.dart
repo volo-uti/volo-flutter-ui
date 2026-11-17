@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/utils/v_debug.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_bottom_nav_style.dart';
 
 /// An item displayed in a [VBottomNav].
@@ -260,94 +261,100 @@ class VBottomNav extends StatelessWidget {
                           child: GestureDetector(
                             onTap: select,
                             behavior: HitTestBehavior.opaque,
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                DecoratedBox(
-                                  decoration: isFocused
-                                      ? BoxDecoration(
-                                          borderRadius: theme.radius.smRadius,
-                                          border: Border.all(
-                                            color: colors.ring,
-                                            width: 2,
-                                          ),
-                                        )
-                                      : const BoxDecoration(),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Stack(
-                                        clipBehavior: Clip.none,
-                                        children: [
-                                          AnimatedScale(
-                                            scale: isSelected ? 1.2 : 1.0,
-                                            duration: theme.animations.normal,
-                                            child: IconTheme(
-                                              data: IconThemeData(
-                                                color: color,
-                                                size: 24,
+                            child: VMinTapTarget(
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  DecoratedBox(
+                                    decoration: isFocused
+                                        ? BoxDecoration(
+                                            borderRadius: theme.radius.smRadius,
+                                            border: Border.all(
+                                              color: colors.ring,
+                                              width: 2,
+                                            ),
+                                          )
+                                        : const BoxDecoration(),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Stack(
+                                          clipBehavior: Clip.none,
+                                          children: [
+                                            AnimatedScale(
+                                              scale: isSelected ? 1.2 : 1.0,
+                                              duration: theme.animations.normal,
+                                              child: IconTheme(
+                                                data: IconThemeData(
+                                                  color: color,
+                                                  size: 24,
+                                                ),
+                                                child: isSelected
+                                                    ? (item.activeIcon ??
+                                                          item.icon)
+                                                    : item.icon,
                                               ),
-                                              child: isSelected
-                                                  ? (item.activeIcon ??
-                                                        item.icon)
-                                                  : item.icon,
                                             ),
-                                          ),
-                                          if (item.badge != null)
-                                            Positioned(
-                                              right: -8,
-                                              top: -4,
-                                              child: item.badge!,
+                                            if (item.badge != null)
+                                              Positioned(
+                                                right: -8,
+                                                top: -4,
+                                                child: item.badge!,
+                                              ),
+                                          ],
+                                        ),
+                                        if (showLabel)
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                              top: theme.spacing.xs,
                                             ),
-                                        ],
-                                      ),
-                                      if (showLabel)
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            top: theme.spacing.xs,
-                                          ),
-                                          child: AnimatedOpacity(
-                                            opacity: showLabel ? 1.0 : 0.0,
-                                            duration: theme.animations.normal,
-                                            // WHY: The item's Semantics already
-                                            // carries the label; a second copy
-                                            // makes a screen reader say it twice.
-                                            // scaleDown keeps a long label on
-                                            // one line, whole, in narrow tabs.
-                                            child: ExcludeSemantics(
-                                              child: FittedBox(
-                                                fit: BoxFit.scaleDown,
-                                                child: Text(
-                                                  item.label,
-                                                  style: typography.labelSmall
-                                                      .copyWith(
-                                                        color: color,
-                                                        fontWeight: isSelected
-                                                            ? FontWeight.w600
-                                                            : FontWeight.normal,
-                                                      ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                            child: AnimatedOpacity(
+                                              opacity: showLabel ? 1.0 : 0.0,
+                                              duration: theme.animations.normal,
+                                              // WHY: The item's Semantics already
+                                              // carries the label; a second copy
+                                              // makes a screen reader say it twice.
+                                              // scaleDown keeps a long label on
+                                              // one line, whole, in narrow tabs.
+                                              child: ExcludeSemantics(
+                                                child: FittedBox(
+                                                  fit: BoxFit.scaleDown,
+                                                  child: Text(
+                                                    item.label,
+                                                    style: typography.labelSmall
+                                                        .copyWith(
+                                                          color: color,
+                                                          fontWeight: isSelected
+                                                              ? FontWeight.w600
+                                                              : FontWeight
+                                                                    .normal,
+                                                        ),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                                if (isSelected && indicatorColor != null)
-                                  Positioned(
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    height: indicatorHeight,
-                                    child: ExcludeSemantics(
-                                      child: ColoredBox(color: indicatorColor),
+                                      ],
                                     ),
                                   ),
-                              ],
+                                  if (isSelected && indicatorColor != null)
+                                    Positioned(
+                                      top: 0,
+                                      left: 0,
+                                      right: 0,
+                                      height: indicatorHeight,
+                                      child: ExcludeSemantics(
+                                        child: ColoredBox(
+                                          color: indicatorColor,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
                         );

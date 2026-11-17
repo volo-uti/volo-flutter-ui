@@ -528,6 +528,9 @@ class VToggleButtonGroup<T> extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: groupRadius,
+          // WHY: A clip would also cut the widened semantics rectangles of the
+          // options; each option already rounds its own outer corners.
+          clipBehavior: Clip.none,
           // WHY: Options grow with the text scale; IntrinsicHeight and stretch
           // keep every option as tall as the tallest one. The Align lets the
           // row take its own height inside a tight parent, as before.
@@ -763,7 +766,7 @@ class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
           ? GestureDetector(
               onTap: widget.onTap,
               behavior: HitTestBehavior.opaque,
-              child: VMinTapTarget(child: toggle),
+              child: VMinTapTarget(growLayout: false, child: toggle),
             )
           : toggle,
     );
@@ -785,9 +788,9 @@ class _ToggleButtonGroupItemState<T> extends State<_ToggleButtonGroupItem<T>> {
     );
 
     // A button that is selected in a single-choice group, toggled otherwise.
-    return Semantics(
-      container: true,
-      button: true,
+    // The node is widened to the minimum tap target without growing the
+    // layout, so the drawn option keeps the group's height.
+    return VMinTapTargetSemantics(
       enabled: _isEnabled,
       selected: widget.exclusive ? widget.isSelected : null,
       inMutuallyExclusiveGroup: widget.exclusive ? true : null,

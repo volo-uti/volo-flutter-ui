@@ -321,19 +321,20 @@ class _VChipState extends State<VChip> with SingleTickerProviderStateMixin {
     // Label
     children.add(Flexible(child: labelWidget));
 
-    // Input chip: delete button (its tap area grows to the minimum tap target size)
+    // Input chip: delete button (its tap area reaches the minimum tap target size)
     if (widget._variant == _VChipVariant.input &&
         widget.onDeleted != null &&
         _isEnabled) {
       children.add(
-        Semantics(
-          button: true,
-          // Its own node, so a screen reader can reach delete apart from the chip.
-          container: true,
+        // Its own node, so a screen reader can reach delete apart from the
+        // chip; the node and the tap area reach the minimum tap target size
+        // without making the chip itself larger.
+        VMinTapTargetSemantics(
           label: VoloLocalizations.of(context).chipDelete,
           child: GestureDetector(
             onTap: widget.onDeleted,
             child: VMinTapTarget(
+              growLayout: false,
               child: Padding(
                 padding: EdgeInsets.only(left: gap),
                 child: VIcons.close(
