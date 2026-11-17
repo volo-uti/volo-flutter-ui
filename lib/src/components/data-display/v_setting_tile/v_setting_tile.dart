@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_checkbox/v_checkbox.dart';
+import 'package:volo_flutter_ui/src/components/inputs/v_radio/v_radio.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_switch/v_switch.dart';
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
@@ -11,8 +12,9 @@ import 'v_setting_tile_style.dart';
 ///
 /// Pick the variant with a named constructor: [VSettingTile.simple],
 /// [VSettingTile.navigation], [VSettingTile.switchTile] or
-/// [VSettingTile.checkbox]. The toggle variants flip on a tap anywhere on the
-/// row and report the new value through `onChanged`.
+/// [VSettingTile.checkbox] or [VSettingTile.radio]. The toggle variants flip on
+/// a tap anywhere on the row and report the new value through `onChanged`;
+/// the radio variant reports its own value.
 ///
 /// ```dart
 /// VSettingTile.switchTile(
@@ -88,6 +90,47 @@ class VSettingTile extends StatefulWidget {
        _checked = value,
        _onChanged = onChanged;
 
+  VSettingTile._radio({
+    required this.title,
+    required bool selected,
+    required VoidCallback? onSelected,
+    required this.enabled,
+    super.key,
+    this.subtitle,
+    this.leading,
+    this.style,
+  }) : _variant = _VSettingTileVariant.radio,
+       trailing = null,
+       value = null,
+       onTap = null,
+       _checked = selected,
+       _onChanged = onSelected == null ? null : ((_) => onSelected());
+
+  /// Creates a row with a radio button at the end, one option of a group.
+  ///
+  /// The row is selected when [value] equals [groupValue]. A tap anywhere on
+  /// the row, or Enter and Space when focused, calls `onChanged` with [value].
+  static VSettingTile radio<T>({
+    required Widget title,
+    required T value,
+    required T? groupValue,
+    Key? key,
+    Widget? subtitle,
+    Widget? leading,
+    ValueChanged<T?>? onChanged,
+    bool enabled = true,
+    VSettingTileStyle? style,
+  }) => VSettingTile._radio(
+    title: title,
+    selected: value == groupValue,
+    key: key,
+    subtitle: subtitle,
+    leading: leading,
+    onSelected: onChanged == null ? null : () => onChanged(value),
+    enabled: enabled,
+    style: style,
+  );
+
   final _VSettingTileVariant _variant;
 
   /// Setting name, typically a [Text].
@@ -122,7 +165,7 @@ class VSettingTile extends StatefulWidget {
   State<VSettingTile> createState() => _VSettingTileState();
 }
 
-enum _VSettingTileVariant { simple, navigation, switchTile, checkbox }
+enum _VSettingTileVariant { simple, navigation, switchTile, checkbox, radio }
 
 class _VSettingTileState extends State<VSettingTile> {
   bool _isPressed = false;
@@ -139,6 +182,7 @@ class _VSettingTileState extends State<VSettingTile> {
       case _VSettingTileVariant.switchTile:
         return widget._onChanged != null;
       case _VSettingTileVariant.checkbox:
+      case _VSettingTileVariant.radio:
         return widget._onChanged != null;
     }
   }
@@ -153,6 +197,7 @@ class _VSettingTileState extends State<VSettingTile> {
         break;
       case _VSettingTileVariant.switchTile:
       case _VSettingTileVariant.checkbox:
+      case _VSettingTileVariant.radio:
         widget._onChanged?.call(!widget._checked);
         break;
     }
@@ -195,6 +240,16 @@ class _VSettingTileState extends State<VSettingTile> {
           onChanged: widget.enabled
               ? (v) => widget._onChanged?.call(v ?? false)
               : null,
+        );
+      case _VSettingTileVariant.radio:
+        // WHY: The inner radio gets a callback so it is not dimmed; the row
+        // owns the tap, so a press on the radio itself selects the row too.
+        return IgnorePointer(
+          child: VRadio<bool>(
+            value: true,
+            groupValue: widget._checked ? true : null,
+            onChanged: (_) {},
+          ),
         );
     }
   }
@@ -293,7 +348,8 @@ class _VSettingTileState extends State<VSettingTile> {
               ExcludeSemantics(
                 excluding:
                     widget._variant == _VSettingTileVariant.switchTile ||
-                    widget._variant == _VSettingTileVariant.checkbox,
+                    widget._variant == _VSettingTileVariant.checkbox ||
+                    widget._variant == _VSettingTileVariant.radio,
                 child: _buildTrailing(colors, typography),
               ),
             ],
@@ -337,8 +393,13 @@ class _VSettingTileState extends State<VSettingTile> {
       toggled: widget._variant == _VSettingTileVariant.switchTile
           ? widget._checked
           : null,
-      checked: widget._variant == _VSettingTileVariant.checkbox
+      checked:
+          widget._variant == _VSettingTileVariant.checkbox ||
+              widget._variant == _VSettingTileVariant.radio
           ? widget._checked
+          : null,
+      inMutuallyExclusiveGroup: widget._variant == _VSettingTileVariant.radio
+          ? true
           : null,
       enabled: widget.enabled,
       child: tile,

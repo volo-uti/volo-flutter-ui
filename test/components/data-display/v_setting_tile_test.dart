@@ -1,3 +1,4 @@
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -363,6 +364,112 @@ void main() {
       final node = tester.getSemantics(find.byType(VSettingTile));
       expect(node.label, 'Alerts');
       expect(node.childrenCount, 0);
+      handle.dispose();
+    });
+  });
+
+  group('VSettingTile radio', () {
+    Widget host(Widget child) => VTheme(
+      data: VThemeData.light(),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Align(alignment: Alignment.topLeft, child: child),
+      ),
+    );
+
+    testWidgets('tapping the row calls onChanged with its value', (
+      tester,
+    ) async {
+      String? got;
+      await tester.pumpWidget(
+        host(
+          VSettingTile.radio(
+            title: const Text('A'),
+            value: 'a',
+            groupValue: 'b',
+            onChanged: (v) => got = v,
+          ),
+        ),
+      );
+      await tester.tap(find.text('A'));
+      expect(got, 'a');
+      expect(find.byType(VRadio<bool>), findsOneWidget);
+    });
+
+    testWidgets('Enter and Space on focus call onChanged', (tester) async {
+      final calls = <String?>[];
+      await tester.pumpWidget(
+        host(
+          VSettingTile.radio<String>(
+            title: const Text('A'),
+            value: 'a',
+            groupValue: null,
+            onChanged: calls.add,
+          ),
+        ),
+      );
+      Focus.of(tester.element(find.text('A'))).requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      expect(calls, ['a', 'a']);
+    });
+
+    testWidgets('disabled or null onChanged ignores taps', (tester) async {
+      var n = 0;
+      await tester.pumpWidget(
+        host(
+          VSettingTile.radio(
+            title: const Text('A'),
+            value: 'a',
+            groupValue: null,
+            enabled: false,
+            onChanged: (_) => n++,
+          ),
+        ),
+      );
+      await tester.tap(find.text('A'));
+      await tester.pumpWidget(
+        host(
+          VSettingTile.radio(
+            title: const Text('A'),
+            value: 'a',
+            groupValue: null,
+          ),
+        ),
+      );
+      await tester.tap(find.text('A'));
+      expect(n, 0);
+    });
+
+    testWidgets('radio mark is not dimmed and the row is one node', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        host(
+          VSettingTile.radio(
+            title: const Text('A'),
+            value: 'a',
+            groupValue: 'a',
+            onChanged: (_) {},
+          ),
+        ),
+      );
+      final dim = tester.widgetList<Opacity>(
+        find.descendant(
+          of: find.byType(VRadio<bool>),
+          matching: find.byType(Opacity),
+        ),
+      );
+      expect(dim.every((o) => o.opacity == 1), isTrue);
+      final node = tester.getSemantics(find.byType(VSettingTile));
+      expect(node.childrenCount, 0);
+      expect(
+        // ignore: deprecated_member_use
+        node.hasFlag(SemanticsFlag.isChecked),
+        isTrue,
+      );
       handle.dispose();
     });
   });

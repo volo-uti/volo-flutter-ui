@@ -34,7 +34,7 @@ Widget _settingTilePlayground(BuildContext context) {
   final title = k.string(label: 'title', initialValue: 'Language');
   final subtitle = k.string(label: 'subtitle');
   final value = k.string(label: 'value (navigation)', initialValue: 'English');
-  final checked = k.boolean(label: 'checked (switchTile, checkbox)');
+  final checked = k.boolean(label: 'checked (switchTile, checkbox, radio)');
   final leading = k.boolean(label: 'leading', initialValue: true);
   final enabled = k.boolean(label: 'enabled', initialValue: true);
   final actionable = k.boolean(label: 'onTap / onChanged', initialValue: true);
@@ -82,12 +82,21 @@ Widget _settingTilePlayground(BuildContext context) {
           enabled: enabled,
           onChanged: onChanged,
         ),
+        _SettingVariant.radio => VSettingTile.radio<String>(
+          title: titleWidget,
+          subtitle: subtitleWidget,
+          leading: leadingWidget,
+          value: 'a',
+          groupValue: checked ? 'a' : 'b',
+          enabled: enabled,
+          onChanged: actionable ? (_) {} : null,
+        ),
       },
     ),
   );
 }
 
-enum _SettingVariant { simple, navigation, switchTile, checkbox }
+enum _SettingVariant { simple, navigation, switchTile, checkbox, radio }
 
 // =============================================================================
 // Showcase
