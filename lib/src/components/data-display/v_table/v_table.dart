@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_checkbox/v_checkbox.dart';
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 
 import 'v_table_style.dart';
 
@@ -342,24 +343,26 @@ class _VTableState extends State<VTable> {
       final isSorted = widget.sortColumnKey == column.key;
       content = GestureDetector(
         onTap: () => _handleSort(column.key),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            content,
-            if (isSorted) ...[
-              SizedBox(width: VTheme.of(context).spacing.xs),
-              if (widget.sortAscending)
-                VIcons.arrowUp(
-                  size: VTheme.of(context).sizes.xs.iconSize,
-                  color: colors.foreground,
-                )
-              else
-                VIcons.arrowDown(
-                  size: VTheme.of(context).sizes.xs.iconSize,
-                  color: colors.foreground,
-                ),
+        child: VMinTapTarget(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              content,
+              if (isSorted) ...[
+                SizedBox(width: VTheme.of(context).spacing.xs),
+                if (widget.sortAscending)
+                  VIcons.arrowUp(
+                    size: VTheme.of(context).sizes.xs.iconSize,
+                    color: colors.foreground,
+                  )
+                else
+                  VIcons.arrowDown(
+                    size: VTheme.of(context).sizes.xs.iconSize,
+                    color: colors.foreground,
+                  ),
+              ],
             ],
-          ],
+          ),
         ),
       );
     }

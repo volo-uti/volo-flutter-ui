@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
 
 void main() {
@@ -11,6 +12,30 @@ void main() {
         child: Center(child: SizedBox(width: 300, child: child)),
       ),
     );
+
+    for (final minTap in [24.0, 48.0]) {
+      testWidgets('the drag area is at least $minTap tall', (tester) async {
+        await tester.pumpWidget(
+          VTheme(
+            data: VThemeData.light().copyWith(minTapTargetSize: minTap),
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: Center(
+                child: SizedBox(
+                  width: 300,
+                  child: VSlider(value: 0.5, onChanged: (_) {}),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(
+          tester.getSize(find.byType(VMinTapTarget)).height,
+          greaterThanOrEqualTo(minTap),
+        );
+      });
+    }
 
     testWidgets('creates VSlider', (tester) async {
       await tester.pumpWidget(

@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
 
 void main() {
@@ -101,6 +102,35 @@ void main() {
     });
 
     group('sortable variant', () {
+      for (final minTap in [24.0, 48.0]) {
+        testWidgets('a sortable header is at least $minTap tall to tap', (
+          tester,
+        ) async {
+          await tester.pumpWidget(
+            VTheme(
+              data: VThemeData.light().copyWith(minTapTargetSize: minTap),
+              child: Directionality(
+                textDirection: TextDirection.ltr,
+                child: VTable.sortable(
+                  columns: columns,
+                  rows: rows,
+                  onSort: (key, {required bool ascending}) {},
+                ),
+              ),
+            ),
+          );
+
+          final size = tester.getSize(
+            find.ancestor(
+              of: find.text('Name'),
+              matching: find.byType(VMinTapTarget),
+            ),
+          );
+          // The header row is 48 tall with a 1px border, so it caps the area.
+          expect(size.height, greaterThanOrEqualTo(minTap - 1));
+        });
+      }
+
       testWidgets('calls onSort when header tapped', (tester) async {
         String? sortedKey;
         bool? sortAscending;

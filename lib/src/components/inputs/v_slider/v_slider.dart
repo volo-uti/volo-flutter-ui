@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/utils/v_debug.dart';
+import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_slider_style.dart';
 
 /// Draggable slider for one value, or two with [VSlider.range].
@@ -601,7 +602,7 @@ class _VSliderState extends State<VSlider> with SingleTickerProviderStateMixin {
             onHorizontalDragEnd: _handleDragEnd,
             onHorizontalDragCancel: _handleDragCancel,
             behavior: HitTestBehavior.opaque,
-            child: slider,
+            child: VMinTapTarget(child: slider),
           ),
         );
 
