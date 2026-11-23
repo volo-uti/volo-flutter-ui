@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_button/v_button.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/theme/themed_text_style.dart';
 
 import 'v_alert_dialog_style.dart';
 
@@ -194,7 +195,7 @@ class VAlertDialog extends StatelessWidget {
         );
 
     return FocusTraversalGroup(
-      child: DefaultTextStyle(
+      child: ThemedDefaultTextStyle(
         style: typography.bodyMedium.copyWith(
           color: descTextColor,
           decoration: TextDecoration.none,

@@ -31,6 +31,18 @@ void main() {
       expect(_family(tester, 'badge'), 'TestFont');
     });
 
+    testWidgets('reaches a widget that resets the default text style', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          _themeWith('TestFont'),
+          VButton(onPressed: () {}, child: const Text('save')),
+        ),
+      );
+      expect(_family(tester, 'save'), 'TestFont');
+    });
+
     testWidgets('reaches the text styles of the typography', (tester) async {
       final typography = _themeWith('TestFont').typography;
       expect(typography.bodyMedium.fontFamily, 'TestFont');

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/theme/themed_text_style.dart';
 import 'v_sheet_style.dart';
 
 /// Side sheet direction.
@@ -263,7 +264,7 @@ class _VBottomSheetState extends State<VBottomSheet>
 
     final titleWidget = widget.title == null
         ? null
-        : DefaultTextStyle(
+        : ThemedDefaultTextStyle(
             style: theme.typography.titleMedium.copyWith(
               color: fgColor,
               decoration: TextDecoration.none,
@@ -279,7 +280,7 @@ class _VBottomSheetState extends State<VBottomSheet>
 
     return FocusTraversalGroup(
       policy: WidgetOrderTraversalPolicy(),
-      child: DefaultTextStyle(
+      child: ThemedDefaultTextStyle(
         style: defaultTextStyle,
         child: Semantics(
           scopesRoute: true,
@@ -523,7 +524,7 @@ class _VSideSheetState extends State<VSideSheet>
 
     return FocusTraversalGroup(
       policy: WidgetOrderTraversalPolicy(),
-      child: DefaultTextStyle(
+      child: ThemedDefaultTextStyle(
         style: defaultTextStyle,
         child: Semantics(
           scopesRoute: true,

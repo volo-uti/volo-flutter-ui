@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/theme/themed_text_style.dart';
 import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_fab_style.dart';
 
@@ -266,7 +267,7 @@ class _VFabState extends State<VFab> with SingleTickerProviderStateMixin {
         items.add(
           IconTheme(
             data: IconThemeData(color: iconColor, size: iconSize),
-            child: DefaultTextStyle(
+            child: ThemedDefaultTextStyle(
               style: TextStyle(color: iconColor, fontSize: iconSize, height: 1),
               child: widget.icon!,
             ),
@@ -285,7 +286,7 @@ class _VFabState extends State<VFab> with SingleTickerProviderStateMixin {
     } else if (widget.icon != null) {
       content = IconTheme(
         data: IconThemeData(color: iconColor, size: iconSize),
-        child: DefaultTextStyle(
+        child: ThemedDefaultTextStyle(
           style: TextStyle(color: iconColor, fontSize: iconSize, height: 1),
           child: widget.icon!,
         ),

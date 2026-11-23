@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/theme/themed_text_style.dart';
 import 'v_tooltip_style.dart';
 
 /// Tooltip position.
@@ -345,7 +346,7 @@ class _TooltipOverlay extends StatelessWidget {
         opacity: fadeAnimation,
         child: ScaleTransition(
           scale: scaleAnimation,
-          child: DefaultTextStyle(
+          child: ThemedDefaultTextStyle(
             style: TextStyle(decoration: TextDecoration.none, color: tooltipFg),
             child: Focus(
               autofocus: true,

@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/feedback/v_loading_spinner/v_loading_spinner.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_button/v_button.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/theme/themed_text_style.dart';
 import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 
 import 'v_icon_button_style.dart';
@@ -403,7 +404,7 @@ class _VIconButtonState extends State<VIconButton>
             child: Center(
               child: IconTheme(
                 data: IconThemeData(color: iconColor, size: iconSize),
-                child: DefaultTextStyle(
+                child: ThemedDefaultTextStyle(
                   style: TextStyle(
                     color: iconColor,
                     fontSize: iconSize,

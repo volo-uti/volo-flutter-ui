@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/theme/themed_text_style.dart';
 import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_toast_style.dart';
 
@@ -426,7 +427,7 @@ class _ToastOverlayState extends State<_ToastOverlay>
         child: toast,
       );
     }
-    toast = DefaultTextStyle(
+    toast = ThemedDefaultTextStyle(
       style: TextStyle(
         decoration: TextDecoration.none,
         color: theme.colors.cardForeground,

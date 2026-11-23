@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/theme/themed_text_style.dart';
 import 'package:volo_flutter_ui/src/utils/keyboard_navigation_mixin.dart';
 import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_menu_style.dart';
@@ -577,7 +578,7 @@ class _MenuContent extends StatelessWidget {
         resolvedStyle?.padding ??
         EdgeInsets.symmetric(vertical: theme.spacing.xs);
 
-    return DefaultTextStyle(
+    return ThemedDefaultTextStyle(
       style: TextStyle(
         decoration: TextDecoration.none,
         color: resolvedStyle?.foregroundColor ?? colors.popoverForeground,

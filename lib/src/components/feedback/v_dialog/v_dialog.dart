@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/components/inputs/v_button/v_button.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/theme/themed_text_style.dart';
 
 import 'v_dialog_style.dart';
 
@@ -251,7 +252,7 @@ class VDialog extends StatelessWidget {
         scopesRoute: true,
         explicitChildNodes: true,
         label: titleLabel,
-        child: DefaultTextStyle(
+        child: ThemedDefaultTextStyle(
           style: contentStyle,
           child: Center(
             child: ConstrainedBox(

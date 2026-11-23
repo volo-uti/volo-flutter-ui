@@ -488,7 +488,7 @@ class _VButtonState extends State<VButton> with SingleTickerProviderStateMixin {
 
     // Wrap with DefaultTextStyle to apply color to Widget children; wrapped
     // lines follow the content alignment.
-    content = DefaultTextStyle(
+    content = ThemedDefaultTextStyle(
       style: textStyle,
       textAlign: _getTextAlign(),
       child: content,
@@ -680,7 +680,7 @@ class _TooltipOverlay extends StatelessWidget {
           left: tooltipLeft,
           child: FractionalTranslation(
             translation: const Offset(-0.5, 0),
-            child: DefaultTextStyle(
+            child: ThemedDefaultTextStyle(
               style: TextStyle(
                 decoration: TextDecoration.none,
                 color: colors.background,

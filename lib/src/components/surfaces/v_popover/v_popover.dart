@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+import 'package:volo_flutter_ui/src/theme/themed_text_style.dart';
 import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 import 'v_popover_style.dart';
 
@@ -606,7 +607,7 @@ class _PopoverOverlay extends StatelessWidget {
               child: VTheme(
                 data: theme,
                 localizations: l10n,
-                child: DefaultTextStyle(
+                child: ThemedDefaultTextStyle(
                   style: TextStyle(
                     decoration: TextDecoration.none,
                     color: fgColor,
