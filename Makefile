@@ -5,8 +5,10 @@ DART    ?= $(if $(FVM),fvm dart,dart)
 # Packages checked by analyze. The example sits outside the pub workspace.
 PACKAGES := . example widgetbook
 FORMAT_DIRS := lib test bin tool example widgetbook
+# The commit that `release-check` and `release-notes` read.
+REV ?= HEAD
 
-.PHONY: setup test fmt analyze tokens index check
+.PHONY: setup test fmt analyze tokens index check release-check release-notes
 
 setup:
 	$(if $(FVM),fvm install,)
@@ -55,3 +57,12 @@ check:
 	fi
 	$(MAKE) analyze
 	$(MAKE) test
+
+# Fails when REV (default HEAD) is not a valid release commit: its title,
+# the version against the previous tag, and breaking changes since that tag.
+release-check:
+	$(DART) run tool/release.dart check --commit $(REV)
+
+# Prints the release notes built from the commit titles since the previous tag.
+release-notes:
+	$(DART) run tool/release.dart notes --commit $(REV)
