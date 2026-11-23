@@ -67,6 +67,17 @@ The short version; see [AGENTS.md](AGENTS.md) for all of it.
 4. Commit with [Conventional Commits](https://www.conventionalcommits.org/) in English: `<type>(<scope>): <subject>`.
 5. Open a pull request and fill in the template. Write in English.
 
+## Releasing
+
+Maintainers release in this order.
+
+1. Pick the version. It must be greater than the previous `v*` tag. While the major version is 0, a breaking change since that tag (a commit title `type!:` or `type(scope)!:`, or a `BREAKING CHANGE:` line in the body) raises the minor version; anything else raises the patch. From 1.0 on, a breaking change raises the major version.
+2. Raise `version:` in `pubspec.yaml` in a commit titled `chore(release): <version>`.
+3. Run `make release-check` on that commit. It fails with one reason line when the title, the version or the version bump is wrong. `make release-notes` previews the notes.
+4. Put the tag on that release commit and push it. The release workflow runs the same check, then creates the GitHub release.
+
+The release notes are built from the commit titles since the previous tag: Breaking changes, Features (`feat`) and Fixes (`fix`, `perf`). Other types are left out, so write each title for the people who read the notes. The repository keeps no changelog file.
+
 ## Reporting bugs and security problems
 
 Open an [issue](https://github.com/volo-uti/volo-flutter-ui/issues/new/choose) for bugs and feature requests. Report security problems privately as described in [SECURITY.md](SECURITY.md); do not open a public issue for them.

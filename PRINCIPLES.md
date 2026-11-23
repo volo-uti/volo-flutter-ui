@@ -70,9 +70,15 @@ Enforced by: review.
 
 ## Only the final state
 
-Documents and code describe how things are now. They carry no "previously" sections and no migration notes; the history is in `git log`. Release notes are written by GitHub from the merged changes when a tag is released.
+Documents and code describe how things are now. They carry no "previously" sections and no migration notes; the history is in `git log`. Release notes are built from the commit titles since the previous tag when a tag is released.
 
 Enforced by: review.
+
+## A version says what changed
+
+A tag sits on its release commit (`chore(release): <version>`), the version is greater than the previous tag, and while the major version is 0 a breaking change raises the minor version. Apps take this library by tag, so a version that hides a breaking change breaks them without warning.
+
+Enforced by: `make release-check`, which the release workflow runs again on the tag.
 
 ## Choices
 
