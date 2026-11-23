@@ -219,7 +219,12 @@ class VApp extends StatelessWidget {
     final themeStyle = effectiveTheme.componentOverrides.get<VAppStyle>();
     final resolvedStyle = themeStyle?.merge(style) ?? style;
     final foreground = resolvedStyle?.foregroundColor;
-    final textStyle = foreground == null ? null : TextStyle(color: foreground);
+    // WidgetsApp replaces the default text style with this one, so it carries
+    // the theme font as well as the color.
+    final fontFamily = effectiveTheme.typography.fontFamily;
+    final textStyle = foreground == null && fontFamily == null
+        ? null
+        : TextStyle(color: foreground, fontFamily: fontFamily);
     final background = resolvedStyle?.backgroundColor;
 
     final appColor = color ?? effectiveTheme.colors.primary;

@@ -23,7 +23,30 @@ void main() {
       final modified = original.copyWith(fontFamily: 'Roboto');
 
       expect(modified.fontFamily, 'Roboto');
-      expect(modified.displayLarge, original.displayLarge);
+      expect(modified.displayLarge.fontFamily, 'Roboto');
+      expect(
+        modified.displayLarge,
+        original.displayLarge.copyWith(fontFamily: 'Roboto'),
+      );
+      expect(modified.bodyMedium.fontSize, original.bodyMedium.fontSize);
+    });
+
+    test('copyWith() keeps the raw styles when the family changes', () {
+      final a = VTypography.defaults.copyWith(fontFamily: 'A');
+      final b = a.copyWith(fontFamily: 'B');
+
+      expect(b.bodyMedium.fontFamily, 'B');
+      expect(VTypography.defaults.copyWith(fontFamily: 'B'), b);
+    });
+
+    test('a style that names its own family keeps it', () {
+      final typography = VTypography.defaults.copyWith(
+        fontFamily: 'A',
+        bodyMedium: VTypography.defaults.bodyMedium.copyWith(fontFamily: 'Own'),
+      );
+
+      expect(typography.bodyMedium.fontFamily, 'Own');
+      expect(typography.bodySmall.fontFamily, 'A');
     });
 
     test('lerp() interpolates between two typographies', () {

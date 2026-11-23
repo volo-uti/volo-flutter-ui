@@ -10,48 +10,68 @@ import 'v_typography.generated.dart';
 class VTypography {
   /// Creates typography tokens.
   const VTypography({
-    required this.displayLarge,
-    required this.displayMedium,
-    required this.displaySmall,
-    required this.headlineLarge,
-    required this.headlineMedium,
-    required this.headlineSmall,
-    required this.titleLarge,
-    required this.titleMedium,
-    required this.titleSmall,
-    required this.bodyLarge,
-    required this.bodyMedium,
-    required this.bodySmall,
-    required this.labelLarge,
-    required this.labelMedium,
-    required this.labelSmall,
+    required TextStyle displayLarge,
+    required TextStyle displayMedium,
+    required TextStyle displaySmall,
+    required TextStyle headlineLarge,
+    required TextStyle headlineMedium,
+    required TextStyle headlineSmall,
+    required TextStyle titleLarge,
+    required TextStyle titleMedium,
+    required TextStyle titleSmall,
+    required TextStyle bodyLarge,
+    required TextStyle bodyMedium,
+    required TextStyle bodySmall,
+    required TextStyle labelLarge,
+    required TextStyle labelMedium,
+    required TextStyle labelSmall,
     this.fontFamily,
     this.fontFamilyMono,
-  });
+  }) : _displayLarge = displayLarge,
+       _displayMedium = displayMedium,
+       _displaySmall = displaySmall,
+       _headlineLarge = headlineLarge,
+       _headlineMedium = headlineMedium,
+       _headlineSmall = headlineSmall,
+       _titleLarge = titleLarge,
+       _titleMedium = titleMedium,
+       _titleSmall = titleSmall,
+       _bodyLarge = bodyLarge,
+       _bodyMedium = bodyMedium,
+       _bodySmall = bodySmall,
+       _labelLarge = labelLarge,
+       _labelMedium = labelMedium,
+       _labelSmall = labelSmall;
 
   /// Interpolates between two typographies (for animations).
   VTypography.lerp(VTypography a, VTypography b, double t)
     : fontFamily = t < 0.5 ? a.fontFamily : b.fontFamily,
       fontFamilyMono = t < 0.5 ? a.fontFamilyMono : b.fontFamilyMono,
-      displayLarge = TextStyle.lerp(a.displayLarge, b.displayLarge, t)!,
-      displayMedium = TextStyle.lerp(a.displayMedium, b.displayMedium, t)!,
-      displaySmall = TextStyle.lerp(a.displaySmall, b.displaySmall, t)!,
-      headlineLarge = TextStyle.lerp(a.headlineLarge, b.headlineLarge, t)!,
-      headlineMedium = TextStyle.lerp(a.headlineMedium, b.headlineMedium, t)!,
-      headlineSmall = TextStyle.lerp(a.headlineSmall, b.headlineSmall, t)!,
-      titleLarge = TextStyle.lerp(a.titleLarge, b.titleLarge, t)!,
-      titleMedium = TextStyle.lerp(a.titleMedium, b.titleMedium, t)!,
-      titleSmall = TextStyle.lerp(a.titleSmall, b.titleSmall, t)!,
-      bodyLarge = TextStyle.lerp(a.bodyLarge, b.bodyLarge, t)!,
-      bodyMedium = TextStyle.lerp(a.bodyMedium, b.bodyMedium, t)!,
-      bodySmall = TextStyle.lerp(a.bodySmall, b.bodySmall, t)!,
-      labelLarge = TextStyle.lerp(a.labelLarge, b.labelLarge, t)!,
-      labelMedium = TextStyle.lerp(a.labelMedium, b.labelMedium, t)!,
-      labelSmall = TextStyle.lerp(a.labelSmall, b.labelSmall, t)!;
+      _displayLarge = TextStyle.lerp(a._displayLarge, b._displayLarge, t)!,
+      _displayMedium = TextStyle.lerp(a._displayMedium, b._displayMedium, t)!,
+      _displaySmall = TextStyle.lerp(a._displaySmall, b._displaySmall, t)!,
+      _headlineLarge = TextStyle.lerp(a._headlineLarge, b._headlineLarge, t)!,
+      _headlineMedium = TextStyle.lerp(
+        a._headlineMedium,
+        b._headlineMedium,
+        t,
+      )!,
+      _headlineSmall = TextStyle.lerp(a._headlineSmall, b._headlineSmall, t)!,
+      _titleLarge = TextStyle.lerp(a._titleLarge, b._titleLarge, t)!,
+      _titleMedium = TextStyle.lerp(a._titleMedium, b._titleMedium, t)!,
+      _titleSmall = TextStyle.lerp(a._titleSmall, b._titleSmall, t)!,
+      _bodyLarge = TextStyle.lerp(a._bodyLarge, b._bodyLarge, t)!,
+      _bodyMedium = TextStyle.lerp(a._bodyMedium, b._bodyMedium, t)!,
+      _bodySmall = TextStyle.lerp(a._bodySmall, b._bodySmall, t)!,
+      _labelLarge = TextStyle.lerp(a._labelLarge, b._labelLarge, t)!,
+      _labelMedium = TextStyle.lerp(a._labelMedium, b._labelMedium, t)!,
+      _labelSmall = TextStyle.lerp(a._labelSmall, b._labelSmall, t)!;
 
   /// Default font family.
   ///
-  /// When `null`, Flutter uses the platform's default system font.
+  /// Every text style of this typography and every text under the theme that
+  /// names no family of its own uses it. When `null`, Flutter uses the
+  /// platform's default system font.
   final String? fontFamily;
 
   /// Monospace font family (for code and numbers).
@@ -62,57 +82,96 @@ class VTypography {
   // ===== Display (Hero Text) =====
 
   /// Display large (57px, Bold).
-  final TextStyle displayLarge;
+  TextStyle get displayLarge => _withFamily(_displayLarge);
+
+  final TextStyle _displayLarge;
 
   /// Display medium (45px, Bold).
-  final TextStyle displayMedium;
+  TextStyle get displayMedium => _withFamily(_displayMedium);
+
+  final TextStyle _displayMedium;
 
   /// Display small (36px, Bold).
-  final TextStyle displaySmall;
+  TextStyle get displaySmall => _withFamily(_displaySmall);
+
+  final TextStyle _displaySmall;
 
   // ===== Headline (Headings) =====
 
   /// Headline large (32px, Bold).
-  final TextStyle headlineLarge;
+  TextStyle get headlineLarge => _withFamily(_headlineLarge);
+
+  final TextStyle _headlineLarge;
 
   /// Headline medium (28px, Bold) - page title.
-  final TextStyle headlineMedium;
+  TextStyle get headlineMedium => _withFamily(_headlineMedium);
+
+  final TextStyle _headlineMedium;
 
   /// Headline small (24px, SemiBold) - section title.
-  final TextStyle headlineSmall;
+  TextStyle get headlineSmall => _withFamily(_headlineSmall);
+
+  final TextStyle _headlineSmall;
 
   // ===== Title (Subtitles) =====
 
   /// Title large (22px, SemiBold) - card title.
-  final TextStyle titleLarge;
+  TextStyle get titleLarge => _withFamily(_titleLarge);
+
+  final TextStyle _titleLarge;
 
   /// Title medium (16px, SemiBold) - subtitle.
-  final TextStyle titleMedium;
+  TextStyle get titleMedium => _withFamily(_titleMedium);
+
+  final TextStyle _titleMedium;
 
   /// Title small (14px, SemiBold) - label.
-  final TextStyle titleSmall;
+  TextStyle get titleSmall => _withFamily(_titleSmall);
+
+  final TextStyle _titleSmall;
 
   // ===== Body =====
 
   /// Body large (16px, Regular).
-  final TextStyle bodyLarge;
+  TextStyle get bodyLarge => _withFamily(_bodyLarge);
+
+  final TextStyle _bodyLarge;
 
   /// Body medium (14px, Regular) - default text.
-  final TextStyle bodyMedium;
+  TextStyle get bodyMedium => _withFamily(_bodyMedium);
+
+  final TextStyle _bodyMedium;
 
   /// Body small (12px, Regular) - secondary text.
-  final TextStyle bodySmall;
+  TextStyle get bodySmall => _withFamily(_bodySmall);
+
+  final TextStyle _bodySmall;
 
   // ===== Label =====
 
   /// Label large (14px, Medium) - button text.
-  final TextStyle labelLarge;
+  TextStyle get labelLarge => _withFamily(_labelLarge);
+
+  final TextStyle _labelLarge;
 
   /// Label medium (12px, Medium) - badge text.
-  final TextStyle labelMedium;
+  TextStyle get labelMedium => _withFamily(_labelMedium);
+
+  final TextStyle _labelMedium;
 
   /// Label small (11px, Medium) - caption.
-  final TextStyle labelSmall;
+  TextStyle get labelSmall => _withFamily(_labelSmall);
+
+  final TextStyle _labelSmall;
+
+  // WHY: the text styles carry the theme font, so widgets that hand a style
+  // straight to EditableText or replace DefaultTextStyle still draw with it.
+  // A style that names its own family keeps it.
+  TextStyle _withFamily(TextStyle style) {
+    final family = fontFamily;
+    if (family == null || style.fontFamily != null) return style;
+    return style.copyWith(fontFamily: family);
+  }
 
   /// Default typography values.
   ///
@@ -158,21 +217,21 @@ class VTypography {
   }) => VTypography(
     fontFamily: fontFamily ?? this.fontFamily,
     fontFamilyMono: fontFamilyMono ?? this.fontFamilyMono,
-    displayLarge: displayLarge ?? this.displayLarge,
-    displayMedium: displayMedium ?? this.displayMedium,
-    displaySmall: displaySmall ?? this.displaySmall,
-    headlineLarge: headlineLarge ?? this.headlineLarge,
-    headlineMedium: headlineMedium ?? this.headlineMedium,
-    headlineSmall: headlineSmall ?? this.headlineSmall,
-    titleLarge: titleLarge ?? this.titleLarge,
-    titleMedium: titleMedium ?? this.titleMedium,
-    titleSmall: titleSmall ?? this.titleSmall,
-    bodyLarge: bodyLarge ?? this.bodyLarge,
-    bodyMedium: bodyMedium ?? this.bodyMedium,
-    bodySmall: bodySmall ?? this.bodySmall,
-    labelLarge: labelLarge ?? this.labelLarge,
-    labelMedium: labelMedium ?? this.labelMedium,
-    labelSmall: labelSmall ?? this.labelSmall,
+    displayLarge: displayLarge ?? _displayLarge,
+    displayMedium: displayMedium ?? _displayMedium,
+    displaySmall: displaySmall ?? _displaySmall,
+    headlineLarge: headlineLarge ?? _headlineLarge,
+    headlineMedium: headlineMedium ?? _headlineMedium,
+    headlineSmall: headlineSmall ?? _headlineSmall,
+    titleLarge: titleLarge ?? _titleLarge,
+    titleMedium: titleMedium ?? _titleMedium,
+    titleSmall: titleSmall ?? _titleSmall,
+    bodyLarge: bodyLarge ?? _bodyLarge,
+    bodyMedium: bodyMedium ?? _bodyMedium,
+    bodySmall: bodySmall ?? _bodySmall,
+    labelLarge: labelLarge ?? _labelLarge,
+    labelMedium: labelMedium ?? _labelMedium,
+    labelSmall: labelSmall ?? _labelSmall,
   );
 
   @override
@@ -181,41 +240,41 @@ class VTypography {
     return other is VTypography &&
         other.fontFamily == fontFamily &&
         other.fontFamilyMono == fontFamilyMono &&
-        other.displayLarge == displayLarge &&
-        other.displayMedium == displayMedium &&
-        other.displaySmall == displaySmall &&
-        other.headlineLarge == headlineLarge &&
-        other.headlineMedium == headlineMedium &&
-        other.headlineSmall == headlineSmall &&
-        other.titleLarge == titleLarge &&
-        other.titleMedium == titleMedium &&
-        other.titleSmall == titleSmall &&
-        other.bodyLarge == bodyLarge &&
-        other.bodyMedium == bodyMedium &&
-        other.bodySmall == bodySmall &&
-        other.labelLarge == labelLarge &&
-        other.labelMedium == labelMedium &&
-        other.labelSmall == labelSmall;
+        other._displayLarge == _displayLarge &&
+        other._displayMedium == _displayMedium &&
+        other._displaySmall == _displaySmall &&
+        other._headlineLarge == _headlineLarge &&
+        other._headlineMedium == _headlineMedium &&
+        other._headlineSmall == _headlineSmall &&
+        other._titleLarge == _titleLarge &&
+        other._titleMedium == _titleMedium &&
+        other._titleSmall == _titleSmall &&
+        other._bodyLarge == _bodyLarge &&
+        other._bodyMedium == _bodyMedium &&
+        other._bodySmall == _bodySmall &&
+        other._labelLarge == _labelLarge &&
+        other._labelMedium == _labelMedium &&
+        other._labelSmall == _labelSmall;
   }
 
   @override
   int get hashCode => Object.hashAll([
     fontFamily,
     fontFamilyMono,
-    displayLarge,
-    displayMedium,
-    displaySmall,
-    headlineLarge,
-    headlineMedium,
-    headlineSmall,
-    titleLarge,
-    titleMedium,
-    titleSmall,
-    bodyLarge,
-    bodyMedium,
-    bodySmall,
-    labelLarge,
-    labelMedium,
-    labelSmall,
+    _displayLarge,
+    _displayMedium,
+    _displaySmall,
+    _headlineLarge,
+    _headlineMedium,
+    _headlineSmall,
+    _titleLarge,
+    _titleMedium,
+    _titleSmall,
+    _bodyLarge,
+    _bodyMedium,
+    _bodySmall,
+    _labelLarge,
+    _labelMedium,
+    _labelSmall,
   ]);
 }

@@ -27,12 +27,12 @@ import 'v_typography.dart';
 /// ```
 class VTheme extends InheritedWidget {
   /// Creates a theme that applies [data] to [child].
-  const VTheme({
+  VTheme({
     required this.data,
-    required super.child,
+    required Widget child,
     super.key,
     this.localizations = const VoloLocalizationsEn(),
-  });
+  }) : super(child: _ThemeFont(child: child));
 
   /// Theme data that descendants read through [VTheme.of].
   final VThemeData data;
@@ -93,6 +93,22 @@ class VTheme extends InheritedWidget {
   @override
   bool updateShouldNotify(VTheme oldWidget) =>
       data != oldWidget.data || localizations != oldWidget.localizations;
+}
+
+// WHY: Text that names no font family reads it from DefaultTextStyle, so the
+// theme font reaches the app's own Text widgets as well as the library's. The
+// merge is always present (with a null family it changes nothing), which keeps
+// the widget tree the same when the theme gains or loses a font.
+class _ThemeFont extends StatelessWidget {
+  const _ThemeFont({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => DefaultTextStyle.merge(
+    style: TextStyle(fontFamily: VTheme.of(context).typography.fontFamily),
+    child: child,
+  );
 }
 
 // WHY: Extension methods provide dot-shorthand (context.vColors) to reduce
