@@ -26,8 +26,7 @@ class _SizeShowcase extends StatelessWidget {
 
     return WidgetbookPageLayout(
       title: 'Component Sizes',
-      description:
-          'All components support five sizes: xs, sm, md, lg, xl. Build harmonious UIs with a consistent sizing system.',
+      description: 'All components support five sizes: xs, sm, md, lg, xl. Build harmonious UIs with a consistent sizing system.',
       children: [
         WidgetbookSection(
           title: 'Size Scale',

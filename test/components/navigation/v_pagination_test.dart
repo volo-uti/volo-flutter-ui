@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volo_flutter_ui/volo_flutter_ui.dart';
+
 import '../../utils/min_tap_helpers.dart';
 
 void main() {
@@ -648,28 +649,29 @@ void main() {
         },
       );
 
-      testWidgets('next icon button navigates to next page in default variant', (
-        tester,
-      ) async {
-        int? changedPage;
+      testWidgets(
+        'next icon button navigates to next page in default variant',
+        (tester) async {
+          int? changedPage;
 
-        await tester.pumpWidget(
-          buildTestWidget(
-            VPagination(
-              currentPage: 5,
-              totalPages: 10,
-              onPageChanged: (page) => changedPage = page,
+          await tester.pumpWidget(
+            buildTestWidget(
+              VPagination(
+                currentPage: 5,
+                totalPages: 10,
+                onPageChanged: (page) => changedPage = page,
+              ),
             ),
-          ),
-        );
+          );
 
-        // Find all Icon widgets - third icon is next button (first, prev, next, last)
-        final icons = find.byType(CustomPaint);
-        await tester.tap(icons.at(2));
-        await tester.pump();
+          // Find all Icon widgets - third icon is next button (first, prev, next, last)
+          final icons = find.byType(CustomPaint);
+          await tester.tap(icons.at(2));
+          await tester.pump();
 
-        expect(changedPage, equals(6));
-      });
+          expect(changedPage, equals(6));
+        },
+      );
 
       testWidgets(
         'prev icon button is disabled on first page in default variant',

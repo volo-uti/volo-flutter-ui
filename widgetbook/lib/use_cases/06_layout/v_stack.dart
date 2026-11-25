@@ -113,8 +113,7 @@ class _StackShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VStack',
-    description:
-        'Arranges children in a vertical or horizontal stack with configurable spacing.',
+    description: 'Arranges children in a vertical or horizontal stack with configurable spacing.',
     children: [
       const WidgetbookSection(
         title: 'Direction',

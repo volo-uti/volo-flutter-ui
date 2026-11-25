@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+
 import 'v_badge_style.dart';
 
 /// Height presets for a [VBadge].

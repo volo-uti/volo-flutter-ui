@@ -217,33 +217,30 @@ void main() {
       );
     });
 
-    test(
-      'maps progress, accordion, card and sheet widgets to their VUI replacements',
-      () {
-        const expected = {
-          'CircularProgressIndicator': 'VLoadingSpinner',
-          'LinearProgressIndicator': 'VProgress.linear',
-          'ExpansionTile': 'VAccordion',
-          'ExpansionPanelList': 'VAccordion',
-          'Card': 'VCard',
-          'showModalBottomSheet': 'VBottomSheet.show',
-          'BottomSheet': 'VBottomSheet',
-        };
-        expected.forEach((raw, replacement) {
-          expect(
-            scanRawWidgets('a.dart', '$raw(context: null)').single,
-            contains('Use $replacement'),
-          );
-        });
+    test('maps progress, accordion, card and sheet widgets to their VUI replacements', () {
+      const expected = {
+        'CircularProgressIndicator': 'VLoadingSpinner',
+        'LinearProgressIndicator': 'VProgress.linear',
+        'ExpansionTile': 'VAccordion',
+        'ExpansionPanelList': 'VAccordion',
+        'Card': 'VCard',
+        'showModalBottomSheet': 'VBottomSheet.show',
+        'BottomSheet': 'VBottomSheet',
+      };
+      expected.forEach((raw, replacement) {
         expect(
-          scanRawWidgets(
-            'a.dart',
-            'VCard(); VCardHeader(); VProgress.linear(); VAccordion(); VSheet.bottom();',
-          ),
-          isEmpty,
+          scanRawWidgets('a.dart', '$raw(context: null)').single,
+          contains('Use $replacement'),
         );
-      },
-    );
+      });
+      expect(
+        scanRawWidgets(
+          'a.dart',
+          'VCard(); VCardHeader(); VProgress.linear(); VAccordion(); VSheet.bottom();',
+        ),
+        isEmpty,
+      );
+    });
 
     test('maps FloatingActionButton and its constructors to VFab', () {
       for (final call in [

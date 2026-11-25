@@ -75,8 +75,7 @@ class _FormFieldShowcase extends StatelessWidget {
 
     return WidgetbookPageLayout(
       title: 'VFormField',
-      description:
-          'Wrapper component providing label, helper text, and error message for form inputs.',
+      description: 'Wrapper component providing label, helper text, and error message for form inputs.',
       children: [
         WidgetbookSection(
           title: 'Label & Helper Text',

@@ -97,8 +97,7 @@ class _AppShowcase extends StatelessWidget {
 
     return WidgetbookPageLayout(
       title: 'VApp',
-      description:
-          'App root that wraps WidgetsApp in VTheme and follows system brightness.',
+      description: 'App root that wraps WidgetsApp in VTheme and follows system brightness.',
       children: [
         WidgetbookSection(
           title: 'Theme Modes',

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+
 import 'v_resizable_style.dart';
 
 /// Floating-point comparison tolerance.
@@ -362,8 +363,11 @@ class _PanelConfig {
 }
 
 /// Moves handle [handle] by [delta] pixels; panels share [availableSize].
-typedef _HandleDragUpdate =
-    void Function(int handle, double delta, double availableSize);
+typedef _HandleDragUpdate = void Function(
+  int handle,
+  double delta,
+  double availableSize,
+);
 
 class _ResizableGroupScope extends InheritedWidget {
   const _ResizableGroupScope({

@@ -95,8 +95,7 @@ class _ToastShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VToast',
-    description:
-        'Displays brief notification messages to the user. Triggered via the toast() function.',
+    description: 'Displays brief notification messages to the user. Triggered via the toast() function.',
     children: [
       WidgetbookSection(
         title: 'Variants',
@@ -330,8 +329,7 @@ class _ToastSample extends StatelessWidget {
       ),
       WidgetbookCodeBlock(
         title: 'Error toast',
-        code:
-            '''VToast.showError(context, 'Network error occurred. Please try again.');''',
+        code: '''VToast.showError(context, 'Network error occurred. Please try again.');''',
         preview: VButton(
           color: VButtonColor.destructive,
           onPressed: () => VToast.showError(

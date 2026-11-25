@@ -336,38 +336,34 @@ void main() {
 
     // Clear button tap test - skipped due to VPopover Overlay interaction issues.
     // Manual testing required: enter text in Widgetbook and click X button to verify deletion.
-    testWidgets(
-      'clears text when X button is clicked',
-      (tester) async {
-        // ignore: unused_local_variable
-        String? selectedValue;
-        await tester.pumpWidget(
-          buildWithOverlay(
-            VAutocomplete<String>(
-              items: testItems,
-              onChanged: (v) => selectedValue = v,
-            ),
+    testWidgets('clears text when X button is clicked', (tester) async {
+      // ignore: unused_local_variable
+      String? selectedValue;
+      await tester.pumpWidget(
+        buildWithOverlay(
+          VAutocomplete<String>(
+            items: testItems,
+            onChanged: (v) => selectedValue = v,
           ),
-        );
+        ),
+      );
 
-        // Tap input field and enter text.
-        await tester.tap(find.byType(EditableText));
-        await tester.pump();
-        await tester.enterText(find.byType(EditableText), 'test');
-        await tester.pump();
+      // Tap input field and enter text.
+      await tester.tap(find.byType(EditableText));
+      await tester.pump();
+      await tester.enterText(find.byType(EditableText), 'test');
+      await tester.pump();
 
-        // Find X button (VIcons.close renders SizedBox > CustomPaint).
-        // The close button is wrapped in a MouseRegion with click cursor.
-        final closeButton = find.byWidgetPredicate(
-          (w) => w is MouseRegion && w.cursor == SystemMouseCursors.click,
-        );
-        expect(closeButton, findsOneWidget);
+      // Find X button (VIcons.close renders SizedBox > CustomPaint).
+      // The close button is wrapped in a MouseRegion with click cursor.
+      final closeButton = find.byWidgetPredicate(
+        (w) => w is MouseRegion && w.cursor == SystemMouseCursors.click,
+      );
+      expect(closeButton, findsOneWidget);
 
-        // Note: Tap test is unstable due to Overlay-based VPopover interaction.
-        // Actual behavior needs manual verification in widgetbook.
-      },
-      skip: true,
-    ); // Tap test unstable due to VPopover Overlay interaction - manual testing required.
+      // Note: Tap test is unstable due to Overlay-based VPopover interaction.
+      // Actual behavior needs manual verification in widgetbook.
+    }, skip: true); // Tap test unstable due to VPopover Overlay interaction - manual testing required.
 
     testWidgets('opens dropdown on focus', (tester) async {
       await tester.pumpWidget(

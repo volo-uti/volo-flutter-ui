@@ -78,8 +78,7 @@ class _BreadcrumbShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VBreadcrumbs',
-    description:
-        'Hierarchical page navigation showing the current location within a site.',
+    description: 'Hierarchical page navigation showing the current location within a site.',
     children: [
       WidgetbookSection(
         title: 'Separator',

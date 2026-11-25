@@ -42,8 +42,7 @@ class _AnimationShowcaseState extends State<_AnimationShowcase> {
 
     return WidgetbookPageLayout(
       title: 'Animation',
-      description:
-          'Motion brings life to the UI. Use consistent durations and easing curves to create natural interactions.',
+      description: 'Motion brings life to the UI. Use consistent durations and easing curves to create natural interactions.',
       children: [
         _DurationSection(
           key: ValueKey('duration_$_durationKey'),
@@ -57,8 +56,7 @@ class _AnimationShowcaseState extends State<_AnimationShowcase> {
         ),
         WidgetbookSection(
           title: 'Transitions',
-          description:
-              'Pre-composed transition tokens combining duration, delay, and timing function.',
+          description: 'Pre-composed transition tokens combining duration, delay, and timing function.',
           children: [
             Table(
               columnWidths: const {

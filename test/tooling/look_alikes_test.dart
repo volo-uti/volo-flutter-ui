@@ -197,9 +197,8 @@ void main() {
         contains('MapPanelSheet rebuilds VBottomSheet'),
       );
       expect(
-        _failures(
-          _sheet('// TODO(library: VBottomSheet cannot stay open)'),
-        ).single,
+        _failures(_sheet('// TODO(library: VBottomSheet cannot stay open)'))
+            .single,
         contains('MapPanelSheet rebuilds VBottomSheet'),
       );
     });

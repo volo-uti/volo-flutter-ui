@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+
 import 'v_list_tile_style.dart';
 
 /// Tile with leading, title, subtitle and trailing slots for list rows.

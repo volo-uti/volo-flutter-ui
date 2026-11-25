@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+
 import 'v_skeleton_style.dart';
 
 /// Animation effect of a [VSkeleton]: pulse (default), wave or none.

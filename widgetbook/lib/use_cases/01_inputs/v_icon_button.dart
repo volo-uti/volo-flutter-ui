@@ -57,9 +57,8 @@ Widget _iconButtonPlayground(BuildContext context) {
   );
 
   return VTheme(
-    data: VTheme.of(
-      context,
-    ).copyWith(minTapTargetSize: minTapTargetSize.toDouble()),
+    data: VTheme.of(context)
+        .copyWith(minTapTargetSize: minTapTargetSize.toDouble()),
     child: StatefulBuilder(
       builder: (context, setState) {
         const icon = Icon(IconData(0xe87e, fontFamily: 'MaterialIcons'));

@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/l10n/volo_localizations.dart';
 import 'package:volo_flutter_ui/src/l10n/volo_localizations_en.dart';
+
 import 'v_theme.dart';
 import 'v_theme_data.dart';
 
@@ -79,13 +80,11 @@ class _AnimatedVThemeState extends AnimatedWidgetBaseState<AnimatedVTheme> {
   // changed properties create new Tween instances (the rest are reused).
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
-    _data =
-        visitor(
-              _data,
-              widget.data,
-              (dynamic value) => VThemeDataTween(begin: value as VThemeData),
-            )
-            as VThemeDataTween?;
+    _data = visitor(
+      _data,
+      widget.data,
+      (dynamic value) => VThemeDataTween(begin: value as VThemeData),
+    ) as VThemeDataTween?;
   }
 
   @override

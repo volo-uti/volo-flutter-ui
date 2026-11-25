@@ -125,8 +125,7 @@ class _SectionShowcase extends StatelessWidget {
 
     return WidgetbookPageLayout(
       title: 'VSection',
-      description:
-          'A content section with optional title, description, and collapsible behavior.',
+      description: 'A content section with optional title, description, and collapsible behavior.',
       children: [
         WidgetbookSection(
           title: 'Variants',

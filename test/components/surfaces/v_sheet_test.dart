@@ -587,13 +587,12 @@ void main() {
         (context) => VSheet.showBottom<void>(
           context,
           VSheet.bottom(
-                style: const VSheetStyle(
-                  backgroundColor: red,
-                  borderRadius: radius,
-                ),
-                child: const Text('Sheet Content'),
-              )
-              as VBottomSheet,
+            style: const VSheetStyle(
+              backgroundColor: red,
+              borderRadius: radius,
+            ),
+            child: const Text('Sheet Content'),
+          ) as VBottomSheet,
         ),
       );
 
@@ -606,10 +605,9 @@ void main() {
         (context) => VSheet.showSide<void>(
           context,
           VSheet.side(
-                style: const VSheetStyle(backgroundColor: red),
-                child: const Text('Sheet Content'),
-              )
-              as VSideSheet,
+            style: const VSheetStyle(backgroundColor: red),
+            child: const Text('Sheet Content'),
+          ) as VSideSheet,
         ),
       );
 
@@ -844,19 +842,17 @@ void main() {
               VSheet.showBottom<void>(
                 context,
                 VSheet.bottom(
-                      barrierDismissible: dismissible,
-                      child: const Text('Sheet Content'),
-                    )
-                    as VBottomSheet,
+                  barrierDismissible: dismissible,
+                  child: const Text('Sheet Content'),
+                ) as VBottomSheet,
               ),
           'VSheet.showSide': (context, {required dismissible}) =>
               VSheet.showSide<void>(
                 context,
                 VSheet.side(
-                      barrierDismissible: dismissible,
-                      child: const Text('Sheet Content'),
-                    )
-                    as VSideSheet,
+                  barrierDismissible: dismissible,
+                  child: const Text('Sheet Content'),
+                ) as VSideSheet,
               ),
         };
 

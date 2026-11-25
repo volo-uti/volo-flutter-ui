@@ -114,8 +114,7 @@ class _BackdropShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VBackdrop',
-    description:
-        'A full-screen overlay displayed behind modals, drawers, or side panels.',
+    description: 'A full-screen overlay displayed behind modals, drawers, or side panels.',
     children: [
       const WidgetbookSection(
         title: 'Basic Behavior',

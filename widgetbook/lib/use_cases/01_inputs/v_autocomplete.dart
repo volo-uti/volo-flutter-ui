@@ -130,8 +130,7 @@ class _AutocompleteShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VAutocomplete',
-    description:
-        'Text input with filtered dropdown suggestions for selecting from a list of options.',
+    description: 'Text input with filtered dropdown suggestions for selecting from a list of options.',
     children: [
       WidgetbookSection(
         title: 'Sizes',

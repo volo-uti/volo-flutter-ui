@@ -88,8 +88,7 @@ class _TextAreaShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VTextArea',
-    description:
-        'Multi-line text input for longer content such as descriptions, comments, and messages.',
+    description: 'Multi-line text input for longer content such as descriptions, comments, and messages.',
     children: [
       const WidgetbookSection(
         title: 'Sizes',

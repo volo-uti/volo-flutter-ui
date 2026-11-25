@@ -117,8 +117,7 @@ class _ListTileShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VListTile',
-    description:
-        'A list item component with title, subtitle, and optional leading/trailing content.',
+    description: 'A list item component with title, subtitle, and optional leading/trailing content.',
     children: [
       WidgetbookSection(
         title: 'Variants',

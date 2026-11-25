@@ -98,8 +98,7 @@ class _TabsShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VTabs',
-    description:
-        'Tab navigation compound component for switching between content panels.',
+    description: 'Tab navigation compound component for switching between content panels.',
     children: [
       const WidgetbookSection(
         title: 'Orientation',

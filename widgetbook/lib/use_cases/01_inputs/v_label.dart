@@ -55,8 +55,7 @@ class _LabelShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VLabel',
-    description:
-        'Label element for form inputs, providing accessible text identification.',
+    description: 'Label element for form inputs, providing accessible text identification.',
     children: [
       const WidgetbookSection(
         title: 'Sizes',

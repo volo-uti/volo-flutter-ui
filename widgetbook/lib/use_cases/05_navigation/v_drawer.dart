@@ -112,8 +112,7 @@ class _DrawerShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VDrawer',
-    description:
-        'Slide-in panel from the edge of the screen for secondary content or navigation.',
+    description: 'Slide-in panel from the edge of the screen for secondary content or navigation.',
     children: [
       WidgetbookSection(
         title: 'Side',

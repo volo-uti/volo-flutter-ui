@@ -11,8 +11,11 @@ import 'v_carousel_style.dart';
 /// Builds a custom page indicator for [VCarousel].
 ///
 /// [total] is the slide count and [current] the zero-based visible slide.
-typedef VCarouselIndicatorBuilder =
-    Widget Function(BuildContext context, int total, int current);
+typedef VCarouselIndicatorBuilder = Widget Function(
+  BuildContext context,
+  int total,
+  int current,
+);
 
 /// Where [VCarousel] draws its page indicator.
 enum VCarouselIndicatorPosition {

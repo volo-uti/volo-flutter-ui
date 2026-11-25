@@ -47,8 +47,7 @@ class _TypographyShowcase extends StatelessWidget {
 
     return WidgetbookPageLayout(
       title: 'Typography',
-      description:
-          'A typography system based on Material Design 3 type scale with Semantic Roles for cross-platform consistency.',
+      description: 'A typography system based on Material Design 3 type scale with Semantic Roles for cross-platform consistency.',
       children: [
         // ---- 1. Font Families ----
         WidgetbookSection(

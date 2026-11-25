@@ -107,8 +107,7 @@ class _CheckboxShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VCheckbox',
-    description:
-        'Toggle a single boolean value on or off, or manage multiple selections as a group.',
+    description: 'Toggle a single boolean value on or off, or manage multiple selections as a group.',
     children: [
       const WidgetbookSection(
         title: 'Sizes',

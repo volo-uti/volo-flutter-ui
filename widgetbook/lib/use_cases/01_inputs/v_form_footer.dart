@@ -65,8 +65,7 @@ class _FormFooterShowcase extends StatelessWidget {
 
     return WidgetbookPageLayout(
       title: 'VFormFooter',
-      description:
-          'Footer section of a form field showing helper text, errors, and character count.',
+      description: 'Footer section of a form field showing helper text, errors, and character count.',
       children: [
         WidgetbookSection(
           title: 'Messages',

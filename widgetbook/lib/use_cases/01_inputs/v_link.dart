@@ -65,8 +65,7 @@ class _LinkShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VLink',
-    description:
-        'Styled anchor element with polymorphic support for framework routers like Next.js Link.',
+    description: 'Styled anchor element with polymorphic support for framework routers like Next.js Link.',
     children: [
       WidgetbookSection(
         title: 'Underline',

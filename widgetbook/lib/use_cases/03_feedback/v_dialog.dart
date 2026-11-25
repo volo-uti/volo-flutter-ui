@@ -133,8 +133,7 @@ class _DialogShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VDialog',
-    description:
-        'A modal dialog with backdrop, focus trap, and keyboard support using a compound component pattern.',
+    description: 'A modal dialog with backdrop, focus trap, and keyboard support using a compound component pattern.',
     children: [
       WidgetbookSection(
         title: 'Basic Structure',

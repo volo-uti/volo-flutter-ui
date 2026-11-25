@@ -92,8 +92,7 @@ class _CardShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VCard',
-    description:
-        'A container component for grouping related content with visual hierarchy.',
+    description: 'A container component for grouping related content with visual hierarchy.',
     children: [
       const WidgetbookSection(
         title: 'Variants',

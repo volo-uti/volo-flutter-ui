@@ -107,8 +107,7 @@ class _TableShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VTable',
-    description:
-        'Displays tabular data with configurable columns, borders, and styling.',
+    description: 'Displays tabular data with configurable columns, borders, and styling.',
     children: [
       const WidgetbookSection(
         title: 'Basic',

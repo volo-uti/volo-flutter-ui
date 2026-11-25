@@ -57,12 +57,11 @@ class VStep {
 }
 
 /// Builds the continue and cancel controls of a [VStepper].
-typedef VStepperControlsBuilder =
-    Widget Function(
-      BuildContext context, {
-      VoidCallback? onStepContinue,
-      VoidCallback? onStepCancel,
-    });
+typedef VStepperControlsBuilder = Widget Function(
+  BuildContext context, {
+  VoidCallback? onStepContinue,
+  VoidCallback? onStepCancel,
+});
 
 /// {@template v_stepper}
 /// Multi-step flow with numbered markers, step content and controls.
@@ -425,9 +424,8 @@ class VStepper extends StatelessWidget {
       color: colors.mutedForeground,
     );
 
-    final stepLabel = VoloLocalizations.of(
-      context,
-    ).stepperStepOf(index + 1, steps.length);
+    final stepLabel = VoloLocalizations.of(context)
+        .stepperStepOf(index + 1, steps.length);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -576,9 +574,8 @@ class VStepper extends StatelessWidget {
           return Semantics(
             button: true,
             enabled: isTappable,
-            label: VoloLocalizations.of(
-              context,
-            ).stepperStepOf(index + 1, steps.length),
+            label: VoloLocalizations.of(context)
+                .stepperStepOf(index + 1, steps.length),
             onTap: onTap,
             excludeSemantics: true,
             child: GestureDetector(

@@ -4,6 +4,7 @@ import 'dart:math' show pi;
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+
 import 'v_loading_spinner_style.dart';
 
 /// Rotating arc that shows an operation is in progress, without a known end.

@@ -122,8 +122,7 @@ class _SheetShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VSheet',
-    description:
-        'A generic surface container with minimal styling, more lightweight than VCard.',
+    description: 'A generic surface container with minimal styling, more lightweight than VCard.',
     children: [
       WidgetbookSection(
         title: 'Variants',

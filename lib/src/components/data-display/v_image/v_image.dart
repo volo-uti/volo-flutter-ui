@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
+
 import 'v_image_style.dart';
 
 /// Image from an asset, URL, file or memory with fade-in, placeholder and error states.
@@ -322,9 +323,10 @@ class _VImageState extends State<VImage> with SingleTickerProviderStateMixin {
                 child: Text(
                   '!',
                   style: TextStyle(
-                    fontSize: VTheme.of(
-                      context,
-                    ).typography.headlineSmall.fontSize,
+                    fontSize: VTheme.of(context)
+                        .typography
+                        .headlineSmall
+                        .fontSize,
                   ),
                 ),
               ),

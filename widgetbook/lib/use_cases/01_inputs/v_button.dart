@@ -207,8 +207,7 @@ class _ButtonShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VButton',
-    description:
-        'Triggers user actions such as form submissions, dialogs, and navigation.',
+    description: 'Triggers user actions such as form submissions, dialogs, and navigation.',
     children: [
       // Variants
       WidgetbookSection(
@@ -756,8 +755,7 @@ class _ButtonSample extends StatelessWidget {
       ),
       WidgetbookCodeBlock(
         title: 'Destructive action',
-        code:
-            'VButton(onPressed: () {}, color: VButtonColor.destructive, child: Text("Delete"))',
+        code: 'VButton(onPressed: () {}, color: VButtonColor.destructive, child: Text("Delete"))',
         preview: VButton(
           onPressed: () {},
           color: VButtonColor.destructive,

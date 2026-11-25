@@ -85,8 +85,7 @@ class _TooltipShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VTooltip',
-    description:
-        'Displays informational text on hover or focus relative to its trigger element.',
+    description: 'Displays informational text on hover or focus relative to its trigger element.',
     children: [
       const WidgetbookSection(
         title: 'Placement',
@@ -191,8 +190,7 @@ class _TooltipShowcase extends StatelessWidget {
             labels: ['VTooltip content="..."'],
             children: [
               VTooltip(
-                message:
-                    'Clicking this button will save all your current changes to the server.',
+                message: 'Clicking this button will save all your current changes to the server.',
                 child: VBadge(label: Text('Hover me')),
               ),
             ],

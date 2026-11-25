@@ -539,9 +539,8 @@ class _VAutocompleteState<T> extends State<VAutocomplete<T>> {
       return Padding(
         padding: EdgeInsets.all(theme.spacing.lg),
         child: Text(
-          VoloLocalizations.of(
-            context,
-          ).autocompleteMinChars(widget.minSearchLength),
+          VoloLocalizations.of(context)
+              .autocompleteMinChars(widget.minSearchLength),
           style: typography.bodyMedium.copyWith(color: colors.mutedForeground),
         ),
       );

@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:volo_flutter_ui/src/icons/v_icons.dart';
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
+
 import 'v_alert_style.dart';
 
 /// Alert appearance variant.

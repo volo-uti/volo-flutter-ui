@@ -40,8 +40,7 @@ class _BorderShowcase extends StatelessWidget {
 
     return WidgetbookPageLayout(
       title: 'Border',
-      description:
-          'A consistent border style system for containers, inputs, and dividers.',
+      description: 'A consistent border style system for containers, inputs, and dividers.',
       children: [
         WidgetbookSection(
           title: 'Border Styles',

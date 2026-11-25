@@ -572,9 +572,8 @@ class _VCalendarState extends State<VCalendar> {
           ),
         ),
         Text(
-          VoloLocalizations.of(
-            context,
-          ).monthYear(_displayMonth.year, _displayMonth.month),
+          VoloLocalizations.of(context)
+              .monthYear(_displayMonth.year, _displayMonth.month),
           style: typography.titleSmall.copyWith(color: colors.foreground),
         ),
         GestureDetector(
@@ -632,9 +631,8 @@ class _VCalendarState extends State<VCalendar> {
       textColor = styleOverride?.foregroundColor ?? colors.foreground;
     }
 
-    final dateLabel = VoloLocalizations.of(
-      context,
-    ).fullDate(date.year, date.month, date.day);
+    final dateLabel = VoloLocalizations.of(context)
+        .fullDate(date.year, date.month, date.day);
 
     return Semantics(
       button: true,

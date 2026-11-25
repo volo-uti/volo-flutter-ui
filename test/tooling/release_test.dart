@@ -22,9 +22,8 @@ class _Repo {
   }
 
   void commit(String message, {String? version}) {
-    File(
-      '${dir.path}/pubspec.yaml',
-    ).writeAsStringSync('name: sample\nversion: ${version ?? _version}\n');
+    File('${dir.path}/pubspec.yaml')
+        .writeAsStringSync('name: sample\nversion: ${version ?? _version}\n');
     if (version != null) _version = version;
     File('${dir.path}/n.txt').writeAsStringSync('$message ${_n++}');
     _git(['add', '-A']);

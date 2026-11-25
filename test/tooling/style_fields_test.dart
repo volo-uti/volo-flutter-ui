@@ -246,9 +246,8 @@ class VXChip extends StatefulWidget {
     final folder = Directory('${dir.path}/inputs/v_x_chip')
       ..createSync(recursive: true);
     File('${folder.path}/v_x_chip_style.dart').writeAsStringSync(_style);
-    File(
-      '${folder.path}/v_x_chip.dart',
-    ).writeAsStringSync(_widget('    return Gap(resolvedStyle?.gap);'));
+    File('${folder.path}/v_x_chip.dart')
+        .writeAsStringSync(_widget('    return Gap(resolvedStyle?.gap);'));
     final found = scanStyleFields(
       dir.path,
       root: dir.path,

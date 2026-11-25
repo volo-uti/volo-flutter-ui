@@ -75,8 +75,7 @@ class _FormShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VForm',
-    description:
-        'Form container component that wraps form elements and handles submission.',
+    description: 'Form container component that wraps form elements and handles submission.',
     children: [
       WidgetbookSection(
         title: 'Form Patterns',

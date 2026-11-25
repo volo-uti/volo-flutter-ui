@@ -117,8 +117,7 @@ class _AboutOverview extends StatelessWidget {
             _PrincipleItem(
               number: '03',
               title: 'Customization',
-              description:
-                  'Easily customize the entire design system via theme provider.',
+              description: 'Easily customize the entire design system via theme provider.',
             ),
             _PrincipleItem(
               number: '04',

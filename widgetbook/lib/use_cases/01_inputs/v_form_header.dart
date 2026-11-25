@@ -61,8 +61,7 @@ class _FormHeaderShowcase extends StatelessWidget {
 
     return WidgetbookPageLayout(
       title: 'VFormHeader',
-      description:
-          'Header section of a form field with label, required indicator, and tooltip.',
+      description: 'Header section of a form field with label, required indicator, and tooltip.',
       children: [
         WidgetbookSection(
           title: 'Basic',

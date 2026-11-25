@@ -351,9 +351,8 @@ class _VDatePickerState extends State<VDatePicker> {
                 ),
               ),
               Text(
-                VoloLocalizations.of(
-                  context,
-                ).monthYear(_displayMonth.year, _displayMonth.month),
+                VoloLocalizations.of(context)
+                    .monthYear(_displayMonth.year, _displayMonth.month),
                 style: typography.titleSmall.copyWith(color: colors.foreground),
               ),
               GestureDetector(

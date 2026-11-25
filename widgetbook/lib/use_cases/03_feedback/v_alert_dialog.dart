@@ -71,8 +71,7 @@ class _AlertDialogShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VAlertDialog',
-    description:
-        'A modal dialog for critical actions requiring explicit user confirmation. Cannot be dismissed by backdrop click or Escape.',
+    description: 'A modal dialog for critical actions requiring explicit user confirmation. Cannot be dismissed by backdrop click or Escape.',
     children: [
       WidgetbookSection(
         title: 'Basic Structure',

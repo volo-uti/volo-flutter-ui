@@ -6,6 +6,7 @@ import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/theme/themed_text_style.dart';
 import 'package:volo_flutter_ui/src/utils/keyboard_navigation_mixin.dart';
 import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
+
 import 'v_menu_style.dart';
 
 /// Corner of its trigger where a [VMenu] opens.

@@ -83,12 +83,15 @@ class VAutocompleteItem<T> {
 typedef VAutocompleteChipBuilder<T> = Widget Function(T value);
 
 /// Loads the suggestions for [query] in [VAutocomplete.async].
-typedef VAutocompleteSearch<T> =
-    Future<List<VAutocompleteItem<T>>> Function(String query);
+typedef VAutocompleteSearch<T> = Future<List<VAutocompleteItem<T>>> Function(
+  String query,
+);
 
 /// Decides whether [item] matches [query] in a [VAutocomplete].
-typedef VAutocompleteFilter<T> =
-    bool Function(VAutocompleteItem<T> item, String query);
+typedef VAutocompleteFilter<T> = bool Function(
+  VAutocompleteItem<T> item,
+  String query,
+);
 
 /// Builds the content shown when no item matches [query].
 typedef VAutocompleteEmptyBuilder = Widget Function(String query);

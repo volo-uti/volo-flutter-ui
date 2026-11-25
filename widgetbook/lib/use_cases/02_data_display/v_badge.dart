@@ -134,8 +134,7 @@ class _BadgeShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VBadge',
-    description:
-        'Displays a small indicator attached to a child element, such as a count or status dot.',
+    description: 'Displays a small indicator attached to a child element, such as a count or status dot.',
     children: [
       const WidgetbookSection(
         title: 'Variants',

@@ -118,8 +118,7 @@ class _BoxShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WidgetbookPageLayout(
     title: 'VBox',
-    description:
-        'A container component for layout composition with configurable dimensions.',
+    description: 'A container component for layout composition with configurable dimensions.',
     children: [
       const WidgetbookSection(
         title: 'Variants',

@@ -204,8 +204,10 @@ class VTable extends StatefulWidget {
 }
 
 /// Signature for [VTable.onSort]: the column [key] and the requested direction.
-typedef VTableSortCallback =
-    void Function(String key, {required bool ascending});
+typedef VTableSortCallback = void Function(
+  String key, {
+  required bool ascending,
+});
 
 enum _VTableVariant { normal, sortable, selectable }
 

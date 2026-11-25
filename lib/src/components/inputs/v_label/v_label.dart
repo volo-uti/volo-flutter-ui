@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:volo_flutter_ui/src/theme/theme.dart';
 import 'package:volo_flutter_ui/src/theme/themed_text_style.dart';
+
 import 'v_label_style.dart';
 
 /// Label size.
