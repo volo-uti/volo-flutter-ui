@@ -71,12 +71,12 @@ The short version; see [AGENTS.md](AGENTS.md) for all of it.
 
 Maintainers release in this order.
 
-1. Pick the version. It must be greater than the previous `v*` tag. While the major version is 0, a breaking change since that tag (a commit title `type!:` or `type(scope)!:`, or a `BREAKING CHANGE:` line in the body) raises the minor version; anything else raises the patch. From 1.0 on, a breaking change raises the major version.
-2. Raise `version:` in `pubspec.yaml` in a commit titled `chore(release): <version>`.
-3. Run `make release-check` on that commit. It fails with one reason line when the title, the version or the version bump is wrong. `make release-notes` previews the notes.
+1. Pick the version. It must be greater than the previous `v*` tag. While the major version is 0, every release raises the patch, a breaking change included (a commit title `type!:` or `type(scope)!:`, or a `BREAKING CHANGE:` line in the body); the Breaking changes section of the notes and the changelog announces it. From 1.0 on, a breaking change raises the major version.
+2. Run `make changelog` to add the version's entry to `CHANGELOG.md`, then raise `version:` in `pubspec.yaml`, and commit both in a commit titled `chore(release): <version>`.
+3. Run `make release-check` on that commit. It fails with one reason line when the title, the version, the version bump or the `CHANGELOG.md` entry is wrong. `make release-notes` previews the notes.
 4. Put the tag on that release commit and push it. The release workflow runs the same check, then creates the GitHub release.
 
-The release notes are built from the commit titles since the previous tag: Breaking changes, Features (`feat`) and Fixes (`fix`, `perf`). Other types are left out, so write each title for the people who read the notes. The repository keeps no changelog file.
+The release notes are built from the commit titles since the previous tag: Breaking changes, Features (`feat`) and Fixes (`fix`, `perf`). Other types are left out, so write each title for the people who read the notes. `CHANGELOG.md` collects the same lines per version, newest first; `make changelog` writes the entry, so do not edit it by hand.
 
 ## Reporting bugs and security problems
 

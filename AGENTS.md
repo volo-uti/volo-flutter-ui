@@ -16,8 +16,9 @@ A Flutter design system: the `volo_flutter_ui` package (this repository's root) 
 - `make check` — the gate. Checks formatting, tokens, index, docs, unread style fields, raw widgets, look-alikes, analysis and tests. The `pre-push` hook (lefthook, installed by `make setup`) runs it; there is no test CI, and GitHub Actions only publish and deploy.
 - `make index` — rewrites the index block below, `doc/index.txt` and `doc/**/*.md`.
 - `make tokens` — rewrites `lib/src/theme/*.generated.dart` from the token JSON.
-- `make release-check` — checks that `REV` (default `HEAD`) is a valid release commit: title `chore(release): <version>`, version greater than the previous tag, a breaking change raises the minor while the major is 0. The release workflow runs it on the tag; `make check` does not.
+- `make release-check` — checks that `REV` (default `HEAD`) is a valid release commit: title `chore(release): <version>`, version greater than the previous tag, and a `## <version>` entry in `CHANGELOG.md`. While the major is 0 a release raises the patch, breaking changes included. The release workflow runs it on the tag; `make check` does not.
 - `make release-notes` — prints the release notes (Breaking changes, Features, Fixes) from the commit titles since the previous tag.
+- `make changelog` — adds the next version's entry, with the same lines as the notes, to the top of `CHANGELOG.md`. Never edit `CHANGELOG.md` by hand.
 
 ## Skills
 

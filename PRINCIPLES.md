@@ -76,7 +76,7 @@ Enforced by: review.
 
 ## A version says what changed
 
-A tag sits on its release commit (`chore(release): <version>`), the version is greater than the previous tag, and while the major version is 0 a breaking change raises the minor version. Apps take this library by tag, so a version that hides a breaking change breaks them without warning.
+A tag sits on its release commit (`chore(release): <version>`), the version is greater than the previous tag, and `CHANGELOG.md` has the version's entry. While the major version is 0 a release raises the patch, and a breaking change is listed under Breaking changes in the notes and the changelog. Apps take this library by tag, so a release that hides a breaking change breaks them without warning.
 
 Enforced by: `make release-check`, which the release workflow runs again on the tag.
 
