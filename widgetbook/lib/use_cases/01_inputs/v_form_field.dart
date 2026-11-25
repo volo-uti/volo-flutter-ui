@@ -20,6 +20,10 @@ WidgetbookComponent vFormFieldComponent() => WidgetbookComponent(
       name: 'Sample',
       builder: (context) => const _FormFieldSample(),
     ),
+    WidgetbookUseCase(
+      name: 'Form value field',
+      builder: (context) => const _FormValueFieldSample(),
+    ),
   ],
 );
 
@@ -498,4 +502,97 @@ class _FormFieldSample extends StatelessWidget {
       ],
     );
   }
+}
+
+// =============================================================================
+// Form value field
+// =============================================================================
+
+class _FormValueFieldSample extends StatefulWidget {
+  const _FormValueFieldSample();
+
+  @override
+  State<_FormValueFieldSample> createState() => _FormValueFieldSampleState();
+}
+
+class _FormValueFieldSampleState extends State<_FormValueFieldSample> {
+  final _formKey = GlobalKey<FormState>();
+  String _result = 'not validated';
+
+  @override
+  Widget build(BuildContext context) => WidgetbookPageLayout(
+    title: 'VFormValueField',
+    description:
+        'A VFormField that keeps its value in the enclosing VForm: validate '
+        'shows the validator text below the control, save hands the value to '
+        'onSaved and reset restores the initial value.',
+    children: [
+      WidgetbookSection(
+        title: 'In a VForm',
+        children: [
+          SizedBox(
+            width: 360,
+            child: VForm(
+              formKey: _formKey,
+              children: [
+                VFormValueField<int>(
+                  label: 'Guests',
+                  required: true,
+                  helper: 'Two to six people',
+                  initialValue: 1,
+                  validator: (v) => (v ?? 0) < 2 ? 'Add at least two' : null,
+                  onSaved: (v) => setState(() => _result = 'saved: $v'),
+                  builder: (state) => VNumberStepper(
+                    value: state.value ?? 1,
+                    max: 6,
+                    semanticLabel: 'Guests',
+                    onChanged: state.didChange,
+                  ),
+                ),
+                VStack.horizontal(
+                  spacing: 8,
+                  children: [
+                    VButton(
+                      onPressed: () => setState(() {
+                        _result = _formKey.currentState!.validate()
+                            ? 'valid'
+                            : 'invalid';
+                      }),
+                      child: const Text('Validate'),
+                    ),
+                    VButton.outlined(
+                      onPressed: () => _formKey.currentState!.save(),
+                      child: const Text('Save'),
+                    ),
+                    VButton.ghost(
+                      onPressed: () {
+                        _formKey.currentState!.reset();
+                        setState(() => _result = 'reset');
+                      },
+                      child: const Text('Reset'),
+                    ),
+                  ],
+                ),
+                Text(_result),
+              ],
+            ),
+          ),
+        ],
+      ),
+      const WidgetbookCodeBlock(
+        title: 'Usage',
+        code: '''VFormValueField<int>(
+  label: 'Guests',
+  initialValue: 1,
+  validator: (v) => (v ?? 0) < 2 ? 'Add at least two' : null,
+  onSaved: (v) => guests = v,
+  builder: (state) => VNumberStepper(
+    value: state.value ?? 1,
+    max: 6,
+    onChanged: state.didChange,
+  ),
+)''',
+      ),
+    ],
+  );
 }
