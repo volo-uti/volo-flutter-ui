@@ -28,6 +28,8 @@ Creates a scope exposing [data] to [child].
 Row or column of [VButton]s joined into one segmented control.
 
 Gives the buttons connected corner radii and a shared size.
+It keeps no selection: for buttons that pick one or several values and
+report the change through `onChanged`, use [VToggleButtonGroup].
 
 ```dart
 VButtonGroup(
