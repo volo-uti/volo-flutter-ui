@@ -19,7 +19,7 @@ enum VPageIndicatorStyle {
 }
 
 /// {@template v_page_indicator}
-/// Dots, number or lines that show the current position in a short page set.
+/// Dots, number or lines that show the current page.
 ///
 /// Use it for carousels, onboarding flows and galleries. Unlike
 /// [VPagination], it is mostly visual; [onPageChanged] makes it tappable.

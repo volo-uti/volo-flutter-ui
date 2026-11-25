@@ -4,7 +4,7 @@ Import: `package:volo_flutter_ui/volo_flutter_ui.dart`
 
 ## VDatePicker
 
-Form field that opens a popover to pick a date, time, date and time, or range.
+Form field that opens a popover to pick a date, time or range.
 
 **Variants:**
 

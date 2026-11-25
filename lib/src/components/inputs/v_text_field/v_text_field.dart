@@ -14,7 +14,7 @@ import 'package:volo_flutter_ui/src/utils/v_min_tap_target.dart';
 
 import 'v_text_field_style.dart';
 
-/// Single-line text input with label, helper text, validation and built-in variants.
+/// Single-line text input with label, helper text and validation.
 ///
 /// For several lines use VTextArea.
 ///

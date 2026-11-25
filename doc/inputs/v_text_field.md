@@ -4,7 +4,7 @@ Import: `package:volo_flutter_ui/volo_flutter_ui.dart`
 
 ## VTextField
 
-Single-line text input with label, helper text, validation and built-in variants.
+Single-line text input with label, helper text and validation.
 
 For several lines use VTextArea.
 

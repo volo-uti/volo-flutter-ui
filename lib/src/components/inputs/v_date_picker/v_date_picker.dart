@@ -29,7 +29,7 @@ enum VDatePickerSize {
   lg,
 }
 
-/// Form field that opens a popover to pick a date, time, date and time, or range.
+/// Form field that opens a popover to pick a date, time or range.
 ///
 /// **Variants:**
 ///
