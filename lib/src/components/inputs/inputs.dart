@@ -33,6 +33,8 @@ export 'v_label/v_label.dart';
 export 'v_label/v_label_style.dart';
 export 'v_link/v_link.dart';
 export 'v_link/v_link_style.dart';
+export 'v_number_stepper/v_number_stepper.dart';
+export 'v_number_stepper/v_number_stepper_style.dart';
 export 'v_radio/v_radio.dart';
 export 'v_radio/v_radio_style.dart';
 export 'v_select/v_select.dart';

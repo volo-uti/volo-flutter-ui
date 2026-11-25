@@ -29,6 +29,7 @@ import 'use_cases/01_inputs/v_form_header.dart';
 import 'use_cases/01_inputs/v_icon_button.dart';
 import 'use_cases/01_inputs/v_label.dart';
 import 'use_cases/01_inputs/v_link.dart';
+import 'use_cases/01_inputs/v_number_stepper.dart';
 import 'use_cases/01_inputs/v_radio.dart';
 import 'use_cases/01_inputs/v_select.dart';
 import 'use_cases/01_inputs/v_slider.dart';
@@ -175,6 +176,7 @@ class WidgetbookApp extends StatelessWidget {
               vSelectComponent(),
               // Value
               vSliderComponent(),
+              vNumberStepperComponent(),
               vCalendarComponent(),
               vDatePickerComponent(),
               // Form Structure

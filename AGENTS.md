@@ -85,7 +85,7 @@ v_button|VButton: Button with filled, outlined, text, ghost, icon and link varia
 v_button_group|VButtonGroupScope: Inherited scope that makes a VButtonGroupData visible to descendants.
 v_calendar|VCalendar: Month grid for picking one date, a range or several dates, with event dots.
 v_checkbox|VCheckbox: Tri-state checkbox with an optional label, also available as a bordered card.
-v_date_picker|VDatePicker: Form field that opens a popover to pick a date, time, date and time, or range.
+v_date_picker|VDatePicker: Form field that opens a popover to pick a date, time or range.
 v_fab|VFab: Floating button for the primary action of a screen, in round and extended forms.
 v_form|VForm: Vertical stack of form fields that validates and saves them together.
 v_form_body|VFormBody: Bordered box that frames a form control, with leading and trailing slots.
@@ -95,12 +95,13 @@ v_form_header|VFormHeader: Label row above a form control, with required mark, t
 v_icon_button|VIconButton: Round button that shows a single icon, optionally toggling between two.
 v_label|VLabel: Label for a form field with an optional required mark.
 v_link|VLink: Inline link that underlines on hover and reports taps.
+v_number_stepper|VNumberStepper: Plus and minus buttons around a whole number.
 v_radio|VRadio: Single-selection radio button, or a whole group via VRadio.group.
 v_select|VSelect: Dropdown that picks one option, or several with VSelect.multiple.
 v_slider|VSlider: Draggable slider for one value, or two with VSlider.range.
 v_switch|VSwitch: Animated on/off switch with an optional label, also available with I/O marks.
 v_text_area|VTextArea: Multi-line text input with label, helper text and optional character counter.
-v_text_field|VTextField: Single-line text input with label, helper text, validation and built-in variants.
+v_text_field|VTextField: Single-line text input with label, helper text and validation.
 v_toggle_button|VToggleButton: Standalone on/off button that is drawn selected while isSelected is true.
 [l10n]
 volo_localizations|VoloLocalizations: Strings volo_flutter_ui widgets show or announce.
@@ -122,7 +123,7 @@ v_breadcrumb|VBreadcrumb: Shows the current location hierarchy.
 v_command|VCommand: Searchable command palette, inline or as a Cmd+K dialog.
 v_drawer|VDrawer: Side panel with a header, content and footer for app navigation.
 v_menu|VMenu: Popup menu of actions that opens below or above its trigger widget.
-v_page_indicator|VPageIndicator: Dots, number or lines that show the current position in a short page set.
+v_page_indicator|VPageIndicator: Dots, number or lines that show the current page.
 v_pagination|VPagination: Page navigation with numbered buttons, ellipsis and previous/next controls.
 v_stepper|VStepper: Multi-step flow with numbered markers, step content and controls.
 v_tabs|VTabs: A tabbed interface for switching views.
