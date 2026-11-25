@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.1.4
+
+### Breaking changes
+
+- require Flutter 3.50 and Dart 3.14 (aaa62e0)
+
+### Features
+
+- **number-stepper:** add VNumberStepper, plus and minus buttons around a whole number (403af89)
+- **form-field:** add VFormValueField, a form field that validates, saves and resets with VForm (6a31493)
+- **release:** build CHANGELOG.md from commit titles and let a breaking change ship in a patch (85d1ed0)
+- **theme:** draw the theme font family in every text under the theme (a559120)
+- **release:** add a release check and release notes built from commit titles (bea61d4)
+
+### Fixes
+
+- **theme:** keep the theme font in widgets that reset the default text style (5ab0e6f)
+
 ## 0.1.3
 
 ### Breaking changes
