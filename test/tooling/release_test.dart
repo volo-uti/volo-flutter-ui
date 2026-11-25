@@ -26,6 +26,8 @@ class _Repo {
         .writeAsStringSync('name: sample\nversion: ${version ?? _version}\n');
     if (version != null) _version = version;
     File('${dir.path}/n.txt').writeAsStringSync('$message ${_n++}');
+    File('${dir.path}/CHANGELOG.md')
+        .writeAsStringSync('# Changelog\n\n## ${version ?? _version}\n');
     _git(['add', '-A']);
     _git(['commit', '-q', '-m', message]);
   }
@@ -68,11 +70,11 @@ void main() {
       expect(repo.check, throwsA(isA<ReleaseException>()));
     });
 
-    test('rejects a patch bump after a breaking subject', () {
+    test('accepts a patch bump after a breaking subject', () {
       repo
         ..commit('fix(tabs)!: announce tabs')
         ..commit('chore(release): 0.1.4', version: '0.1.4');
-      expect(repo.check, throwsA(isA<ReleaseException>()));
+      expect(repo.check(), contains('breaking changes 1'));
     });
 
     test('accepts a minor bump after a breaking subject', () {
@@ -86,7 +88,7 @@ void main() {
       repo
         ..commit('feat: x\n\nBREAKING CHANGE: y is gone')
         ..commit('chore(release): 0.1.4', version: '0.1.4');
-      expect(repo.check, throwsA(isA<ReleaseException>()));
+      expect(repo.check(), contains('breaking changes 1'));
     });
 
     test('skips a tag on the release commit itself', () {
@@ -95,6 +97,13 @@ void main() {
         ..commit('chore(release): 0.1.4', version: '0.1.4')
         ..tag('v0.1.4');
       expect(repo.check(), contains('v0.1.3'));
+    });
+
+    test('rejects a release without its CHANGELOG entry', () {
+      repo.commit('chore(release): 0.1.4', version: '0.1.4');
+      File('${repo.dir.path}/CHANGELOG.md').writeAsStringSync('# Changelog\n');
+      repo._git(['commit', '-q', '-a', '--amend', '--no-edit']);
+      expect(repo.check, throwsA(isA<ReleaseException>()));
     });
 
     test('after 1.0 a breaking change must raise the major', () {
@@ -137,6 +146,47 @@ void main() {
       expect(notes, contains('## Fixes'));
       expect(notes, isNot(contains('## Breaking changes')));
       expect(notes, isNot(contains('## Features')));
+    });
+  });
+
+  group('writeChangelog', () {
+    test('adds the next entry on top with the notes lines', () {
+      repo
+        ..commit('feat(x): new thing')
+        ..commit('fix: a bug')
+        ..commit('docs: words');
+      File('${repo.dir.path}/CHANGELOG.md')
+          .writeAsStringSync('# Changelog\n\n## 0.1.3\n\n- old\n');
+      expect(writeChangelog('HEAD', dir: repo.dir.path), contains('0.1.4'));
+      final log = File('${repo.dir.path}/CHANGELOG.md').readAsStringSync();
+      expect(log, startsWith('# Changelog\n\n## 0.1.4\n\n### Features\n'));
+      expect(log, contains('**x:** new thing'));
+      expect(log, contains('### Fixes'));
+      expect(log, isNot(contains('words')));
+      expect(log.indexOf('## 0.1.4'), lessThan(log.indexOf('## 0.1.3')));
+      expect(log, contains('- old'));
+    });
+
+    test('refuses an entry that is already there', () {
+      repo.commit('fix: a bug');
+      writeChangelog('HEAD', dir: repo.dir.path);
+      final once = File('${repo.dir.path}/CHANGELOG.md').readAsStringSync();
+      expect(
+        () => writeChangelog('HEAD', dir: repo.dir.path),
+        throwsA(isA<ReleaseException>()),
+      );
+      expect(File('${repo.dir.path}/CHANGELOG.md').readAsStringSync(), once);
+    });
+
+    test('takes an explicit version for a past tag', () {
+      repo
+        ..commit('feat: later')
+        ..tag('v0.1.4');
+      writeChangelog('v0.1.4', version: '0.1.4', dir: repo.dir.path);
+      final log = File('${repo.dir.path}/CHANGELOG.md').readAsStringSync();
+      expect(log, contains('## 0.1.4'));
+      expect(log, contains('later'));
+      expect(log, isNot(contains('first')));
     });
   });
 

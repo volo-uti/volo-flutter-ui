@@ -5,10 +5,12 @@ DART    ?= $(if $(FVM),fvm dart,dart)
 # Packages checked by analyze. The example sits outside the pub workspace.
 PACKAGES := . example widgetbook
 FORMAT_DIRS := lib test bin tool example widgetbook
-# The commit that `release-check` and `release-notes` read.
+# The commit that `release-check`, `release-notes` and `changelog` read.
 REV ?= HEAD
+# The version `changelog` writes; empty picks it from pubspec.yaml and the tags.
+VERSION ?=
 
-.PHONY: setup test fmt analyze tokens index check release-check release-notes
+.PHONY: setup test fmt analyze tokens index check release-check release-notes changelog
 
 setup:
 	$(if $(FVM),fvm install,)
@@ -59,10 +61,15 @@ check:
 	$(MAKE) test
 
 # Fails when REV (default HEAD) is not a valid release commit: its title,
-# the version against the previous tag, and breaking changes since that tag.
+# its CHANGELOG.md entry, and the version against the previous tag.
 release-check:
 	$(DART) run tool/release.dart check --commit $(REV)
 
 # Prints the release notes built from the commit titles since the previous tag.
 release-notes:
 	$(DART) run tool/release.dart notes --commit $(REV)
+
+# Adds the next version's entry, built from the commit titles since the
+# previous tag, to the top of CHANGELOG.md. It does not commit.
+changelog:
+	$(DART) run tool/release.dart changelog --commit $(REV) $(if $(VERSION),--version $(VERSION),)

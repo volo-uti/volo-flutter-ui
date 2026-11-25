@@ -3,9 +3,11 @@
 // `dart tool/release.dart` runs without `pub get`.
 //
 // A release is a commit titled `chore(release): <version>` that raises the
-// `version:` of pubspec.yaml. The version must be greater than the one of the
-// previous `v*` tag, and while the major version is 0 a breaking change since
-// that tag must raise the minor version.
+// `version:` of pubspec.yaml and has a `## <version>` entry in CHANGELOG.md.
+// The version must be greater than the one of the previous `v*` tag; a
+// breaking change may ship in a patch while the major version is 0 and is
+// announced in the Breaking changes section. From 1.0 on, a breaking change
+// must raise the major version.
 import 'dart:io';
 
 /// A release rule that does not hold, or a git repository that cannot be read.
@@ -156,25 +158,44 @@ List<ReleaseCommit> commitsSince(String? tag, String rev, {String dir = '.'}) {
   return commits;
 }
 
+/// The `version:` of pubspec.yaml at [rev], as written and parsed.
+(String, ReleaseVersion) _pubspecVersion(String rev, String dir) {
+  final pubspec = _git(['show', '$rev:pubspec.yaml'], dir);
+  final text = RegExp(
+    r'^version:\s*(\S+)',
+    multiLine: true,
+  ).firstMatch(pubspec)?.group(1);
+  final version = text == null ? null : ReleaseVersion.tryParse(text);
+  if (text == null || version == null) {
+    throw ReleaseException('pubspec.yaml has no usable version: line');
+  }
+  return (text, version);
+}
+
+/// True when [changelog] has a `## <version>` heading.
+bool _hasEntry(String changelog, ReleaseVersion version) =>
+    changelog.split('\n').any((l) => l.trimRight() == '## $version');
+
 /// Checks the release rules for the commit [rev] and returns a one-line
 /// summary; throws [ReleaseException] with the reason when a rule fails.
 String checkRelease(String rev, {String dir = '.'}) {
   final subject = _git(['log', '-1', '--format=%s', rev], dir).trim();
-  final pubspec = _git(['show', '$rev:pubspec.yaml'], dir);
-  final versionText = RegExp(
-    r'^version:\s*(\S+)',
-    multiLine: true,
-  ).firstMatch(pubspec)?.group(1);
-  final version = versionText == null
-      ? null
-      : ReleaseVersion.tryParse(versionText);
-  if (version == null) {
-    throw ReleaseException('pubspec.yaml has no usable version: line');
-  }
+  final (versionText, version) = _pubspecVersion(rev, dir);
   if (subject != 'chore(release): $versionText') {
     throw ReleaseException(
       'the commit title must be "chore(release): $versionText", '
       'it is "$subject"',
+    );
+  }
+  final changelog = Process.runSync('git', [
+    'show',
+    '$rev:CHANGELOG.md',
+  ], workingDirectory: dir);
+  if (changelog.exitCode != 0 ||
+      !_hasEntry(changelog.stdout as String, version)) {
+    throw ReleaseException(
+      'CHANGELOG.md at $rev has no "## $version" entry; '
+      'run `make changelog` and commit it',
     );
   }
   final tag = previousTag(rev, dir: dir);
@@ -192,25 +213,25 @@ String checkRelease(String rev, {String dir = '.'}) {
     rev,
     dir: dir,
   ).where((c) => c.isBreaking).length;
-  if (breaking > 0) {
-    final raised = previous.major == 0
-        ? version.major > 0 || version.minor > previous.minor
-        : version.major > previous.major;
-    if (!raised) {
-      final what = previous.major == 0 ? 'minor' : 'major';
-      throw ReleaseException(
-        '$breaking breaking change(s) since $tag, so the $what version must '
-        'go up ($tag -> $version)',
-      );
-    }
+  if (breaking > 0 && previous.major > 0 && version.major <= previous.major) {
+    throw ReleaseException(
+      '$breaking breaking change(s) since $tag, so the major version must '
+      'go up ($tag -> $version)',
+    );
   }
   return 'release $version, previous tag $tag, breaking changes $breaking';
 }
 
 /// Markdown release notes for `previousTag..rev`: breaking changes, features
 /// and fixes. Empty sections are left out.
-String releaseNotes(String rev, {String dir = '.'}) {
-  final commits = commitsSince(previousTag(rev, dir: dir), rev, dir: dir);
+String releaseNotes(String rev, {String dir = '.'}) => _sections(
+  commitsSince(previousTag(rev, dir: dir), rev, dir: dir),
+  heading: '##',
+);
+
+/// The notes sections for [commits] under [heading] titles; empty when no
+/// commit is a breaking change, a feature or a fix.
+String _sections(List<ReleaseCommit> commits, {required String heading}) {
   final breaking = <String>[];
   final features = <String>[];
   final fixes = <String>[];
@@ -232,7 +253,7 @@ String releaseNotes(String rev, {String dir = '.'}) {
     if (lines.isEmpty) return;
     if (out.isNotEmpty) out.writeln();
     out
-      ..writeln('## $title')
+      ..writeln('$heading $title')
       ..writeln()
       ..writeln(lines.join('\n'));
   }
@@ -243,8 +264,73 @@ String releaseNotes(String rev, {String dir = '.'}) {
   return out.toString();
 }
 
-/// Runs the command line: `check` or `notes`, with `--commit REV` (default
-/// `HEAD`). Returns the exit code: 0 ok, 1 a rule fails, 2 unusable input.
+/// Adds the entry of the next version to the top of CHANGELOG.md at the root
+/// of the git repository that holds [dir], and returns a one-line summary.
+///
+/// The entry lists the commits since the nearest `v*` tag reachable from
+/// [rev] (a tag on [rev] counts, the tag of the version being written does
+/// not), in the sections of the release notes. The version is [version], else
+/// the pubspec version at [rev] when it is greater than that tag, else the
+/// tag's patch plus one. Throws [ReleaseException] and leaves the file alone
+/// when the entry is already there. It never commits.
+String writeChangelog(String rev, {String? version, String dir = '.'}) {
+  final root = _git(['rev-parse', '--show-toplevel'], dir).trim();
+  final explicit = version == null ? null : ReleaseVersion.tryParse(version);
+  if (version != null && explicit == null) {
+    throw ReleaseException('not a version: $version', usage: true);
+  }
+  String? tagBehind({String? exclude}) {
+    final r = Process.runSync('git', [
+      'describe',
+      '--tags',
+      '--abbrev=0',
+      '--match',
+      'v*',
+      if (exclude != null) ...['--exclude', exclude],
+      rev,
+    ], workingDirectory: root);
+    final tag = (r.stdout as String).trim();
+    return r.exitCode != 0 || tag.isEmpty ? null : tag;
+  }
+
+  ReleaseVersion next;
+  if (explicit != null) {
+    next = explicit;
+  } else {
+    final tag = tagBehind();
+    final previous = tag == null ? null : ReleaseVersion.tryParse(tag);
+    final (_, current) = _pubspecVersion(rev, root);
+    next = previous == null || current.compareTo(previous) > 0
+        ? current
+        : ReleaseVersion(previous.major, previous.minor, previous.patch + 1);
+  }
+  final tag = tagBehind(exclude: 'v$next');
+  final file = File('$root/CHANGELOG.md');
+  final old = file.existsSync() ? file.readAsStringSync() : '';
+  if (_hasEntry(old, next)) {
+    throw ReleaseException('CHANGELOG.md already has a "## $next" entry');
+  }
+  final sections = _sections(commitsSince(tag, rev, dir: root), heading: '###');
+  final entry =
+      '## $next\n\n${sections.isEmpty ? 'No notable changes.\n' : sections}';
+  final lines = old.split('\n');
+  final title = lines.indexWhere((l) => l.trimRight() == '# Changelog');
+  final String text;
+  if (title < 0) {
+    text =
+        '# Changelog\n\n$entry${old.trim().isEmpty ? '' : '\n${old.trimLeft()}'}';
+  } else {
+    final before = lines.sublist(0, title + 1).join('\n');
+    final after = lines.sublist(title + 1).join('\n').trimLeft();
+    text = '$before\n\n$entry${after.isEmpty ? '' : '\n$after'}';
+  }
+  file.writeAsStringSync(text);
+  return 'CHANGELOG.md: added $next (since ${tag ?? 'the first commit'})';
+}
+
+/// Runs the command line: `check`, `notes` or `changelog`, with `--commit REV`
+/// (default `HEAD`) and, for `changelog`, `--version X.Y.Z`. Returns the exit
+/// code: 0 ok, 1 a rule fails, 2 unusable input.
 int runRelease(
   List<String> args, {
   required StringSink out,
@@ -253,10 +339,15 @@ int runRelease(
 }) {
   final command = args.isEmpty ? null : args.first;
   var rev = 'HEAD';
+  String? version;
   final rest = args.skip(1).toList();
   for (var i = 0; i < rest.length; i++) {
     if (rest[i] == '--commit' && i + 1 < rest.length) {
       rev = rest[++i];
+    } else if (command == 'changelog' &&
+        rest[i] == '--version' &&
+        i + 1 < rest.length) {
+      version = rest[++i];
     } else {
       err.writeln('unknown argument: ${rest[i]}');
       return 2;
@@ -270,8 +361,14 @@ int runRelease(
       case 'notes':
         out.write(releaseNotes(rev, dir: dir));
         return 0;
+      case 'changelog':
+        out.writeln(writeChangelog(rev, version: version, dir: dir));
+        return 0;
       default:
-        err.writeln('usage: dart tool/release.dart check|notes [--commit REV]');
+        err.writeln(
+          'usage: dart tool/release.dart check|notes|changelog '
+          '[--commit REV] [--version X.Y.Z]',
+        );
         return 2;
     }
   } on ReleaseException catch (e) {
