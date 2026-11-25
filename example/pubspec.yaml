@@ -3,7 +3,7 @@ description: Example app demonstrating volo_flutter_ui components.
 publish_to: none
 
 environment:
-  sdk: ^3.11.0
+  sdk: ^3.14.0
 
 dependencies:
   flutter:

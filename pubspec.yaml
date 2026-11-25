@@ -7,8 +7,8 @@ repository: https://github.com/volo-uti/volo-flutter-ui
 issue_tracker: https://github.com/volo-uti/volo-flutter-ui/issues
 
 environment:
-  sdk: ^3.11.0
-  flutter: ">=3.41.0"
+  sdk: ^3.14.0
+  flutter: ">=3.50.0"
 
 workspace:
   - widgetbook

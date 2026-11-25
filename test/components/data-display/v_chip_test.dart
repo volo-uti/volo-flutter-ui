@@ -1,5 +1,6 @@
 import 'dart:ui' show Tristate;
 
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart' show Icons;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';

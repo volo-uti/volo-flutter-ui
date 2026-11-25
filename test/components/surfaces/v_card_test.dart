@@ -1,5 +1,6 @@
 import 'dart:ui' show Color, PointerDeviceKind;
 
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart' show Icons;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
