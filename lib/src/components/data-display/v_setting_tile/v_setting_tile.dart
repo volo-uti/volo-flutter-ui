@@ -63,15 +63,14 @@ class VSettingTile extends StatefulWidget {
     super.key,
     this.subtitle,
     this.leading,
-    ValueChanged<bool>? onChanged,
+    this._onChanged,
     this.enabled = true,
     this.style,
   }) : _variant = _VSettingTileVariant.switchTile,
        trailing = null,
        value = null,
        onTap = null,
-       _checked = value,
-       _onChanged = onChanged;
+       _checked = value;
 
   /// Creates a row with a checkbox at the end.
   const VSettingTile.checkbox({
@@ -80,15 +79,14 @@ class VSettingTile extends StatefulWidget {
     super.key,
     this.subtitle,
     this.leading,
-    ValueChanged<bool>? onChanged,
+    this._onChanged,
     this.enabled = true,
     this.style,
   }) : _variant = _VSettingTileVariant.checkbox,
        trailing = null,
        value = null,
        onTap = null,
-       _checked = value,
-       _onChanged = onChanged;
+       _checked = value;
 
   VSettingTile._radio({
     required this.title,

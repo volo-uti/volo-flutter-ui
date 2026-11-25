@@ -70,10 +70,8 @@ class _MinTapTarget extends SingleChildRenderObjectWidget {
 // child and a hit anywhere in it is forwarded to the child's center, so the
 // child reacts to a tap in the grown area.
 class _RenderMinTapTarget extends RenderShiftedBox {
-  _RenderMinTapTarget({required double minSize, required bool growLayout})
-    : _minSize = minSize,
-      _growLayout = growLayout,
-      super(null);
+  _RenderMinTapTarget({required this._minSize, required this._growLayout})
+    : super(null);
 
   double _minSize;
   bool _growLayout;
@@ -274,11 +272,10 @@ class _MinTapSemantics extends SingleChildRenderObjectWidget {
 
 class _RenderMinTapSemantics extends RenderSemanticsAnnotations {
   _RenderMinTapSemantics({
-    required double minSize,
+    required this._minSize,
     required super.properties,
     super.textDirection,
-  }) : _minSize = minSize,
-       super(container: true);
+  }) : super(container: true);
 
   double _minSize;
 

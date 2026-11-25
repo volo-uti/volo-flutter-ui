@@ -78,7 +78,7 @@ class VGrid extends StatelessWidget {
   /// ```
   const VGrid.count({
     required this.children,
-    required int crossAxisCount,
+    required int this._crossAxisCount,
     super.key,
     this.mainAxisSpacing,
     this.crossAxisSpacing,
@@ -92,8 +92,7 @@ class VGrid extends StatelessWidget {
     this.primary,
     this.reverse = false,
     this.style,
-  }) : _crossAxisCount = crossAxisCount,
-       _maxCrossAxisExtent = null,
+  }) : _maxCrossAxisExtent = null,
        _gridDelegate = null;
 
   /// Max column width grid.
@@ -109,7 +108,7 @@ class VGrid extends StatelessWidget {
   /// ```
   const VGrid.extent({
     required this.children,
-    required double maxCrossAxisExtent,
+    required double this._maxCrossAxisExtent,
     super.key,
     this.mainAxisSpacing,
     this.crossAxisSpacing,
@@ -124,7 +123,6 @@ class VGrid extends StatelessWidget {
     this.reverse = false,
     this.style,
   }) : _crossAxisCount = null,
-       _maxCrossAxisExtent = maxCrossAxisExtent,
        _gridDelegate = null;
 
   /// Custom delegate grid.
@@ -143,7 +141,7 @@ class VGrid extends StatelessWidget {
   /// ```
   const VGrid.custom({
     required this.children,
-    required SliverGridDelegate gridDelegate,
+    required SliverGridDelegate this._gridDelegate,
     super.key,
     this.mainAxisSpacing,
     this.crossAxisSpacing,
@@ -158,8 +156,7 @@ class VGrid extends StatelessWidget {
     this.reverse = false,
     this.style,
   }) : _crossAxisCount = null,
-       _maxCrossAxisExtent = null,
-       _gridDelegate = gridDelegate;
+       _maxCrossAxisExtent = null;
 
   /// Tiles laid out in the grid.
   final List<Widget> children;
