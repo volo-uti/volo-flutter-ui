@@ -203,3 +203,65 @@ class VFormField extends StatelessWidget {
     return MergeSemantics(child: bodyWidget);
   }
 }
+
+/// Form field that keeps its value in the enclosing form and shows its error.
+///
+/// Registers with the nearest [Form] (a [VForm] or a widgets `Form`), so
+/// `validate`, `save` and `reset` on the form's state reach it. [builder]
+/// draws the control from the field state: read `state.value` and call
+/// `state.didChange` when the user changes it. The label row and the message
+/// row come from [VFormField]; after a failed validation the message row shows
+/// the [validator] text in place of [helper].
+///
+/// ```dart
+/// VFormValueField<int>(
+///   label: 'Guests',
+///   initialValue: 1,
+///   validator: (v) => (v ?? 0) < 1 ? 'Add at least one guest' : null,
+///   onSaved: (v) => guests = v,
+///   builder: (state) => VNumberStepper(
+///     value: state.value ?? 1,
+///     onChanged: state.didChange,
+///   ),
+/// )
+/// ```
+///
+/// See also:
+/// - [VFormField] - The same frame for a value kept outside a form
+/// - [VForm] - Validates and saves its fields together
+class VFormValueField<T> extends FormField<T> {
+  /// Creates a form field that draws its control with [builder].
+  VFormValueField({
+    required FormFieldBuilder<T> builder,
+    super.key,
+    super.initialValue,
+    super.validator,
+    super.onSaved,
+    super.enabled,
+    super.autovalidateMode,
+    String? label,
+    String? more,
+    bool required = false,
+    String requiredMark = '*',
+    Widget? tooltip,
+    bool floatingLabel = false,
+    String? helper,
+    String? extra,
+    VFormFieldStyle? style,
+  }) : super(
+         builder: (state) => VFormField(
+           label: label,
+           more: more,
+           required: required,
+           requiredMark: requiredMark,
+           tooltip: tooltip,
+           floatingLabel: floatingLabel,
+           helper: helper,
+           error: state.hasError,
+           errorText: state.errorText,
+           extra: extra,
+           style: style,
+           child: builder(state),
+         ),
+       );
+}

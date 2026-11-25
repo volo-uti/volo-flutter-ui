@@ -1,4 +1,4 @@
-# VFormField
+# VFormField, VFormValueField
 
 Import: `package:volo_flutter_ui/volo_flutter_ui.dart`
 
@@ -63,6 +63,58 @@ Creates a form field.
 | `maxLength` | `int?` |  |  | Character limit; when set, a counter is shown. |
 | `currentLength` | `int` | `0` |  | Characters entered so far, used by the generated counter. |
 | `style` | `VFormFieldStyle?` |  |  | Style override merged over the theme's [VFormFieldStyle]. |
+
+## VFormValueField
+
+Form field that keeps its value in the enclosing form and shows its error.
+
+Registers with the nearest [Form] (a [VForm] or a widgets `Form`), so
+`validate`, `save` and `reset` on the form's state reach it. [builder]
+draws the control from the field state: read `state.value` and call
+`state.didChange` when the user changes it. The label row and the message
+row come from [VFormField]; after a failed validation the message row shows
+the [validator] text in place of [helper].
+
+```dart
+VFormValueField<int>(
+  label: 'Guests',
+  initialValue: 1,
+  validator: (v) => (v ?? 0) < 1 ? 'Add at least one guest' : null,
+  onSaved: (v) => guests = v,
+  builder: (state) => VNumberStepper(
+    value: state.value ?? 1,
+    onChanged: state.didChange,
+  ),
+)
+```
+
+See also:
+- [VFormField] - The same frame for a value kept outside a form
+- [VForm] - Validates and saves its fields together
+
+### Constructors
+
+#### `VFormValueField`
+
+Creates a form field that draws its control with [builder].
+
+| Parameter | Type | Default | Required | Description |
+|---|---|---|---|---|
+| `builder` | `Widget Function(FormFieldState<T>)` |  | yes |  |
+| `initialValue` | `T?` |  |  |  |
+| `validator` | `String? Function(T?)?` |  |  |  |
+| `onSaved` | `void Function(T?)?` |  |  |  |
+| `enabled` | `bool` | `true` |  |  |
+| `autovalidateMode` | `AutovalidateMode?` |  |  |  |
+| `label` | `String?` |  |  |  |
+| `more` | `String?` |  |  |  |
+| `required` | `bool` | `false` |  |  |
+| `requiredMark` | `String` | `'*'` |  |  |
+| `tooltip` | `Widget?` |  |  |  |
+| `floatingLabel` | `bool` | `false` |  |  |
+| `helper` | `String?` |  |  |  |
+| `extra` | `String?` |  |  |  |
+| `style` | `VFormFieldStyle?` |  |  |  |
 
 ## VFormFieldStyle
 
